@@ -1,6 +1,8 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh LpR fFf">
+    <q-header
+      elevated
+    >
       <q-toolbar>
         <q-btn
           flat
@@ -12,95 +14,81 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          RepoMiner
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
-
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
-      content-class="bg-grey-1"
+      show-if-above
+      content-class="bg-primary text-white"
     >
       <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
+        <q-item
+          v-for="sideBarLink in sideBarLinks"
+          clickable
+          :key="sideBarLink"
+          :exact="sideBarLink.exact"
+          :to="sideBarLink.to"
+          active-class="q-item-no-link-highlighting"
         >
-          Essential Links
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+          <q-item-section
+            avatar
+          >
+            <q-icon
+              :name="sideBarLink.icon"
+            />
+          </q-item-section>
+          <q-item-section>
+            {{ sideBarLink.label }}
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
+<style scoped>
+a {
+  text-decoration: none;
+  color: inherit;
+}
+</style>
+
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksData = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
-
+import { openURL } from 'quasar';
+import { mdiEarth} from "@quasar/extras/mdi-v5";
 export default {
   name: 'MainLayout',
-  components: { EssentialLink },
-  data () {
+  data() {
     return {
+      desktopModeBreakPoint: 1023,
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      windowWidth: 0,
+      sideBarLinks: [
+        {
+          label: 'Projects',
+          icon: mdiEarth,
+          to: {
+            name: 'projects'
+          },
+          exact: false
+        }
+      ]
+    }
+  },
+  created() {
+  },
+  methods: {
+    openURLInBrowser(url) {
+      openURL(url)
     }
   }
 }
