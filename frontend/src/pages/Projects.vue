@@ -78,6 +78,7 @@
               <q-btn
                 icon="edit"
                 color="info"
+                @click="$router.push({ name: 'editProject', params: { id: project.id }})"
               />
               <q-btn
                 icon="delete"
@@ -107,6 +108,7 @@ export default {
     loadProjects() {
       this.loading = true;
       this.projects = [];
+      this.$q.loadingBar.start()
       setTimeout(() => {
         this.loading = false;
         this.projects = [
@@ -115,7 +117,8 @@ export default {
             name: "TestProject",
             lastUpdate: new Date()
           }
-        ]
+        ];
+        this.$q.loadingBar.stop();
       }, 2000)
     }
   }

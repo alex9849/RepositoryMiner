@@ -10,8 +10,12 @@ const routes = [
         redirect : {name: 'projects'},
       }, {
         name: 'projects',
-        path: '/projects',
+        path: '/project',
         component: () => import('pages/Projects')
+      }, {
+        name: 'editProject',
+        path: '/project/:id/edit',
+        component: () => import('pages/EditProject')
       }
     ]
   },
