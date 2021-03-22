@@ -65,15 +65,19 @@
               {{ project.name }}
             </q-item-label>
             <q-item-label caption>
-              Last edited {{ project.lastUpdate }}
+              Last edited {{ project.lastUpdate.toLocaleDateString() }} at {{ project.lastUpdate.toLocaleTimeString() }}
             </q-item-label>
           </q-item-section>
           <q-item-section side>
             <div class="q-gutter-sm">
               <q-btn
                 icon="search"
-                color="info"
+                color="positive"
                 label="Select"
+              />
+              <q-btn
+                icon="edit"
+                color="info"
               />
               <q-btn
                 icon="delete"
