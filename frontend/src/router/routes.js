@@ -16,6 +16,10 @@ const routes = [
         name: 'editProject',
         path: '/project/:id/edit',
         component: () => import('pages/EditProject')
+      }, {
+        name: 'addProject',
+        path: '/project/add',
+        component: () => import('pages/EditProject')
       }
     ]
   },

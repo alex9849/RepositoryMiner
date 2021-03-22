@@ -13,6 +13,7 @@
     >
       <q-btn
         color="positive"
+        @click="$router.push({ name: 'addProject' })"
       >
         Add Project
       </q-btn>
