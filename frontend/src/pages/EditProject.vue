@@ -70,7 +70,7 @@ export default {
   name: "EditProject",
   data: () => {
     return {
-      gitCommand: "git log --pretty=format'[%h] %an %ad %s' --date=short --numstat --summary >> repolog.log",
+      gitCommand: "git log --pretty=format'[%h] %an %ad %s' --date=short --numstat --summary --reverse >> repolog.log",
       isGitCommandCopied: false
     }
   },
