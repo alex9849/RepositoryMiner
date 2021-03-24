@@ -16,7 +16,7 @@ CREATE TABLE Author
     name TEXT
 );
 
-CREATE TABLE Commits
+CREATE TABLE "Commit"
 (
     projectId INTEGER NOT NULL REFERENCES Project,
     hash      TEXT PRIMARY KEY,
@@ -27,7 +27,7 @@ CREATE TABLE Commits
 
 CREATE TABLE FileChange
 (
-    commitHash TEXT    NOT NULL REFERENCES Commits,
+    commitHash TEXT    NOT NULL REFERENCES "Commit",
     fileId     INTEGER NOT NULL REFERENCES File,
     path       TEXT,
     insertions INTEGER CHECK ( insertions >= 0 ),
@@ -38,6 +38,6 @@ CREATE TABLE FileChange
 CREATE VIEW CurrentPath AS
 SELECT fc.fileId, c.hash, fc.path
 from FileChange fc
-         join Commits c on c.hash = fc.commitHash
+         join "Commit" c on c.hash = fc.commitHash
 group by fc.fileId
 having c.hash = max(c.hash);
