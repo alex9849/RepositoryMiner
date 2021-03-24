@@ -6,29 +6,31 @@ CREATE TABLE Project
 
 CREATE TABLE File
 (
-    projectId   INTEGER NOT NULL REFERENCES Project,
-    id          INTEGER primary key
+    projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
+    id        INTEGER PRIMARY KEY
 );
 
 CREATE TABLE Author
 (
-    id   INTEGER PRIMARY KEY,
-    name TEXT
+    id        INTEGER PRIMARY KEY,
+    projectId INTEGER REFERENCES Project ON DELETE CASCADE,
+    name      TEXT,
+    CONSTRAINT author_pk PRIMARY KEY (id, projectId)
 );
 
 CREATE TABLE "Commit"
 (
-    projectId INTEGER NOT NULL REFERENCES Project,
+    projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
     hash      TEXT PRIMARY KEY,
-    authorId  INTEGER NOT NULL REFERENCES Author,
+    authorId  INTEGER NOT NULL REFERENCES Author ON DELETE CASCADE,
     timestamp INTEGER NOT NULL,
     message   TEXT    NOT NULL
 );
 
 CREATE TABLE FileChange
 (
-    commitHash TEXT    NOT NULL REFERENCES "Commit",
-    fileId     INTEGER NOT NULL REFERENCES File,
+    commitHash TEXT    NOT NULL REFERENCES "Commit" ON DELETE CASCADE,
+    fileId     INTEGER NOT NULL REFERENCES File ON DELETE CASCADE,
     path       TEXT,
     insertions INTEGER CHECK ( insertions >= 0 ),
     deletions  INTEGER CHECK ( deletions >= 0 ),
