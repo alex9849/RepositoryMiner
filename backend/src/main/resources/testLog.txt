@@ -1,0 +1,55 @@
+[3cd7578] alex9849 2021-03-24 Added TestFile
+0	0	TestFile.txt
+ create mode 100644 TestFile.txt
+
+[77cdf17] alex9849 2021-03-24 Added TestFile content
+2	0	TestFile.txt
+
+[796a006] alex9849 2021-03-24 Renamed TestFile
+0	0	TestFile.txt => TestFile Renamed.txt
+ rename TestFile.txt => TestFile Renamed.txt (100%)
+
+[08bc627] alex9849 2021-03-24 Moved TestFile to TestFolder
+0	0	TestFile Renamed.txt => TestFolder/TestFile Renamed.txt
+ rename TestFile Renamed.txt => TestFolder/TestFile Renamed.txt (100%)
+
+[93c651a] alex9849 2021-03-24 Deleted all files
+0	2	TestFolder/TestFile Renamed.txt
+ delete mode 100644 TestFolder/TestFile Renamed.txt
+
+[7b47b92] alex9849 2021-03-24 Commmit mit mehreren Zeilen und so!
+-	-	repolog.log
+ create mode 100644 repolog.log
+
+[dabd4b1] alex9849 2021-03-24 Test
+-	-	repolog.log
+
+[25331ba] alex9849 2021-03-24 Test
+-	-	repolog.log
+
+[dcafd50] alex9849 2021-03-24 Test
+-	-	repolog.log
+
+[602dda3] alex9849 2021-03-24 Test
+-	-	repolog.log => repolog.txt
+ rename repolog.log => repolog.txt (100%)
+
+[16b78ee] alex9849 2021-03-24 Test
+1	0	test.txt
+ create mode 100644 test.txt
+
+[677bc72] alex9849 2021-03-24 Added Testfiles
+0	0	Test1.txt
+1	0	Test2.txt
+-	-	repolog.txt => repolog.log
+0	1	test.txt
+ create mode 100644 Test1.txt
+ create mode 100644 Test2.txt
+ rename repolog.txt => repolog.log (65%)
+ delete mode 100644 test.txt
+
+[de75456] alex9849 2021-03-24 Switched filenames
+1	0	Test1.txt
+0	1	Test2.txt
+-	-	repolog.log
+ delete mode 100644 repolog.log

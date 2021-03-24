@@ -6,6 +6,7 @@ public class FileChange {
     private final String path;
     private final int insertions;
     private final int deletions;
+    private File file;
 
     public FileChange(String commitHash, int fileId, String path, int insertions, int deletions) {
         this.commitHash = commitHash;
@@ -33,5 +34,13 @@ public class FileChange {
 
     public int getDeletions() {
         return deletions;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }
