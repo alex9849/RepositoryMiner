@@ -14,7 +14,7 @@
       <div
         class="row justify-center"
       >
-        Copy & execute this command and paste the resulting repolog file in the textbox below
+        Copy & execute this command and paste the resulting repolog.log file in the textbox below
       </div>
       <div
         class="row justify-center"
