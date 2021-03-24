@@ -13,9 +13,8 @@ CREATE TABLE File
 CREATE TABLE Author
 (
     id        INTEGER PRIMARY KEY,
-    projectId INTEGER REFERENCES Project ON DELETE CASCADE,
-    name      TEXT,
-    CONSTRAINT author_pk PRIMARY KEY (id, projectId)
+    projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
+    name      TEXT
 );
 
 CREATE TABLE "Commit"
