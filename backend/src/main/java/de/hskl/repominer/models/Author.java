@@ -1,6 +1,11 @@
 package de.hskl.repominer.models;
 
+import javax.persistence.Table;
+
+
 public class Author {
+
+
     private final int projectId;
     private final int id;
     private final String name;
