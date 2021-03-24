@@ -14,7 +14,7 @@
       <div
         class="row justify-center"
       >
-        Copy & execute this command and paste the result in the textbox below
+        Copy & execute this command and paste the resulting repolog.log file in the textbox below
       </div>
       <div
         class="row justify-center"
@@ -70,7 +70,7 @@ export default {
   name: "EditProject",
   data: () => {
     return {
-      gitCommand: "git log --pretty=format:'[%h] %an %ad %s' --date=short --numstat",
+      gitCommand: "git log --pretty=format:'[%h] %an %ad %s' --date=short --numstat --summary --reverse >> repolog.log",
       isGitCommandCopied: false
     }
   },
