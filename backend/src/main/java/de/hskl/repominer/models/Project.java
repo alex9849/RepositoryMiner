@@ -14,6 +14,11 @@ public class Project {
         this.id = id;
     }
 
+    public Project(int id, Date lastUpdate){
+        this. id = id;
+        this.lastUpdate = lastUpdate;
+    }
+
     public Integer getId() {
         return id;
     }

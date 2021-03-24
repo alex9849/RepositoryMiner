@@ -1,20 +1,20 @@
 package de.hskl.repominer.models;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Commit {
     private final int projectId;
     private final String hash;
     private final int authorId;
     private final Date timeStamp;
-    private final String messsage;
+    private final String message;
 
-    public Commit(int projectId, String hash, int authorId, Date timeStamp, String messsage) {
+    public Commit(int projectId, String hash, int authorId, Date timeStamp, String message) {
         this.projectId = projectId;
         this.hash = hash;
         this.authorId = authorId;
         this.timeStamp = timeStamp;
-        this.messsage = messsage;
+        this.message = message;
     }
 
     public int getProjectId() {
@@ -33,7 +33,7 @@ public class Commit {
         return timeStamp;
     }
 
-    public String getMesssage() {
-        return messsage;
+    public String getMessage() {
+        return message;
     }
 }
