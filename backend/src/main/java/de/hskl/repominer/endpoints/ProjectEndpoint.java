@@ -29,12 +29,18 @@ public class ProjectEndpoint {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> addProject(@RequestPart(value = "logfile") MultipartFile uploadFile,
+                                        @RequestPart(value = "name") String projectName,
                                         UriComponentsBuilder uriBuilder, ServletRequest request) throws IOException, ParseException {
         BufferedReader logStream = new BufferedReader(new InputStreamReader(uploadFile.getInputStream()));
-        Project project = projectService.addProject(logStream);
+        Project project = projectService.addProject(projectName, logStream);
 
         UriComponents uriComponents = uriBuilder.path("/api/project/{id}").buildAndExpand(project.getId());
         return ResponseEntity.created(uriComponents.toUri()).body(project);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getProjects() {
+        return ResponseEntity.ok(projectService.getProjects());
     }
 
 }

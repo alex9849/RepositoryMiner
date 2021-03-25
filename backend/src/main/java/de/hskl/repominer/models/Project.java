@@ -1,12 +1,15 @@
 package de.hskl.repominer.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class Project {
     private final Integer id;
+    private String name;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date lastUpdate;
     @JsonIgnore
     private List<Author> authors;
@@ -28,6 +31,14 @@ public class Project {
 
     public Integer getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getLastUpdate() {

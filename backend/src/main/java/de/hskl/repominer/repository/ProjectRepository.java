@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProjectRepository {
@@ -20,9 +22,10 @@ public class ProjectRepository {
     public Project saveProject(Project project) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO Project (lastUpdate) VALUES (?)",
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO Project (name, lastUpdate) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-            pstmt.setDate(1, new Date(System.currentTimeMillis()));
+            pstmt.setString(1, project.getName());
+            pstmt.setDate(2, new Date(System.currentTimeMillis()));
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -35,6 +38,21 @@ public class ProjectRepository {
         }
     }
 
+    public List<Project> loadProjects() {
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM Project");
+            ResultSet rs = pstmt.executeQuery();
+            List<Project> projects = new ArrayList<>();
+            while (rs.next()) {
+                projects.add(parseProject(rs));
+            }
+            return projects;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            throw new DaoException("Error loading Project");
+        }
+    }
 
     public Project loadProject(int id) {
         try {
@@ -53,9 +71,11 @@ public class ProjectRepository {
     }
 
     private Project parseProject(ResultSet rs) throws SQLException {
-        return new Project(
+        Project p = new Project(
                 rs.getInt("id"),
                 rs.getDate("lastUpdate")
         );
+        p.setName(rs.getString("name"));
+        return p;
     }
 }

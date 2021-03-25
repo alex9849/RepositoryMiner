@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 
 @Service
 @Transactional
@@ -30,8 +31,9 @@ public class ProjectService {
         this.authorRepo = authorRepo;
     }
 
-    public Project addProject(BufferedReader logInputStream) throws IOException, ParseException {
+    public Project addProject(String projectName, BufferedReader logInputStream) throws IOException, ParseException {
         Project project = LogParser.parseLogStream(logInputStream);
+        project.setName(projectName);
         Project savedProject = projectRepo.saveProject(project);
         for (Author author : project.getAuthors()) {
             author.setProjectId(savedProject.getId());
@@ -59,4 +61,7 @@ public class ProjectService {
         return savedProject;
     }
 
+    public List<Project> getProjects() {
+        return projectRepo.loadProjects();
+    }
 }

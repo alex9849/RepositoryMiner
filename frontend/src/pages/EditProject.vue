@@ -37,41 +37,69 @@
         </q-input>
       </div>
     </div>
-    <q-form>
-      <q-input
-        type="textarea"
-        outlined
-        filled
-        label="Copy git log here"
-      />
-      <div
-        class="row justify-center q-pa-md q-gutter-lg"
+    <div
+      class="row justify-center"
+    >
+      <q-form
+        @submit.prevent="onSubmit"
+        style="width: 600px"
       >
-        <q-btn
-          rounded
-          color="negative"
-          label="Abort"
-          style="width: 150px"
-          @click="$router.push({name: 'projects'})"
+        <q-input
+          label="Name"
+          filled
+          v-model="projectName"
+          class="q-pa-md"
         />
-        <q-btn
-          rounded
-          color="positive"
-          :label="isNewProject? 'Add':'Update'"
-          style="width: 150px"
-        />
-      </div>
-    </q-form>
+        <q-file
+          class="q-pa-md"
+          filled
+          v-model="uploadFile"
+          label="Upload git-log here"
+        >
+          <template v-slot:prepend>
+            <q-icon name="cloud_upload"/>
+          </template>
+        </q-file>
+
+        <div
+          class="row justify-center q-pa-md q-gutter-lg"
+        >
+          <q-btn
+            rounded
+            color="negative"
+            label="Abort"
+            style="width: 150px"
+            @click="$router.push({name: 'projects'})"
+          />
+          <q-btn
+            rounded
+            :loading="submitting"
+            :disable="$v.$invalid"
+            color="positive"
+            :label="isNewProject? 'Add':'Update'"
+            style="width: 150px"
+            type="submit"
+          />
+        </div>
+      </q-form>
+    </div>
   </q-page>
 </template>
 
 <script>
+
+import ProjectService from "../service/ProjectService";
+import {required} from "vuelidate/lib/validators";
+
 export default {
   name: "EditProject",
   data: () => {
     return {
       gitCommand: "git log --pretty=format:'[%h] %an %ad %s' --date=\"format:%Y-%m-%d %H:%M:%S\" --numstat --summary --reverse >> repolog.log",
-      isGitCommandCopied: false
+      isGitCommandCopied: false,
+      uploadFile: null,
+      projectName: '',
+      submitting: false
     }
   },
   methods: {
@@ -81,11 +109,35 @@ export default {
       setInterval(() => {
         this.isGitCommandCopied = false;
       }, 2000)
+    },
+    onSubmit() {
+      this.submitting = true;
+      ProjectService.createProject(this.projectName, this.uploadFile)
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Project created successfully'
+          });
+          this.$router.push({name: 'projects'})
+        }, error => {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Couldn\'t create project: ' + error.response.data.message
+          });
+        })
+        .finally(() => {
+          this.submitting = false;
+        })
     }
   },
-  computed: {
-    isNewProject() {
-      return this.$route.name === 'addProject';
+  validations() {
+    return {
+      uploadFile: {
+        required
+      },
+      projectName: {
+        required
+      }
     }
   }
 }

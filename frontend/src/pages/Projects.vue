@@ -56,7 +56,7 @@
         </q-item>
         <q-item
           v-for="project in projects"
-          :key="project"
+          :key="project.id"
         >
           <q-item-section avatar top>
             <q-avatar icon="folder" color="primary" text-color="white"/>
@@ -66,7 +66,7 @@
               {{ project.name }}
             </q-item-label>
             <q-item-label caption>
-              Last edited {{ project.lastUpdate.toLocaleDateString() }} at {{ project.lastUpdate.toLocaleTimeString() }}
+              Created on {{ project.lastUpdate.toLocaleDateString() }} at {{ project.lastUpdate.toLocaleTimeString() }}
             </q-item-label>
           </q-item-section>
           <q-item-section side>
@@ -75,11 +75,6 @@
                 icon="search"
                 color="positive"
                 label="Select"
-              />
-              <q-btn
-                icon="edit"
-                color="info"
-                @click="$router.push({ name: 'editProject', params: { id: project.id }})"
               />
               <q-btn
                 icon="delete"
@@ -94,6 +89,8 @@
 </template>
 
 <script>
+import ProjectService from "src/service/ProjectService";
+
 export default {
   name: "Projects",
   data: () => {
@@ -110,17 +107,14 @@ export default {
       this.loading = true;
       this.projects = [];
       this.$q.loadingBar.start()
-      setTimeout(() => {
-        this.loading = false;
-        this.projects = [
-          {
-            id: 1,
-            name: "TestProject",
-            lastUpdate: new Date()
-          }
-        ];
-        this.$q.loadingBar.stop();
-      }, 2000)
+      ProjectService.getProjects()
+        .then(projects => {
+          this.projects = projects;
+        })
+        .finally(() => {
+          this.loading = false;
+          this.$q.loadingBar.stop();
+        });
     }
   }
 }

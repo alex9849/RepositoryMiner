@@ -1,6 +1,7 @@
 CREATE TABLE Project
 (
     id         INTEGER primary key,
+    name       TEXT NOT NULL,
     lastUpdate INTEGER NOT NULL
 );
 

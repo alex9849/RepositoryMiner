@@ -30,7 +30,6 @@
         <q-item
           v-for="sideBarLink in sideBarLinks"
           clickable
-          :key="sideBarLink"
           :exact="sideBarLink.exact"
           :to="sideBarLink.to"
           active-class="q-item-no-link-highlighting"
@@ -63,8 +62,9 @@ a {
 </style>
 
 <script>
-import { openURL } from 'quasar';
-import { mdiEarth} from "@quasar/extras/mdi-v5";
+import {openURL} from 'quasar';
+import {mdiEarth} from "@quasar/extras/mdi-v5";
+
 export default {
   name: 'MainLayout',
   data() {
