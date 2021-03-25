@@ -16,18 +16,18 @@ public class CommitRepository  {
         this.ds = ds;
     }
 
-    public Commit loadCommit(String hash ){
+    public Commit loadCommit(int id){
         try (Connection con = ds.getConnection()){
-            return loadCommit(hash, con);
+            return loadCommit(id, con);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             throw new DaoException("Error laoding Commit");
         }
     }
 
-   Commit loadCommit(String hash, Connection connection) throws SQLException {
-        PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM Commit WHERE hash = ? ");
-        pstmt.setString(1,hash);
+   Commit loadCommit(int id, Connection connection) throws SQLException {
+        PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM \"Commit\" WHERE id = ? ");
+        pstmt.setInt(1, id);
         ResultSet rs = pstmt.executeQuery();
         if(rs.next()){
             return parseCommit(rs);
@@ -47,7 +47,7 @@ public class CommitRepository  {
 
     Commit saveCommit(Commit commit, Connection connection) throws SQLException {
         PreparedStatement pstmt = connection.prepareStatement(
-                "INSERT INTO Commit (projectId, hash, authorId,timestamp, message)" +
+                "INSERT INTO \"Commit\" (projectId, hash, authorId,timestamp, message)" +
                     "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         pstmt.setInt(1, commit.getProjectId());
         pstmt.setString(2, commit.getHash());
@@ -58,7 +58,7 @@ public class CommitRepository  {
 
         ResultSet rs = pstmt.getGeneratedKeys();
         if(rs.next()){
-            return loadCommit(rs.getString(2));
+            return loadCommit(rs.getInt(1));
         }
         return null;
 
@@ -74,8 +74,8 @@ public class CommitRepository  {
     }
 
     private Commit deleteCommit(Commit commit, Connection connection) throws SQLException {
-        PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Commit WHERE hash = ?", Statement.RETURN_GENERATED_KEYS);
-        pstmt.setString(1, commit.getHash());
+        PreparedStatement pstmt = connection.prepareStatement("DELETE FROM \"Commit\" WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
+        pstmt.setInt(1, commit.getId());
         pstmt.execute();
         ResultSet rs = pstmt.getGeneratedKeys();
         if (rs.next()){
@@ -86,6 +86,7 @@ public class CommitRepository  {
 
     private Commit parseCommit(ResultSet rs) throws SQLException {
         return new Commit(
+                rs.getInt("id"),
                 rs.getInt("projectId"),
                 rs.getString("hash"),
                 rs.getInt("authorId"),

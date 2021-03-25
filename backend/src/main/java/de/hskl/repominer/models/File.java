@@ -1,8 +1,8 @@
 package de.hskl.repominer.models;
 
 public class File {
-    private final int id;
-    private final int projectId;
+    private int id;
+    private int projectId;
 
     public File(int id, int projectId) {
         this.id = id;
@@ -15,5 +15,13 @@ public class File {
 
     public int getProjectId() {
         return projectId;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 }

@@ -1,14 +1,11 @@
 package de.hskl.repominer.models;
 
-import javax.persistence.Table;
-
-
 public class Author {
 
 
-    private final int projectId;
-    private final int id;
-    private final String name;
+    private int projectId;
+    private int id;
+    private String name;
 
     public Author(int projectId, int id, String name) {
         this.projectId = projectId;
@@ -26,5 +23,17 @@ public class Author {
 
     public String getName() {
         return name;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

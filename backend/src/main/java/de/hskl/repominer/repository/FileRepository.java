@@ -1,13 +1,10 @@
 package de.hskl.repominer.repository;
 
-import de.hskl.repominer.models.Commit;
 import de.hskl.repominer.models.File;
 import de.hskl.repominer.models.exception.DaoException;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import javax.swing.plaf.nimbus.State;
-import javax.xml.transform.Result;
 import java.sql.*;
 
 @Service
@@ -48,7 +45,7 @@ public class FileRepository {
     }
 
     File saveFile(File file, Connection connection) throws SQLException {
-        PreparedStatement pstmt = connection.prepareStatement("INSERT INTO File (projectId) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = connection.prepareStatement("INSERT INTO File (projectId) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
         pstmt.setInt(1, file.getProjectId());
         pstmt.execute();
         ResultSet rs = pstmt.getGeneratedKeys();

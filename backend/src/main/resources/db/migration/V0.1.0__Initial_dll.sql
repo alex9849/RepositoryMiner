@@ -19,26 +19,28 @@ CREATE TABLE Author
 
 CREATE TABLE "Commit"
 (
-    projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
-    hash      TEXT PRIMARY KEY,
+    id        INTEGER PRIMARY KEY,
+    projectId INTEGER REFERENCES Project ON DELETE CASCADE,
+    hash      TEXT,
     authorId  INTEGER NOT NULL REFERENCES Author ON DELETE CASCADE,
     timestamp INTEGER NOT NULL,
-    message   TEXT    NOT NULL
+    message   TEXT    NOT NULL,
+    CONSTRAINT commit_hash_unique UNIQUE (projectId, hash)
 );
 
 CREATE TABLE FileChange
 (
-    commitHash TEXT    NOT NULL REFERENCES "Commit" ON DELETE CASCADE,
-    fileId     INTEGER NOT NULL REFERENCES File ON DELETE CASCADE,
+    commitId   INTEGER REFERENCES "Commit" ON DELETE CASCADE,
+    fileId     INTEGER REFERENCES File ON DELETE CASCADE,
     path       TEXT,
     insertions INTEGER CHECK ( insertions >= 0 ),
     deletions  INTEGER CHECK ( deletions >= 0 ),
-    CONSTRAINT FileChange_pk PRIMARY KEY (commitHash, fileId)
+    CONSTRAINT FileChange_pk PRIMARY KEY (commitId, fileId)
 );
 
 CREATE VIEW CurrentPath AS
 SELECT fc.fileId, c.hash, fc.path
 from FileChange fc
-         join "Commit" c on c.hash = fc.commitHash
+         join "Commit" c on c.id = fc.commitId
 group by fc.fileId
-having c.hash = max(c.hash);
+having c.timestamp = max(c.timestamp);

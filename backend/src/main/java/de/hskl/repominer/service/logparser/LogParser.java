@@ -4,12 +4,13 @@ import de.hskl.repominer.models.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class LogParser {
-    private static final String commitHeaderRegex = "\\[[0-9a-z]+\\] [0-9a-z-]+ \\d\\d\\d\\d-\\d\\d-\\d\\d .+";
+    private static final String commitHeaderRegex = "^\\[[0-9a-z]+\\] [0-9a-z-]+ \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d .+";
     private static final String modifiedFileRegex = "(\\d+|-)\t(\\d+|-)\t.+";
     private static final String deletedFileRegex = "(delete) ((mode \\d\\d\\d\\d\\d\\d)|) .+";
     private static class UnparsedCommit {
@@ -46,16 +47,16 @@ public class LogParser {
         }
         Map<String, Author> nameToAuthors = new HashMap<>();
         Map<String, File> pathToFileMap = new HashMap();
-        SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         for (UnparsedCommit currentUnparsedCommit : unparsedCommits) {
             Scanner headerScanner = new Scanner(currentUnparsedCommit.header);
             String stringHash = headerScanner.findInLine("[0-9a-z]+");
             String stringAuthor = headerScanner.findInLine("[0-9a-z-]+");
-            String stringDate = headerScanner.findInLine("\\d\\d\\d\\d-\\d\\d-\\d\\d");
+            String stringDate = headerScanner.findInLine("\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d");
             String commitMessage = headerScanner.findInLine(".+").trim();
             Author author = nameToAuthors.computeIfAbsent(stringAuthor, x -> new Author(0, 0, stringAuthor));
-            Commit commit = new Commit(0, stringHash, 0, dateParser.parse(stringDate), commitMessage);
+            Commit commit = new Commit(0, 0, stringHash, 0, new Date(dateParser.parse(stringDate).getTime()), commitMessage);
             commit.setAuthor(author);
             List<FileChange> fileChanges = new ArrayList<>();
             for(String fileChangeText : currentUnparsedCommit.modifiedFiles) {
@@ -90,7 +91,7 @@ public class LogParser {
                     pathToFileMap.put(fileNames[1], changedFile);
                     path = fileNames[1];
                 }
-                FileChange fileChange = new FileChange(stringHash, 0, path, addedLines, deletedLines);
+                FileChange fileChange = new FileChange(0, 0, path, addedLines, deletedLines);
                 fileChange.setFile(changedFile);
                 fileChanges.add(fileChange);
             }

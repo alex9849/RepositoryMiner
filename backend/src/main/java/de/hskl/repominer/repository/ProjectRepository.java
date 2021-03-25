@@ -5,24 +5,43 @@ import de.hskl.repominer.models.exception.DaoException;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 @Service
 public class ProjectRepository {
 
     private final DataSource ds;
 
-    public ProjectRepository(DataSource ds){
+    public ProjectRepository(DataSource ds) {
         this.ds = ds;
     }
 
-    public Project loadProject(int id){
-        try (Connection con = ds.getConnection()){
+    public Project saveProject(Project project) {
+        try (Connection con = ds.getConnection()) {
+            return saveProject(project, con);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            throw new DaoException("Error save Project");
+        }
+    }
+
+
+    Project saveProject(Project project, Connection con) throws SQLException {
+        PreparedStatement pstmt = con.prepareStatement("INSERT INTO Project (lastUpdate) VALUES (?)",
+                Statement.RETURN_GENERATED_KEYS);
+        pstmt.setDate(1, new Date(System.currentTimeMillis()));
+        pstmt.execute();
+        ResultSet rs = pstmt.getGeneratedKeys();
+        if (rs.next()) {
+            return loadProject(rs.getInt(1), con);
+        }
+        return null;
+    }
+
+    public Project loadProject(int id) {
+        try (Connection con = ds.getConnection()) {
             return loadProject(id, con);
-        }catch(SQLException throwables){
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
             throw new DaoException("Error loading Project");
         }

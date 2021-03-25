@@ -12,8 +12,6 @@ public class Project {
     private List<Author> authors;
     @JsonIgnore
     private List<Commit> commits;
-    @JsonIgnore
-    private List<File> files;
 
     public Project() {
         this.id = null;
