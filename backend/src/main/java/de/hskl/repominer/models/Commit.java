@@ -1,8 +1,8 @@
 package de.hskl.repominer.models;
 
+import java.sql.Date;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Date;
 import java.util.List;
 
 public class Commit {
@@ -10,18 +10,18 @@ public class Commit {
     private final String hash;
     private final int authorId;
     private final Date timeStamp;
-    private final String messsage;
+    private final String message;
     @JsonIgnore
     private List<FileChange> fileChanges;
     @JsonIgnore
     private Author author;
 
-    public Commit(int projectId, String hash, int authorId, Date timeStamp, String messsage) {
+    public Commit(int projectId, String hash, int authorId, Date timeStamp, String message) {
         this.projectId = projectId;
         this.hash = hash;
         this.authorId = authorId;
         this.timeStamp = timeStamp;
-        this.messsage = messsage;
+        this.message = message;
     }
 
     public int getProjectId() {
@@ -40,8 +40,8 @@ public class Commit {
         return timeStamp;
     }
 
-    public String getMesssage() {
-        return messsage;
+    public String getMessage() {
+        return message;
     }
 
     public List<FileChange> getFileChanges() {
