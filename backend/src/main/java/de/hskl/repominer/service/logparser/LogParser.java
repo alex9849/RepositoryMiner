@@ -13,6 +13,7 @@ public class LogParser {
     private static final String commitHeaderRegex = "^\\[[0-9a-z]+\\] [0-9a-z-]+ \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d .+";
     private static final String modifiedFileRegex = "(\\d+|-)\t(\\d+|-)\t.+";
     private static final String deletedFileRegex = "(delete) ((mode \\d\\d\\d\\d\\d\\d)|) .+";
+    private static final String otherValidLinesRegex = "(rename|create) .+";
     private static class UnparsedCommit {
         String header;
         List<String> modifiedFiles = new LinkedList<>();
@@ -30,6 +31,9 @@ public class LogParser {
         String currentLine;
         while ((currentLine = logInputStream.readLine()) != null) {
             if(currentLine.isEmpty()) {
+                if(currentCommit.header == null) {
+                    throw new IllegalArgumentException("Malformed git-log!");
+                }
                 unparsedCommits.add(currentCommit);
                 currentCommit = new UnparsedCommit();
             }
@@ -43,6 +47,12 @@ public class LogParser {
                 String trimLine = currentLine.trim();
                 //delete mode 100644 %fileName% <-- filename begins at index 19
                 currentCommit.deletedFiles.add(trimLine.substring(19));
+            }
+            else if(currentLine.trim().matches(otherValidLinesRegex)) {
+                continue;
+            }
+            else {
+                throw new IllegalArgumentException("Malformed git-log!");
             }
         }
         Map<String, Author> nameToAuthors = new HashMap<>();
