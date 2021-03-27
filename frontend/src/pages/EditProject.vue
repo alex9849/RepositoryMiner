@@ -6,7 +6,7 @@
     <h4
       class="row justify-center"
     >
-      {{ isNewProject ? 'Add' : 'Edit' }} Project
+      Add Project
     </h4>
     <div
       class="q-gutter-xs"
@@ -76,7 +76,7 @@
             :loading="submitting"
             :disable="$v.$invalid"
             color="positive"
-            :label="isNewProject? 'Add':'Update'"
+            label="Add"
             style="width: 150px"
             type="submit"
           />
