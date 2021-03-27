@@ -3,10 +3,7 @@ package de.hskl.repominer.endpoints;
 import de.hskl.repominer.models.Project;
 import de.hskl.repominer.service.ProjectService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -41,6 +38,14 @@ public class ProjectEndpoint {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getProjects() {
         return ResponseEntity.ok(projectService.getProjects());
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteProject(@PathVariable(value = "id") int projectId) {
+        if(!projectService.deleteProject(projectId)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
     }
 
 }

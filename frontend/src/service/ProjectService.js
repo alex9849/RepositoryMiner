@@ -29,6 +29,10 @@ class ProjectService {
       });
   }
 
+  deleteProject(id) {
+    return axios.delete(API_PATH + id);
+  }
+
   _parseProject(project) {
     project.lastUpdate = new Date(project.lastUpdate);
   }

@@ -64,4 +64,8 @@ public class ProjectService {
     public List<Project> getProjects() {
         return projectRepo.loadProjects();
     }
+
+    public boolean deleteProject(int projectId) {
+        return projectRepo.deleteProject(projectId);
+    }
 }

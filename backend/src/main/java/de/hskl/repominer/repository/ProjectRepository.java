@@ -78,4 +78,16 @@ public class ProjectRepository {
         p.setName(rs.getString("name"));
         return p;
     }
+
+    public boolean deleteProject(int projectId) {
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM Project WHERE id = ?");
+            pstmt.setInt(1, projectId);
+            return pstmt.executeUpdate() != 0;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            throw new DaoException("Error deleting Project");
+        }
+    }
 }
