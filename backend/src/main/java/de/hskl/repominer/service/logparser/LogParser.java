@@ -52,7 +52,7 @@ public class LogParser {
                 continue;
             }
             else {
-                throw new IllegalArgumentException("Malformed git-log!");
+                throw new IllegalArgumentException("Malformed git-log! Make sure the File-Encoding is set to UTF-8!");
             }
         }
         Map<String, Author> nameToAuthors = new HashMap<>();
