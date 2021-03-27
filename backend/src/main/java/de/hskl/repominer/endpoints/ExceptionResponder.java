@@ -14,6 +14,7 @@ public class ExceptionResponder extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<?> handleBadRequest(RuntimeException ex, WebRequest request) {
+        ex.printStackTrace();
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
@@ -21,6 +22,7 @@ public class ExceptionResponder extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<ErrorDetails> handleException(RuntimeException ex, WebRequest request) {
+        ex.printStackTrace();
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);

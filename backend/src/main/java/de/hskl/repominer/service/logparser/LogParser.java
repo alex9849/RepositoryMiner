@@ -10,10 +10,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class LogParser {
-    private static final String commitHeaderRegex = "^\\[[0-9a-z]+\\] [0-9a-z-]+ \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d .+";
+    private static final String commitHeaderRegex = "^\\[[0-9a-z]+\\] \\[.+\\] \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d .+";
     private static final String modifiedFileRegex = "(\\d+|-)\t(\\d+|-)\t.+";
     private static final String deletedFileRegex = "(delete) ((mode \\d\\d\\d\\d\\d\\d)|) .+";
-    private static final String otherValidLinesRegex = "(rename|create) .+";
+    private static final String otherValidLinesRegex = "(rename|create|mode change) .+";
     private static class UnparsedCommit {
         String header;
         List<String> modifiedFiles = new LinkedList<>();
@@ -52,7 +52,7 @@ public class LogParser {
                 continue;
             }
             else {
-                throw new IllegalArgumentException("Malformed git-log! Make sure the File-Encoding is set to UTF-8!");
+                throw new IllegalArgumentException("Malformed git-log! Make sure the File-Encoding is set to UTF-16!");
             }
         }
         Map<String, Author> nameToAuthors = new HashMap<>();
@@ -62,10 +62,12 @@ public class LogParser {
         for (UnparsedCommit currentUnparsedCommit : unparsedCommits) {
             Scanner headerScanner = new Scanner(currentUnparsedCommit.header);
             String stringHash = headerScanner.findInLine("[0-9a-z]+");
-            String stringAuthor = headerScanner.findInLine("[0-9a-z-]+");
+            String stringAuthor = headerScanner.findInLine(" \\[.+?\\] ");
+            stringAuthor = stringAuthor.substring(2, stringAuthor.length() - 2);
             String stringDate = headerScanner.findInLine("\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d");
             String commitMessage = headerScanner.findInLine(".+").trim();
-            Author author = nameToAuthors.computeIfAbsent(stringAuthor, x -> new Author(0, 0, stringAuthor));
+            String finalStringAuthor = stringAuthor;
+            Author author = nameToAuthors.computeIfAbsent(stringAuthor, x -> new Author(0, 0, finalStringAuthor));
             Commit commit = new Commit(0, 0, stringHash, 0, new Date(dateParser.parse(stringDate).getTime()), commitMessage);
             commit.setAuthor(author);
             List<FileChange> fileChanges = new ArrayList<>();
@@ -95,7 +97,7 @@ public class LogParser {
                         path = fileName;
                     }
                 } else {
-                    String[] fileNames = fileName.split(" => ", 2);
+                    String[] fileNames = getOldAndNewPath(fileName);
                     //old filename
                     changedFile = pathToFileMap.remove(fileNames[0]);
                     pathToFileMap.put(fileNames[1], changedFile);
@@ -110,5 +112,25 @@ public class LogParser {
         }
         project.getAuthors().addAll(nameToAuthors.values());
         return project;
+    }
+
+    private static String[] getOldAndNewPath(String renameString) {
+        String pathPrefix = "";
+        String pathSuffix = "";
+        boolean isVeryLongRename = renameString.matches("(.+)?\\{.+=>.+}(.+)?");
+        if(isVeryLongRename) {
+            String[] bracketWrappers = renameString.split("\\{.+=>.+}", 2);
+            pathPrefix = bracketWrappers[0];
+            pathSuffix = bracketWrappers[1];
+            renameString = renameString.substring(pathPrefix.length() + 1, renameString.length() - pathSuffix.length() - 1);
+        }
+        String[] renamedPart = renameString.split(" => ", 2);
+        String oldPath = (pathPrefix + renamedPart[0] + pathSuffix).replace("//", "/");
+        String newPath = (pathPrefix + renamedPart[1] + pathSuffix).replace("//", "/");
+        return new String[]{
+                oldPath,
+                newPath
+        };
+
     }
 }
