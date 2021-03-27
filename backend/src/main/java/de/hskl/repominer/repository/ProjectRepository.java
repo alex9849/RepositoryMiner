@@ -32,9 +32,8 @@ public class ProjectRepository {
                 return loadProject(rs.getInt(1));
             }
             throw new DaoException("Error saving Project");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error saving Project");
+        } catch (SQLException e) {
+            throw new DaoException("Error saving Project", e);
         }
     }
 
@@ -48,9 +47,8 @@ public class ProjectRepository {
                 projects.add(parseProject(rs));
             }
             return projects;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error loading Project");
+        } catch (SQLException e) {
+            throw new DaoException("Error loading Project", e);
         }
     }
 
@@ -64,9 +62,19 @@ public class ProjectRepository {
                 return parseProject(rs);
             }
             return null;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error loading Project");
+        } catch (SQLException e) {
+            throw new DaoException("Error loading Project", e);
+        }
+    }
+
+    public boolean deleteProject(int projectId) {
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM Project WHERE id = ?");
+            pstmt.setInt(1, projectId);
+            return pstmt.executeUpdate() != 0;
+        } catch (SQLException e) {
+            throw new DaoException("Error deleting Project", e);
         }
     }
 
@@ -77,17 +85,5 @@ public class ProjectRepository {
         );
         p.setName(rs.getString("name"));
         return p;
-    }
-
-    public boolean deleteProject(int projectId) {
-        try {
-            Connection con = DataSourceUtils.getConnection(ds);
-            PreparedStatement pstmt = con.prepareStatement("DELETE FROM Project WHERE id = ?");
-            pstmt.setInt(1, projectId);
-            return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error deleting Project");
-        }
     }
 }

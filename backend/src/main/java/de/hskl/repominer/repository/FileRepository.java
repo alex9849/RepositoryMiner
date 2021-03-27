@@ -27,9 +27,8 @@ public class FileRepository {
                 return parseFile(rs);
             }
             return null;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error loading File");
+        } catch (SQLException e) {
+            throw new DaoException("Error loading File", e);
         }
     }
 
@@ -45,9 +44,8 @@ public class FileRepository {
                 return loadFile(rs.getInt(1));
             }
             throw new DaoException("Error saving File");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error saving File");
+        } catch (SQLException e) {
+            throw new DaoException("Error saving File", e);
         }
     }
 
@@ -57,9 +55,8 @@ public class FileRepository {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM File WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, file.getId());
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error deleting File");
+        } catch (SQLException e) {
+            throw new DaoException("Error deleting File", e);
         }
     }
 

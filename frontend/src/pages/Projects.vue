@@ -140,6 +140,10 @@ export default {
           this.deleteDialog.project = '';
           this.deleteDialog.display = false;
           this.loadProjects();
+          this.$q.notify({
+            type: 'positive',
+            message: 'Project deleted!'
+          });
         }, (error) => {
           this.$q.notify({
             type: 'negative',

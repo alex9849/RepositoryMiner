@@ -27,9 +27,8 @@ public class CommitRepository  {
                 return parseCommit(rs);
             }
             return null;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error loading Commit");
+        } catch (SQLException e) {
+            throw new DaoException("Error loading Commit", e);
         }
     }
 
@@ -52,9 +51,8 @@ public class CommitRepository  {
                 return loadCommit(rs.getInt(1));
             }
             throw new DaoException("Error saving Commit");
-        }catch (SQLException throwables){
-            throwables.printStackTrace();
-            throw new DaoException("Error saving Commit");
+        }catch (SQLException e){
+            throw new DaoException("Error saving Commit", e);
         }
     }
 
@@ -64,9 +62,8 @@ public class CommitRepository  {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM \"Commit\" WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, commit.getId());
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error deleting Commit");
+        } catch (SQLException e) {
+            throw new DaoException("Error deleting Commit", e);
         }
     }
 

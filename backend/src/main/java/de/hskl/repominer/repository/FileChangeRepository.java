@@ -29,9 +29,8 @@ public class FileChangeRepository {
                 return parseFileChange(rs);
             }
             return null;
-        }catch (SQLException throwables){
-            throwables.printStackTrace();
-            throw new DaoException("Error loading FileChange");
+        }catch (SQLException e){
+            throw new DaoException("Error loading FileChange", e);
         }
     }
 
@@ -52,9 +51,8 @@ public class FileChangeRepository {
                 return loadFileChange(fileChange.getCommitId(), fileChange.getFileId());
             }
             throw new DaoException("Errror saving FileChange");
-        } catch(SQLException throwables){
-            throwables.printStackTrace();
-            throw new DaoException("Errror saving FileChange");
+        } catch(SQLException e){
+            throw new DaoException("Errror saving FileChange", e);
         }
     }
 
@@ -66,9 +64,8 @@ public class FileChangeRepository {
             pstmt.setInt(1, commitId);
             pstmt.setInt(2, fileId);
             return pstmt.executeUpdate() != 0;
-        }catch(SQLException throwables){
-            throwables.printStackTrace();
-            throw new DaoException("Error deleting FileChange");
+        }catch(SQLException e){
+            throw new DaoException("Error deleting FileChange", e);
         }
     }
 

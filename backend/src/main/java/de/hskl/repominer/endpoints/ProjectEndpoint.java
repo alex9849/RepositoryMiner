@@ -2,6 +2,7 @@ package de.hskl.repominer.endpoints;
 
 import de.hskl.repominer.models.Project;
 import de.hskl.repominer.service.ProjectService;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,9 +42,9 @@ public class ProjectEndpoint {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteProject(@PathVariable(value = "id") int projectId) {
+    public ResponseEntity<?> deleteProject(@PathVariable(value = "id") int projectId) throws NotFoundException {
         if(!projectService.deleteProject(projectId)) {
-            return ResponseEntity.notFound().build();
+            throw new NotFoundException("Project not found!");
         }
         return ResponseEntity.ok().build();
     }

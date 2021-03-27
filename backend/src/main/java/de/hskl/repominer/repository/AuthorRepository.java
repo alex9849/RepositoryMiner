@@ -27,9 +27,8 @@ public class AuthorRepository {
                 return parseAuthor(rs);
             }
             return null;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error loading Author");
+        } catch (SQLException e) {
+            throw new DaoException("Error loading Author", e);
         }
     }
 
@@ -45,9 +44,8 @@ public class AuthorRepository {
                 return loadAuthor(rs.getInt(1));
             }
             throw new DaoException("Error saving Author");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            throw new DaoException("Error saving Author");
+        } catch (SQLException e) {
+            throw new DaoException("Error saving Author", e);
         }
     }
 
