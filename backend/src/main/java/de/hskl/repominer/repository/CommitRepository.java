@@ -37,13 +37,14 @@ public class CommitRepository  {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement(
-                    "INSERT INTO \"Commit\" (projectId, hash, authorId,timestamp, message)" +
-                            "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "INSERT INTO \"Commit\" (projectId, isMainBranch, hash, authorId, timestamp, message)" +
+                            "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, commit.getProjectId());
-            pstmt.setString(2, commit.getHash());
-            pstmt.setInt(3, commit.getAuthorId());
-            pstmt.setDate(4, commit.getTimeStamp());
-            pstmt.setString(5, commit.getMessage());
+            pstmt.setBoolean(2, commit.isMainBranch());
+            pstmt.setString(3, commit.getHash());
+            pstmt.setInt(4, commit.getAuthorId());
+            pstmt.setDate(5, commit.getTimeStamp());
+            pstmt.setString(6, commit.getMessage());
             pstmt.execute();
 
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -72,6 +73,7 @@ public class CommitRepository  {
                 rs.getInt("id"),
                 rs.getInt("projectId"),
                 rs.getString("hash"),
+                rs.getBoolean("isMainBranch"),
                 rs.getInt("authorId"),
                 rs.getDate("timestamp"),
                 rs.getString("message")

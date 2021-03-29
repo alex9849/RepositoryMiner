@@ -4,40 +4,92 @@ import de.hskl.repominer.models.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LogParser {
-    private static final String commitHeaderRegex = "^\\[[0-9a-z]+\\] \\[.+\\] \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d .+";
+    private static final String commitHeaderRegex = "^\\[[0-9a-z]+\\] \\[.+\\] \\(([0-9a-z ]+)?\\) \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d .+";
     private static final String modifiedFileRegex = "(\\d+|-)\t(\\d+|-)\t.+";
     private static final String deletedFileRegex = "(delete) ((mode \\d\\d\\d\\d\\d\\d)|) .+";
+    private static final String createdFileRegex = "(create) ((mode \\d\\d\\d\\d\\d\\d)|) .+";
     private static final String otherValidLinesRegex = "(rename|create|mode change) .+";
-    private static class UnparsedCommit {
-        String header;
-        List<String> modifiedFiles = new LinkedList<>();
-        Set<String> deletedFiles = new HashSet<>();
-    }
 
 
     public static Project parseLogStream(BufferedReader logInputStream) throws IOException, ParseException {
         Project project = new Project();
-        project.setAuthors(new ArrayList<>());
-        project.setCommits(new ArrayList<>());
+        Map<String, ParsedCommit> hashToCommitMap = new HashMap<>();
+        Map<String, Author> nameToAuthorMap = new HashMap<>();
+        List<Commit> commits = new LinkedList<>();
+        Set<String> masterBranchHashes = new HashSet<>();
+        FileTracker fileTracker = null;
+
+
+        boolean isNewestCommit = true;
+        for(ParsedCommit pc : toParsedCommits(toUnparsedCommits(logInputStream))) {
+            if(isNewestCommit) {
+                fileTracker = new FileTracker(pc.hash);
+                masterBranchHashes.add(pc.hash);
+                isNewestCommit = false;
+            }
+            if(pc.isMerge) {
+                fileTracker.addMerge(pc.hash, pc.parentHash, pc.mergeSourceHash);
+            } else {
+                fileTracker.addCommit(pc.hash, pc.parentHash);
+            }
+            //The newest commit is always master! Parent commits of master are always master! Recursive!
+            if(masterBranchHashes.contains(pc.hash)) {
+                masterBranchHashes.add(pc.parentHash);
+            }
+            List<FileChange> fileChanges = new LinkedList<>();
+            Author author = nameToAuthorMap.computeIfAbsent(pc.author, x -> new Author(0, 0, pc.author));
+            Commit currentCommit = new Commit(0, 0, pc.hash, masterBranchHashes.contains(pc.hash), 0, pc.date, pc.commitMessage);
+            currentCommit.setAuthor(author);
+
+            for(ParsedFileChange pFc : pc.fileChanges) {
+                String path = pFc.newPath;
+                if(pc.deletedFiles.contains(path)) {
+                    path = null;
+                }
+                FileChange currentFileChange = new FileChange(0, 0, path, pFc.insertions, pFc.deletions);
+
+                if(pFc.isRename()) {
+                    fileTracker.changeName(pc.hash, pFc.oldPath, pFc.newPath);
+                }
+                File file = fileTracker.getFile(pc.hash, pFc.newPath);
+                currentFileChange.setFile(file);
+                fileChanges.add(currentFileChange);
+            }
+            for(String filePath : pc.deletedFiles) {
+                fileTracker.onDeleteFile(pc.hash, filePath);
+            }
+            for(String filePath : pc.createdFiles) {
+                fileTracker.onCreateFile(pc.hash, filePath);
+            }
+
+            currentCommit.setFileChanges(fileChanges);
+            commits.add(currentCommit);
+        }
+
+        project.setCommits(commits);
+        project.setAuthors(new ArrayList<>(nameToAuthorMap.values()));
+        return project;
+    }
+
+    private static List<UnparsedCommit> toUnparsedCommits(BufferedReader logInputStream) throws IOException {
 
         List<UnparsedCommit> unparsedCommits = new LinkedList<>();
         UnparsedCommit currentCommit = new UnparsedCommit();
         String currentLine;
         while ((currentLine = logInputStream.readLine()) != null) {
             if(currentLine.isEmpty()) {
-                if(currentCommit.header == null) {
-                    throw new IllegalArgumentException("Malformed git-log!");
-                }
-                unparsedCommits.add(currentCommit);
-                currentCommit = new UnparsedCommit();
+                continue;
             }
             else if(currentLine.matches(commitHeaderRegex)) {
+                if(currentCommit.header != null) {
+                    unparsedCommits.add(currentCommit);
+                }
+                currentCommit = new UnparsedCommit();
                 currentCommit.header = currentLine;
             }
             else if(currentLine.matches(modifiedFileRegex)) {
@@ -48,6 +100,11 @@ public class LogParser {
                 //delete mode 100644 %fileName% <-- filename begins at index 19
                 currentCommit.deletedFiles.add(trimLine.substring(19));
             }
+            else if(currentLine.trim().matches(createdFileRegex)) {
+                String trimLine = currentLine.trim();
+                //create mode 100644 %fileName% <-- filename begins at index 19
+                currentCommit.createdFiles.add(trimLine.substring(19));
+            }
             else if(currentLine.trim().matches(otherValidLinesRegex)) {
                 continue;
             }
@@ -55,6 +112,29 @@ public class LogParser {
                 throw new IllegalArgumentException("Malformed git-log! Make sure the File-Encoding is set to UTF-16!");
             }
         }
+        return unparsedCommits;
+    }
+
+    private static List<ParsedCommit> toParsedCommits(List<UnparsedCommit> unparsedCommits) throws ParseException {
+        List<ParsedCommit> parsedCommits = new LinkedList<>();
+
+        for (UnparsedCommit uc : unparsedCommits) {
+            ParsedCommit pc = new ParsedCommit(uc.header);
+            pc.fileChanges = uc.modifiedFiles.stream().map(ParsedFileChange::new).collect(Collectors.toList());
+            pc.deletedFiles = uc.deletedFiles;
+            pc.createdFiles = uc.createdFiles;
+            parsedCommits.add(pc);
+        }
+
+        return parsedCommits;
+    }
+
+/*
+    public static void parseLogStream(BufferedReader logInputStream) throws IOException, ParseException {
+        Project project = new Project();
+        project.setAuthors(new ArrayList<>());
+        project.setCommits(new ArrayList<>());
+
         Map<String, Author> nameToAuthors = new HashMap<>();
         Map<String, File> pathToFileMap = new HashMap();
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -68,7 +148,7 @@ public class LogParser {
             String commitMessage = headerScanner.findInLine(".+").trim();
             String finalStringAuthor = stringAuthor;
             Author author = nameToAuthors.computeIfAbsent(stringAuthor, x -> new Author(0, 0, finalStringAuthor));
-            Commit commit = new Commit(0, 0, stringHash, 0, new Date(dateParser.parse(stringDate).getTime()), commitMessage);
+            Commit commit = new Commit(0, 0, stringHash, isMainBranch, 0, new Date(dateParser.parse(stringDate).getTime()), commitMessage);
             commit.setAuthor(author);
             List<FileChange> fileChanges = new ArrayList<>();
             for(String fileChangeText : currentUnparsedCommit.modifiedFiles) {
@@ -133,4 +213,6 @@ public class LogParser {
         };
 
     }
+
+ */
 }

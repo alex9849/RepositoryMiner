@@ -9,6 +9,7 @@ public class Commit {
     private int id;
     private int projectId;
     private String hash;
+    private boolean isMainBranch;
     private int authorId;
     private Date timeStamp;
     private String message;
@@ -17,10 +18,11 @@ public class Commit {
     @JsonIgnore
     private Author author;
 
-    public Commit(int id, int projectId, String hash, int authorId, Date timeStamp, String message) {
+    public Commit(int id, int projectId, String hash, boolean isMainBranch, int authorId, Date timeStamp, String message) {
         this.id = id;
         this.projectId = projectId;
         this.hash = hash;
+        this.isMainBranch = isMainBranch;
         this.authorId = authorId;
         this.timeStamp = timeStamp;
         this.message = message;
@@ -44,6 +46,14 @@ public class Commit {
 
     public int getAuthorId() {
         return authorId;
+    }
+
+    public boolean isMainBranch() {
+        return isMainBranch;
+    }
+
+    public void setMainBranch(boolean mainBranch) {
+        isMainBranch = mainBranch;
     }
 
     public Date getTimeStamp() {

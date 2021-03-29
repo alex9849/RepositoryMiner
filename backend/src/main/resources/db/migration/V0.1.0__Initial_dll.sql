@@ -20,12 +20,13 @@ CREATE TABLE Author
 
 CREATE TABLE "Commit"
 (
-    id        INTEGER PRIMARY KEY,
-    projectId INTEGER REFERENCES Project ON DELETE CASCADE,
-    hash      TEXT,
-    authorId  INTEGER NOT NULL REFERENCES Author ON DELETE CASCADE,
-    timestamp INTEGER NOT NULL,
-    message   TEXT    NOT NULL,
+    id           INTEGER PRIMARY KEY,
+    projectId    INTEGER REFERENCES Project ON DELETE CASCADE,
+    isMainBranch INTEGER NOT NULL,
+    hash         TEXT,
+    authorId     INTEGER NOT NULL REFERENCES Author ON DELETE CASCADE,
+    timestamp    INTEGER NOT NULL,
+    message      TEXT    NOT NULL,
     CONSTRAINT commit_hash_unique UNIQUE (projectId, hash)
 );
 
@@ -43,5 +44,6 @@ CREATE VIEW CurrentPath AS
 SELECT fc.fileId, c.hash, fc.path
 from FileChange fc
          join "Commit" c on c.id = fc.commitId
+where c.isMainBranch = true
 group by fc.fileId
 having c.timestamp = max(c.timestamp);
