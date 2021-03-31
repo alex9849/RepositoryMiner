@@ -28,7 +28,7 @@ public class FileTracker {
         Branch childBranch = this.hashToBranchMap.get(commit.hash);
         this.hashToBranchMap.put(commit.parentHash, childBranch);
         commit.changedFiles.fileChanges.forEach(x -> changeName(commit.hash, x.oldPath, x.newPath));
-        commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
+        //commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
         commit.changedFiles.createdFiles.forEach(x -> onCreateFile(commit.hash, x));
     }
 
@@ -39,7 +39,7 @@ public class FileTracker {
         this.hashToBranchMap.put(mergeCommit.mergeSourceHash, sourceBranch);
 
         mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> changeName(mergeCommit.hash, x.oldPath, x.newPath));
-        mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> onDeleteFile(mergeCommit.hash, x));
+        //mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> onDeleteFile(mergeCommit.hash, x));
         mergeCommit.changedFilesFromLeftTreeSide.createdFiles.forEach(x -> onCreateFile(mergeCommit.hash, x));
     }
 
@@ -83,10 +83,13 @@ public class FileTracker {
         return file;
     }
 
+    /*
     private File onDeleteFile(String commitHash, String filePath) {
         Branch branch = this.hashToBranchMap.get(commitHash);
         return branch.pathToFileMap.put(filePath, new File(0, 0));
     }
+
+     */
 
     private File onCreateFile(String commitHash, String filePath) {
         Branch branch = this.hashToBranchMap.get(commitHash);

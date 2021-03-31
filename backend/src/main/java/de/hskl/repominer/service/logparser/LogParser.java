@@ -31,13 +31,6 @@ public class LogParser {
             }
 
             boolean isMerge = pc instanceof ParsedMergeCommit;
-            if(!isMerge) {
-                //Todo Bug: enn eine datei gelöscht wird wird diese durch getFile später wieder erstellt
-                //Idee: Alle Dateien, welche im commit verfügbar sind zurück geben und von der map/Liste drauf zugreifen
-                fileTracker.addCommit(pc);
-            } else {
-                fileTracker.addMerge((ParsedMergeCommit) pc);
-            }
 
             List<FileChange> fileChanges = new LinkedList<>();
             Author author = nameToAuthorMap.computeIfAbsent(pc.author, x -> new Author(0, 0, pc.author));
@@ -58,10 +51,16 @@ public class LogParser {
                 int deletedLines = isMerge? 0:pFc.deletions;
                 FileChange currentFileChange = new FileChange(0, 0, path, addedLines, deletedLines);
 
-                File file = fileTracker.getFile(pc.hash, pFc.oldPath);
+                File file = fileTracker.getFile(pc.hash, pFc.newPath);
 
                 currentFileChange.setFile(file);
                 fileChanges.add(currentFileChange);
+            }
+
+            if(!isMerge) {
+                fileTracker.addCommit(pc);
+            } else {
+                fileTracker.addMerge((ParsedMergeCommit) pc);
             }
 
             currentCommit.setFileChanges(fileChanges);
