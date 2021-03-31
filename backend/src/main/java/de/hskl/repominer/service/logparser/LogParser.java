@@ -32,6 +32,8 @@ public class LogParser {
 
             boolean isMerge = pc instanceof ParsedMergeCommit;
             if(!isMerge) {
+                //Todo Bug: enn eine datei gelöscht wird wird diese durch getFile später wieder erstellt
+                //Idee: Alle Dateien, welche im commit verfügbar sind zurück geben und von der map/Liste drauf zugreifen
                 fileTracker.addCommit(pc);
             } else {
                 fileTracker.addMerge((ParsedMergeCommit) pc);
@@ -107,6 +109,11 @@ public class LogParser {
                 throw new IllegalArgumentException("Malformed git-log! Make sure the File-Encoding is set to UTF-16!");
             }
         }
+
+        if(currentCommit.header != null) {
+            unparsedCommits.add(currentCommit);
+        }
+
         return unparsedCommits;
     }
 

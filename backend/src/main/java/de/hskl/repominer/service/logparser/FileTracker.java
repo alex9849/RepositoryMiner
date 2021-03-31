@@ -27,17 +27,20 @@ public class FileTracker {
     public void addCommit(ParsedCommit commit) {
         Branch childBranch = this.hashToBranchMap.get(commit.hash);
         this.hashToBranchMap.put(commit.parentHash, childBranch);
-
-        for(ParsedFileChange fc : commit.changedFiles.fileChanges) {
-
-        }
+        commit.changedFiles.fileChanges.forEach(x -> changeName(commit.hash, x.oldPath, x.newPath));
+        commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
+        commit.changedFiles.createdFiles.forEach(x -> onCreateFile(commit.hash, x));
     }
 
     public void addMerge(ParsedMergeCommit mergeCommit) {
+        Branch targetBranch = this.hashToBranchMap.get(mergeCommit.hash);
         this.addCommit(mergeCommit);
-        Branch targetBranch = this.hashToBranchMap.get(mergeCommit.parentHash);
         Branch sourceBranch = targetBranch.clone();
         this.hashToBranchMap.put(mergeCommit.mergeSourceHash, sourceBranch);
+
+        mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> changeName(mergeCommit.hash, x.oldPath, x.newPath));
+        mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> onDeleteFile(mergeCommit.hash, x));
+        mergeCommit.changedFilesFromLeftTreeSide.createdFiles.forEach(x -> onCreateFile(mergeCommit.hash, x));
     }
 
     public File getFile(String commitHash, String path) {
@@ -54,6 +57,14 @@ public class FileTracker {
             this.hashToBranchMap.values().forEach(b -> b.pathToFileMap.put(path, addFile));
         }
         return file;
+    }
+
+    /**
+     * Creates a tracking object if no object is already present on this branch
+     */
+    private File touchFile(String commitHash, String name) {
+        Branch branch = this.hashToBranchMap.get(commitHash);
+        return branch.pathToFileMap.computeIfAbsent(name, x -> new File(0, 0));
     }
 
     private File changeName(String commitHash, String oldPath, String newPath) {
