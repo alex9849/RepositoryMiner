@@ -13,5 +13,4 @@ public class ParsedMergeCommit extends ParsedCommit {
         this.mergeSourceHash = mergeSourceHash;
     }
 
-    private
 }

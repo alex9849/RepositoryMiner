@@ -24,15 +24,20 @@ public class FileTracker {
         this.hashToBranchMap.put(lastCommitHash, new Branch());
     }
 
-    public void addCommit(String commitHash, String parentHash) {
-        Branch branch = this.hashToBranchMap.get(commitHash);
-        this.hashToBranchMap.put(parentHash, branch);
+    public void addCommit(ParsedCommit commit) {
+        Branch childBranch = this.hashToBranchMap.get(commit.hash);
+        this.hashToBranchMap.put(commit.parentHash, childBranch);
+
+        for(ParsedFileChange fc : commit.changedFiles.fileChanges) {
+
+        }
     }
 
-    public void addMerge(String commitHash, String targetHash, String sourceHash) {
-        this.addCommit(commitHash, targetHash);
-        Branch targetBranch = this.hashToBranchMap.get(targetHash);
-        this.hashToBranchMap.put(sourceHash, targetBranch.clone());
+    public void addMerge(ParsedMergeCommit mergeCommit) {
+        this.addCommit(mergeCommit);
+        Branch targetBranch = this.hashToBranchMap.get(mergeCommit.parentHash);
+        Branch sourceBranch = targetBranch.clone();
+        this.hashToBranchMap.put(mergeCommit.mergeSourceHash, sourceBranch);
     }
 
     public File getFile(String commitHash, String path) {
@@ -41,27 +46,38 @@ public class FileTracker {
         if(file == null) {
             file = new File(0 ,0);
             final File addFile = file;
+            /*  Wir legen diese Datei in jedem Branch an.
+                Falls wir in die Date in einem anderem Branch sehen muss diese gemergt worden sein.
+                Der Fall, dass die Datei auf dem einen Branch bearbeitet und auf den anderem gelöscht wurde
+                führt zum merge-conflict und muss deshalb nicht beachtet werden
+             */
             this.hashToBranchMap.values().forEach(b -> b.pathToFileMap.put(path, addFile));
         }
         return file;
     }
 
-    public File changeName(String commitHash, String oldPath, String newPath) {
+    private File changeName(String commitHash, String oldPath, String newPath) {
         Branch branch = this.hashToBranchMap.get(commitHash);
         File file = branch.pathToFileMap.remove(newPath);
         if(file == null) {
-            file = getFile(commitHash, oldPath);
+            /*  Generiere neue FileId auf allen branches
+                Beachte Scenario 3. Die Datei kann auf den anderen branches nicht anders heißen, da dies zu
+                einem mergeconflict geführt hätte. Sollte die Datei auf einem anderen branch bearbeitet worden sein
+                muss diese vorher auch umbenannt worden sein
+             */
+            getFile(commitHash, newPath);
+            file = branch.pathToFileMap.remove(newPath);
         }
         branch.pathToFileMap.put(oldPath, file);
         return file;
     }
 
-    public File onDeleteFile(String commitHash, String filePath) {
+    private File onDeleteFile(String commitHash, String filePath) {
         Branch branch = this.hashToBranchMap.get(commitHash);
         return branch.pathToFileMap.put(filePath, new File(0, 0));
     }
 
-    public File onCreateFile(String commitHash, String filePath) {
+    private File onCreateFile(String commitHash, String filePath) {
         Branch branch = this.hashToBranchMap.get(commitHash);
         File file = branch.pathToFileMap.remove(filePath);
         //Wir haben die Datei hier erstellt. Also kann die fileID auf keinem anderem Branch existieren -> löschen
