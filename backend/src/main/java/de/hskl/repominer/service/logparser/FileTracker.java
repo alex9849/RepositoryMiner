@@ -26,6 +26,7 @@ public class FileTracker {
 
     public void addCommit(ParsedCommit commit) {
         Branch childBranch = this.hashToBranchMap.get(commit.hash);
+        boolean isSplitt = this.hashToBranchMap.containsKey(commit.parentHash);
         this.hashToBranchMap.put(commit.parentHash, childBranch);
         commit.changedFiles.fileChanges.forEach(x -> changeName(commit.hash, x.oldPath, x.newPath));
         //commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
@@ -34,50 +35,34 @@ public class FileTracker {
 
     public void addMerge(ParsedMergeCommit mergeCommit) {
         Branch targetBranch = this.hashToBranchMap.get(mergeCommit.hash);
-        this.addCommit(mergeCommit);
+        //Touch files
+        mergeCommit.changedFiles.deletedFiles.forEach(x -> getFile(mergeCommit.hash, x));
+        mergeCommit.changedFiles.fileChanges.forEach(x -> getFile(mergeCommit.hash, x.newPath));
+        mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> getFile(mergeCommit.hash, x));
+        mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> getFile(mergeCommit.hash, x.newPath));
         Branch sourceBranch = targetBranch.clone();
+        this.addCommit(mergeCommit);
         this.hashToBranchMap.put(mergeCommit.mergeSourceHash, sourceBranch);
-
-        mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> changeName(mergeCommit.hash, x.oldPath, x.newPath));
+        mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> changeName(mergeCommit.mergeSourceHash, x.oldPath, x.newPath));
         //mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> onDeleteFile(mergeCommit.hash, x));
-        mergeCommit.changedFilesFromLeftTreeSide.createdFiles.forEach(x -> onCreateFile(mergeCommit.hash, x));
-    }
-
-    public File getFile(String commitHash, String path) {
-        Branch branch = this.hashToBranchMap.get(commitHash);
-        File file = branch.pathToFileMap.get(path);
-        if(file == null) {
-            file = new File(0 ,0);
-            final File addFile = file;
-            /*  Wir legen diese Datei in jedem Branch an.
-                Falls wir in die Date in einem anderem Branch sehen muss diese gemergt worden sein.
-                Der Fall, dass die Datei auf dem einen Branch bearbeitet und auf den anderem gelöscht wurde
-                führt zum merge-conflict und muss deshalb nicht beachtet werden
-             */
-            this.hashToBranchMap.values().forEach(b -> b.pathToFileMap.put(path, addFile));
-        }
-        return file;
+        mergeCommit.changedFilesFromLeftTreeSide.createdFiles.forEach(x -> onCreateFile(mergeCommit.mergeSourceHash, x));
     }
 
     /**
-     * Creates a tracking object if no object is already present on this branch
+     * Returns the associated tracking Object if present.
+     * Creates a tracking object otherwise and returns that
      */
-    private File touchFile(String commitHash, String name) {
+    public File getFile(String commitHash, String path) {
         Branch branch = this.hashToBranchMap.get(commitHash);
-        return branch.pathToFileMap.computeIfAbsent(name, x -> new File(0, 0));
+        return branch.pathToFileMap.computeIfAbsent(path, x -> new File(0, 0));
     }
 
     private File changeName(String commitHash, String oldPath, String newPath) {
         Branch branch = this.hashToBranchMap.get(commitHash);
         File file = branch.pathToFileMap.remove(newPath);
         if(file == null) {
-            /*  Generiere neue FileId auf allen branches
-                Beachte Scenario 3. Die Datei kann auf den anderen branches nicht anders heißen, da dies zu
-                einem mergeconflict geführt hätte. Sollte die Datei auf einem anderen branch bearbeitet worden sein
-                muss diese vorher auch umbenannt worden sein
-             */
-            getFile(commitHash, newPath);
-            file = branch.pathToFileMap.remove(newPath);
+            throw new NullPointerException("file is null");
+            //file = branch.pathToFileMap.remove(newPath);
         }
         branch.pathToFileMap.put(oldPath, file);
         return file;
@@ -88,7 +73,6 @@ public class FileTracker {
         Branch branch = this.hashToBranchMap.get(commitHash);
         return branch.pathToFileMap.put(filePath, new File(0, 0));
     }
-
      */
 
     private File onCreateFile(String commitHash, String filePath) {
