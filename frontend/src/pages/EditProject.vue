@@ -95,7 +95,7 @@ export default {
   name: "EditProject",
   data: () => {
     return {
-      gitCommand: "git log --pretty=format:'[%h] [%an] (%p) %ad %s' --date=\"format:%Y-%m-%d %H:%M:%S\" --numstat --summary --parents >> repolog.log",
+      gitCommand: "git log --pretty=format:'[%h] [%an] (%p) %ad %s' --date=\"format:%Y-%m-%d %H:%M:%S\" -m --numstat --summary --parents >> repolog.log",
       isGitCommandCopied: false,
       uploadFile: null,
       projectName: '',

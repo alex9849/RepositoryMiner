@@ -18,10 +18,8 @@ public class LogParser {
 
     public static Project parseLogStream(BufferedReader logInputStream) throws IOException, ParseException {
         Project project = new Project();
-        Map<String, ParsedCommit> hashToCommitMap = new HashMap<>();
         Map<String, Author> nameToAuthorMap = new HashMap<>();
         List<Commit> commits = new LinkedList<>();
-        Set<String> masterBranchHashes = new HashSet<>();
         FileTracker fileTracker = null;
 
 
@@ -29,41 +27,49 @@ public class LogParser {
         for(ParsedCommit pc : toParsedCommits(toUnparsedCommits(logInputStream))) {
             if(isNewestCommit) {
                 fileTracker = new FileTracker(pc.hash);
-                masterBranchHashes.add(pc.hash);
                 isNewestCommit = false;
             }
-            if(pc.isMerge) {
-                fileTracker.addMerge(pc.hash, pc.parentHash, pc.mergeSourceHash);
+
+            boolean isMerge = pc instanceof ParsedMergeCommit;
+            if(!isMerge) {
+                fileTracker.addCommit(pc);
             } else {
-                fileTracker.addCommit(pc.hash, pc.parentHash);
+                fileTracker.addMerge((ParsedMergeCommit) pc);
             }
-            //The newest commit is always master! Parent commits of master are always master! Recursive!
-            if(masterBranchHashes.contains(pc.hash)) {
-                masterBranchHashes.add(pc.parentHash);
-            }
+
             List<FileChange> fileChanges = new LinkedList<>();
             Author author = nameToAuthorMap.computeIfAbsent(pc.author, x -> new Author(0, 0, pc.author));
-            Commit currentCommit = new Commit(0, 0, pc.hash, masterBranchHashes.contains(pc.hash), 0, pc.date, pc.commitMessage);
+            Commit currentCommit = new Commit(0, 0, pc.hash, isMerge, 0, pc.date, pc.commitMessage);
             currentCommit.setAuthor(author);
 
-            for(ParsedFileChange pFc : pc.fileChanges) {
+            for(ParsedFileChange pFc : pc.changedFiles.fileChanges) {
                 String path = pFc.newPath;
-                if(pc.deletedFiles.contains(path)) {
+                if(pc.changedFiles.deletedFiles.contains(path)) {
                     path = null;
                 }
-                FileChange currentFileChange = new FileChange(0, 0, path, pFc.insertions, pFc.deletions);
 
-                if(pFc.isRename()) {
-                    fileTracker.changeName(pc.hash, pFc.oldPath, pFc.newPath);
+                if(isMerge && (path != null) && !pFc.isRename()) {
+                    continue;
                 }
-                File file = fileTracker.getFile(pc.hash, pFc.newPath);
+
+                int addedLines = isMerge? 0:pFc.insertions;
+                int deletedLines = isMerge? 0:pFc.deletions;
+                FileChange currentFileChange = new FileChange(0, 0, path, addedLines, deletedLines);
+
+                File file;
+                if(pFc.isRename()) {
+                    file = fileTracker.changeName(pc.hash, pFc.oldPath, pFc.newPath);
+                } else {
+                    file = fileTracker.getFile(pc.hash, pFc.newPath);
+                }
+
                 currentFileChange.setFile(file);
                 fileChanges.add(currentFileChange);
             }
-            for(String filePath : pc.deletedFiles) {
+            for(String filePath : pc.changedFiles.deletedFiles) {
                 fileTracker.onDeleteFile(pc.hash, filePath);
             }
-            for(String filePath : pc.createdFiles) {
+            for(String filePath : pc.changedFiles.createdFiles) {
                 fileTracker.onCreateFile(pc.hash, filePath);
             }
 
@@ -117,13 +123,30 @@ public class LogParser {
 
     private static List<ParsedCommit> toParsedCommits(List<UnparsedCommit> unparsedCommits) throws ParseException {
         List<ParsedCommit> parsedCommits = new LinkedList<>();
+        ParsedCommit currentParsedCommit = null;
+        boolean appendNext = false;
 
         for (UnparsedCommit uc : unparsedCommits) {
-            ParsedCommit pc = new ParsedCommit(uc.header);
-            pc.fileChanges = uc.modifiedFiles.stream().map(ParsedFileChange::new).collect(Collectors.toList());
-            pc.deletedFiles = uc.deletedFiles;
-            pc.createdFiles = uc.createdFiles;
-            parsedCommits.add(pc);
+            if(!appendNext) {
+                currentParsedCommit = ParsedCommit.parse(uc.header);
+                parsedCommits.add(currentParsedCommit);
+            }
+            appendNext = (currentParsedCommit instanceof ParsedMergeCommit) && !appendNext;
+
+            FileModificationHolder fmh = new FileModificationHolder();
+            fmh.fileChanges = uc.modifiedFiles.stream().map(ParsedFileChange::new).collect(Collectors.toList());
+            fmh.deletedFiles = uc.deletedFiles;
+            fmh.createdFiles = uc.createdFiles;
+
+            if(currentParsedCommit instanceof ParsedMergeCommit) {
+                if(appendNext) {
+                    currentParsedCommit.changedFiles = fmh;
+                } else {
+                    ((ParsedMergeCommit) currentParsedCommit).changedFilesFromLeftTreeSide = fmh;
+                }
+            } else {
+                currentParsedCommit.changedFiles = fmh;
+            }
         }
 
         return parsedCommits;

@@ -37,10 +37,10 @@ public class CommitRepository  {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement(
-                    "INSERT INTO \"Commit\" (projectId, isMainBranch, hash, authorId, timestamp, message)" +
+                    "INSERT INTO \"Commit\" (projectId, isMerge, hash, authorId, timestamp, message)" +
                             "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, commit.getProjectId());
-            pstmt.setBoolean(2, commit.isMainBranch());
+            pstmt.setBoolean(2, commit.isMerge());
             pstmt.setString(3, commit.getHash());
             pstmt.setInt(4, commit.getAuthorId());
             pstmt.setDate(5, commit.getTimeStamp());
@@ -73,7 +73,7 @@ public class CommitRepository  {
                 rs.getInt("id"),
                 rs.getInt("projectId"),
                 rs.getString("hash"),
-                rs.getBoolean("isMainBranch"),
+                rs.getBoolean("isMerge"),
                 rs.getInt("authorId"),
                 rs.getDate("timestamp"),
                 rs.getString("message")
