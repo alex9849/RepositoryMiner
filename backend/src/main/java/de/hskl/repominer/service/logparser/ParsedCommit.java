@@ -12,7 +12,7 @@ public class ParsedCommit {
     final Date date;
     final String commitMessage;
 
-    FileModificationHolder changedFiles;
+    FileModificationHolder changedFiles = new FileModificationHolder();
 
     protected ParsedCommit(String hash, String parentHash, String author, Date date, String commitMessage) {
         this.hash = hash;

@@ -119,26 +119,24 @@ public class LogParser {
     private static List<ParsedCommit> toParsedCommits(List<UnparsedCommit> unparsedCommits) throws ParseException {
         List<ParsedCommit> parsedCommits = new LinkedList<>();
         ParsedCommit currentParsedCommit = null;
-        boolean appendNext = false;
 
         for (UnparsedCommit uc : unparsedCommits) {
-            if(!appendNext) {
-                currentParsedCommit = ParsedCommit.parse(uc.header);
+            ParsedCommit nextCommit = ParsedCommit.parse(uc.header);
+             boolean appendCommit = (currentParsedCommit instanceof ParsedMergeCommit)
+                    && (nextCommit instanceof ParsedMergeCommit)
+                    && nextCommit.hash.equals(currentParsedCommit.hash);
+            if(!appendCommit) {
+                currentParsedCommit = nextCommit;
                 parsedCommits.add(currentParsedCommit);
             }
-            appendNext = (currentParsedCommit instanceof ParsedMergeCommit) && !appendNext;
 
             FileModificationHolder fmh = new FileModificationHolder();
             fmh.fileChanges = uc.modifiedFiles.stream().map(ParsedFileChange::new).collect(Collectors.toList());
             fmh.deletedFiles = uc.deletedFiles;
             fmh.createdFiles = uc.createdFiles;
 
-            if(currentParsedCommit instanceof ParsedMergeCommit) {
-                if(appendNext) {
-                    currentParsedCommit.changedFiles = fmh;
-                } else {
-                    ((ParsedMergeCommit) currentParsedCommit).changedFilesFromLeftTreeSide = fmh;
-                }
+            if(appendCommit) {
+                ((ParsedMergeCommit) currentParsedCommit).changedFilesFromLeftTreeSide = fmh;
             } else {
                 currentParsedCommit.changedFiles = fmh;
             }
