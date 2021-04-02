@@ -25,27 +25,41 @@ public class FileTracker {
     }
 
     public void addCommit(ParsedCommit commit) {
+        addCommit(commit, true);
+    }
+
+    private void addCommit(ParsedCommit commit, boolean doOnCreate) {
         Branch childBranch = this.hashToBranchMap.get(commit.hash);
         boolean isSplitt = this.hashToBranchMap.containsKey(commit.parentHash);
         this.hashToBranchMap.put(commit.parentHash, childBranch);
         commit.changedFiles.fileChanges.forEach(x -> changeName(commit.hash, x.oldPath, x.newPath));
         //commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
-        commit.changedFiles.createdFiles.forEach(x -> onCreateFile(commit.hash, x));
+        if(doOnCreate) {
+            commit.changedFiles.createdFiles.forEach(x -> onCreateFile(commit.hash, x));
+        }
     }
 
     public void addMerge(ParsedMergeCommit mergeCommit) {
         Branch targetBranch = this.hashToBranchMap.get(mergeCommit.hash);
         //Touch files
-        mergeCommit.changedFiles.deletedFiles.forEach(x -> getFile(mergeCommit.hash, x));
-        mergeCommit.changedFiles.fileChanges.forEach(x -> getFile(mergeCommit.hash, x.newPath));
-        mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> getFile(mergeCommit.hash, x));
-        mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> getFile(mergeCommit.hash, x.newPath));
-        Branch sourceBranch = targetBranch.clone();
-        this.addCommit(mergeCommit);
+        Map<String, File> touchedFiles = new HashMap<>();
+        mergeCommit.changedFiles.deletedFiles.forEach(x -> touchedFiles.put(x, getFile(mergeCommit.hash, x)));
+        mergeCommit.changedFiles.fileChanges.forEach(x -> touchedFiles.put(x.newPath, getFile(mergeCommit.hash, x.newPath)));
+        mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> touchedFiles.put(x, getFile(mergeCommit.hash, x)));
+        mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> touchedFiles.put(x.newPath, getFile(mergeCommit.hash, x.newPath)));
+        Branch sourceBranch;
+        if(this.hashToBranchMap.containsKey(mergeCommit.mergeSourceHash)) {
+            sourceBranch = this.hashToBranchMap.get(mergeCommit.mergeSourceHash);
+            sourceBranch.pathToFileMap.putAll(touchedFiles);
+        } else {
+            sourceBranch = targetBranch.clone();
+        }
+
+        this.addCommit(mergeCommit, false);
         this.hashToBranchMap.put(mergeCommit.mergeSourceHash, sourceBranch);
         mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> changeName(mergeCommit.mergeSourceHash, x.oldPath, x.newPath));
         //mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> onDeleteFile(mergeCommit.hash, x));
-        mergeCommit.changedFilesFromLeftTreeSide.createdFiles.forEach(x -> onCreateFile(mergeCommit.mergeSourceHash, x));
+        //mergeCommit.changedFilesFromLeftTreeSide.createdFiles.forEach(x -> onCreateFile(mergeCommit.mergeSourceHash, x));
     }
 
     /**

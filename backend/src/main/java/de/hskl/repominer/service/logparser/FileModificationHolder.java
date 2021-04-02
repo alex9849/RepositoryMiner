@@ -9,4 +9,10 @@ public class FileModificationHolder {
     List<ParsedFileChange> fileChanges = new ArrayList<>();
     Set<String> createdFiles = new HashSet<>();
     Set<String> deletedFiles = new HashSet<>();
+
+    public boolean isEmpty() {
+        return fileChanges.isEmpty()
+                && createdFiles.isEmpty()
+                && deletedFiles.isEmpty();
+    }
 }
