@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileTracker {
+
     private static class Branch implements Cloneable {
         final Map<String, File> pathToFileMap = new HashMap<>();
 
@@ -24,19 +25,32 @@ public class FileTracker {
         this.hashToBranchMap.put(lastCommitHash, new Branch());
     }
 
-    public void addCommit(ParsedCommit commit) {
-        addCommit(commit, true);
+    public void afterParsingTasks(ParsedCommit commit) {
+        afterParsingTasks(commit, !(commit instanceof ParsedMergeCommit));
     }
 
-    private void addCommit(ParsedCommit commit, boolean doOnCreate) {
-        Branch childBranch = this.hashToBranchMap.get(commit.hash);
-        boolean isSplitt = this.hashToBranchMap.containsKey(commit.parentHash);
-        this.hashToBranchMap.put(commit.parentHash, childBranch);
-        commit.changedFiles.fileChanges.forEach(x -> changeName(commit.hash, x.oldPath, x.newPath));
-        //commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
+    private void afterParsingTasks(ParsedCommit commit, boolean doOnCreate) {
         if(doOnCreate) {
             commit.changedFiles.createdFiles.forEach(x -> onCreateFile(commit.hash, x));
         }
+    }
+
+    public void addCommit(ParsedCommit commit) {
+        Branch childBranch = this.hashToBranchMap.get(commit.hash);
+        boolean isSplitt = this.hashToBranchMap.containsKey(commit.parentHash);
+        if(isSplitt) {
+            Branch otherSplit = this.hashToBranchMap.get(commit.parentHash);
+            childBranch.pathToFileMap.putAll(otherSplit.pathToFileMap);
+            this.hashToBranchMap.forEach((key, value) -> {
+                if (value == otherSplit) {
+                    this.hashToBranchMap.put(key, childBranch);
+                }
+            });
+        }
+        this.hashToBranchMap.put(commit.parentHash, childBranch);
+        commit.changedFiles.fileChanges.forEach(x -> getFile(commit.hash, x.newPath));
+        commit.changedFiles.fileChanges.forEach(x -> changeName(commit.hash, x.oldPath, x.newPath));
+        //commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
     }
 
     public void addMerge(ParsedMergeCommit mergeCommit) {
@@ -55,7 +69,7 @@ public class FileTracker {
             sourceBranch = targetBranch.clone();
         }
 
-        this.addCommit(mergeCommit, false);
+        this.addCommit(mergeCommit);
         this.hashToBranchMap.put(mergeCommit.mergeSourceHash, sourceBranch);
         mergeCommit.changedFilesFromLeftTreeSide.fileChanges.forEach(x -> changeName(mergeCommit.mergeSourceHash, x.oldPath, x.newPath));
         //mergeCommit.changedFilesFromLeftTreeSide.deletedFiles.forEach(x -> onDeleteFile(mergeCommit.hash, x));

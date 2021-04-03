@@ -37,6 +37,12 @@ public class LogParser {
             Commit currentCommit = new Commit(0, 0, pc.hash, isMerge, 0, pc.date, pc.commitMessage);
             currentCommit.setAuthor(author);
 
+            if(!isMerge) {
+                fileTracker.addCommit(pc);
+            } else {
+                fileTracker.addMerge((ParsedMergeCommit) pc);
+            }
+
             for(ParsedFileChange pFc : pc.changedFiles.fileChanges) {
                 String path = pFc.newPath;
                 if(pc.changedFiles.deletedFiles.contains(path)) {
@@ -51,17 +57,13 @@ public class LogParser {
                 int deletedLines = isMerge? 0:pFc.deletions;
                 FileChange currentFileChange = new FileChange(0, 0, path, addedLines, deletedLines);
 
-                File file = fileTracker.getFile(pc.hash, pFc.newPath);
+                File file = fileTracker.getFile(pc.hash, pFc.oldPath);
 
                 currentFileChange.setFile(file);
                 fileChanges.add(currentFileChange);
             }
 
-            if(!isMerge) {
-                fileTracker.addCommit(pc);
-            } else {
-                fileTracker.addMerge((ParsedMergeCommit) pc);
-            }
+            fileTracker.afterParsingTasks(pc);
 
             currentCommit.setFileChanges(fileChanges);
             commits.add(currentCommit);
