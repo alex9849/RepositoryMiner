@@ -3,9 +3,7 @@ package de.hskl.repominer.service.logparser;
 import de.hskl.repominer.models.File;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class FileTracker {
 
@@ -20,15 +18,12 @@ public class FileTracker {
     }
 
     private final Map<String, Branch> hashToBranchMap;
-    private final Set<Branch> allBranches;
 
 
     public FileTracker(String lastCommitHash) {
         this.hashToBranchMap = new HashMap<>();
-        this.allBranches = new HashSet<>();
         Branch initBranch = new Branch();
         this.hashToBranchMap.put(lastCommitHash, initBranch);
-        this.allBranches.add(initBranch);
     }
 
     public void afterParsingTasks(ParsedCommit commit) {
@@ -79,7 +74,6 @@ public class FileTracker {
             });
         } else {
             sourceBranch = targetBranch.clone();
-            this.allBranches.add(sourceBranch);
         }
 
         this.addCommit(mergeCommit);
