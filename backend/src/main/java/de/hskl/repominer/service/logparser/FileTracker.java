@@ -3,7 +3,9 @@ package de.hskl.repominer.service.logparser;
 import de.hskl.repominer.models.File;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class FileTracker {
 
@@ -18,11 +20,15 @@ public class FileTracker {
     }
 
     private final Map<String, Branch> hashToBranchMap;
+    private final Set<Branch> allBranches;
 
 
     public FileTracker(String lastCommitHash) {
         this.hashToBranchMap = new HashMap<>();
-        this.hashToBranchMap.put(lastCommitHash, new Branch());
+        this.allBranches = new HashSet<>();
+        Branch initBranch = new Branch();
+        this.hashToBranchMap.put(lastCommitHash, initBranch);
+        this.allBranches.add(initBranch);
     }
 
     public void afterParsingTasks(ParsedCommit commit) {
@@ -64,9 +70,16 @@ public class FileTracker {
         Branch sourceBranch;
         if(this.hashToBranchMap.containsKey(mergeCommit.mergeSourceHash)) {
             sourceBranch = this.hashToBranchMap.get(mergeCommit.mergeSourceHash);
-            sourceBranch.pathToFileMap.putAll(touchedFiles);
+            touchedFiles.forEach((k, v) -> {
+                if(sourceBranch.pathToFileMap.containsKey(k)) {
+                    targetBranch.pathToFileMap.put(k , sourceBranch.pathToFileMap.get(k));
+                } else {
+                    sourceBranch.pathToFileMap.put(k, v);
+                }
+            });
         } else {
             sourceBranch = targetBranch.clone();
+            this.allBranches.add(sourceBranch);
         }
 
         this.addCommit(mergeCommit);
@@ -82,7 +95,14 @@ public class FileTracker {
      */
     public File getFile(String commitHash, String path) {
         Branch branch = this.hashToBranchMap.get(commitHash);
-        return branch.pathToFileMap.computeIfAbsent(path, x -> new File(0, 0));
+        if(!branch.pathToFileMap.containsKey(path)) {
+            File addFile = new File(0, 0);
+            /*this.allBranches.forEach(x -> {
+                x.pathToFileMap.put(path, addFile);
+            });*/
+            branch.pathToFileMap.put(path, addFile);
+        }
+        return branch.pathToFileMap.get(path);
     }
 
     private File changeName(String commitHash, String oldPath, String newPath) {
