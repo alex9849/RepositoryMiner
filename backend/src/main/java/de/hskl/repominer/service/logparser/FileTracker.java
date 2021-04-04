@@ -51,7 +51,6 @@ public class FileTracker {
         this.hashToBranchMap.put(commit.parentHash, childBranch);
         commit.changedFiles.fileChanges.forEach(x -> getFile(commit.hash, x.newPath));
         commit.changedFiles.fileChanges.forEach(x -> changeName(commit.hash, x.oldPath, x.newPath));
-        //commit.changedFiles.deletedFiles.forEach(x -> onDeleteFile(commit.hash, x));
     }
 
     public void addMerge(ParsedMergeCommit mergeCommit) {
