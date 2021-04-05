@@ -120,7 +120,7 @@ public class LogParser {
 
     private static List<ParsedCommit> toParsedCommits(List<UnparsedCommit> unparsedCommits) throws ParseException {
         List<ParsedCommit> parsedCommits = new LinkedList<>();
-        Set<ParsedMergeCommit> unsafeParentDiffMerges = new HashSet<>();
+        List<ParsedMergeCommit> unsafeParentDiffMerges = new ArrayList<>();
         GitTreeBuilder gitTreeBuilder = null;
 
         ParsedCommit currentParsedCommit = null;
@@ -137,7 +137,15 @@ public class LogParser {
                 if(currentParsedCommit instanceof ParsedMergeCommit) {
                     ParsedMergeCommit mergeCommit = (ParsedMergeCommit) currentParsedCommit;
                     if(mergeCommit.changedFilesFromLeftTreeSide == null) {
-                        unsafeParentDiffMerges.add(mergeCommit);
+                        boolean isUnsafe = false;
+                        mergeCommit.changedFilesFromLeftTreeSide = new FileModificationHolder();
+                        for(ParsedFileChange fileChange : mergeCommit.changedFiles.fileChanges) {
+                            //We only have to double check mergecommits, is any files have been renamed
+                            isUnsafe |= fileChange.isRename();
+                        }
+                        if(isUnsafe) {
+                            unsafeParentDiffMerges.add(mergeCommit);
+                        }
                     }
                 }
                 currentParsedCommit = nextCommit;
@@ -161,9 +169,48 @@ public class LogParser {
                 currentParsedCommit.changedFiles = fmh;
             }
         }
+        if(gitTreeBuilder == null) {
+            return parsedCommits;
+        }
+
         GitTreeBuilder.GitTree gitTree = gitTreeBuilder.build();
 
-        
+       /* for(int i = unsafeParentDiffMerges.size() - 1; i >= 0; i--) {
+            boolean isLeftSideDiff = false;
+            ParsedMergeCommit checkMerge = unsafeParentDiffMerges.get(i);
+            GitTreeBuilder.TreeNode currMergeNode = gitTree.getCommitNode(checkMerge.hash);
+            ParsedFileChange searchRename = null;
+            for(ParsedFileChange fc : checkMerge.changedFiles.fileChanges) {
+                if(fc.isRename()) {
+                    searchRename = fc;
+                    break;
+                }
+            }
+            if(searchRename == null) {
+                checkMerge.changedFilesFromLeftTreeSide = new FileModificationHolder();
+                continue;
+            }
+
+            GitTreeBuilder.TreeNode compareNode = currMergeNode;
+            nodeComparisons:
+            while (compareNode.getTargetParent() != null) {
+                compareNode = compareNode.getTargetParent();
+                for(ParsedFileChange fc : compareNode.getCommit().changedFiles.fileChanges) {
+                    if(!fc.isRename()) {
+                        continue;
+                    }
+                    if(fc.newPath.equals(searchRename.newPath)) {
+                        isLeftSideDiff = true;
+                        break nodeComparisons;
+                    }
+                }
+            }
+
+            if(isLeftSideDiff) {
+                checkMerge.changedFilesFromLeftTreeSide = checkMerge.changedFiles;
+                checkMerge.changedFiles = new FileModificationHolder();
+            }
+        }*/
 
         return parsedCommits;
     }

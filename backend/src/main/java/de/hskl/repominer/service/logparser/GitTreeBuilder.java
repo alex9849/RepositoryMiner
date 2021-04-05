@@ -70,6 +70,10 @@ public class GitTreeBuilder {
         private GitTree(TreeNode rootNode) {
             this.root = rootNode;
         }
+
+        public TreeNode getCommitNode(String hash) {
+            return hashToCommitMap.get(hash);
+        }
     }
 
     public class TreeNode {
