@@ -120,6 +120,9 @@ public class LogParser {
 
     private static List<ParsedCommit> toParsedCommits(List<UnparsedCommit> unparsedCommits) throws ParseException {
         List<ParsedCommit> parsedCommits = new LinkedList<>();
+        Set<ParsedMergeCommit> unsafeParentDiffMerges = new HashSet<>();
+        GitTreeBuilder gitTreeBuilder = null;
+
         ParsedCommit currentParsedCommit = null;
 
         for (UnparsedCommit uc : unparsedCommits) {
@@ -128,8 +131,23 @@ public class LogParser {
                     && (nextCommit instanceof ParsedMergeCommit)
                     && nextCommit.hash.equals(currentParsedCommit.hash);
             if(!appendCommit) {
+                /* If the next diff of a merge commit is not a commit we have to check if the parents
+                   have been ordered correctly, because we can't surely tell if the diff came from the
+                   source or the target parent */
+                if(currentParsedCommit instanceof ParsedMergeCommit) {
+                    ParsedMergeCommit mergeCommit = (ParsedMergeCommit) currentParsedCommit;
+                    if(mergeCommit.changedFilesFromLeftTreeSide == null) {
+                        unsafeParentDiffMerges.add(mergeCommit);
+                    }
+                }
                 currentParsedCommit = nextCommit;
                 parsedCommits.add(currentParsedCommit);
+
+                if(gitTreeBuilder == null) {
+                    gitTreeBuilder = new GitTreeBuilder(currentParsedCommit);
+                } else {
+                    gitTreeBuilder.append(currentParsedCommit);
+                }
             }
 
             FileModificationHolder fmh = new FileModificationHolder();
@@ -143,6 +161,9 @@ public class LogParser {
                 currentParsedCommit.changedFiles = fmh;
             }
         }
+        GitTreeBuilder.GitTree gitTree = gitTreeBuilder.build();
+
+        
 
         return parsedCommits;
     }
