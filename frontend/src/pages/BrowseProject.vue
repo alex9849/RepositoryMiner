@@ -5,6 +5,7 @@
     <file-browser
       v-model="currentPath"
       :file-tree="fileTree"
+      :loading="loadingFileTree"
       @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
     />
   </q-page>
@@ -41,7 +42,8 @@ export default {
           "folder": false
         }
       ],
-      currentPath: "test/test"
+      currentPath: "test/test",
+      loadingFileTree: true
     }
   },
   created() {
@@ -50,6 +52,10 @@ export default {
     } else {
       this.currentPath = "";
     }
+    setInterval(() => {
+      this.loadingFileTree = false;
+    }, 2000)
+
   }
 }
 </script>

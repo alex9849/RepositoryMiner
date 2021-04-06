@@ -37,10 +37,18 @@
     <q-card
       class="bg-grey-3"
     >
+      <q-item-section
+        v-if="loading"
+        style="min-height: 100px"
+      >
+        <q-inner-loading showing>
+          <q-spinner-pie size="50px" color="primary" />
+        </q-inner-loading>
+      </q-item-section>
       <q-card-actions
         vertical
         align="center"
-        v-if="!Array.isArray(currentFiles)"
+        v-else-if="!Array.isArray(currentFiles)"
       >
         <q-icon
           size="100px"
@@ -76,7 +84,7 @@
             </q-btn>
           </q-item-section>
           <q-item-section side>
-            test
+            last commit/author?
           </q-item-section>
         </q-item>
         <q-item
