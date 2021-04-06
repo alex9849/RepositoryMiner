@@ -9,8 +9,6 @@ public class ProjectStructure {
 
     private String name;
     private boolean isFolder;
-
-    //@JsonIgnore
     private List<ProjectStructure> children;
 
     public ProjectStructure() {
@@ -45,7 +43,7 @@ public class ProjectStructure {
 
             if (path.contains("/")) {
                 name = path.substring(path.lastIndexOf("/") + 1);
-                path = path.substring(0, path.indexOf("/"));
+                path = path.substring(0, path.lastIndexOf("/"));
             } else {
                 name = path;
                 loop = false;
