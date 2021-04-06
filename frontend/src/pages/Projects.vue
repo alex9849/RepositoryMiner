@@ -56,7 +56,7 @@
         </q-item>
         <q-item
           v-for="project in projects"
-          :key="project"
+          :key="project.id"
         >
           <q-item-section avatar top>
             <q-avatar icon="folder" color="primary" text-color="white"/>
@@ -66,7 +66,7 @@
               {{ project.name }}
             </q-item-label>
             <q-item-label caption>
-              Last edited {{ project.lastUpdate.toLocaleDateString() }} at {{ project.lastUpdate.toLocaleTimeString() }}
+              Created on {{ project.lastUpdate.toLocaleDateString() }} at {{ project.lastUpdate.toLocaleTimeString() }}
             </q-item-label>
           </q-item-section>
           <q-item-section side>
@@ -77,29 +77,43 @@
                 label="Select"
               />
               <q-btn
-                icon="edit"
-                color="info"
-                @click="$router.push({ name: 'editProject', params: { id: project.id }})"
-              />
-              <q-btn
                 icon="delete"
                 color="negative"
+                @click="() => {deleteDialog.project = project; deleteDialog.display = true}"
               />
             </div>
           </q-item-section>
         </q-item>
       </q-list>
+      <c-question
+        :question="'Delete Project \'' + deleteDialog.project.name + '\'?'"
+        v-model="deleteDialog.display"
+        ok-button-text="Delete"
+        ok-color="negative"
+        :loading="deleteDialog.loading"
+        @clickOk="onDeleteProject"
+        @clickAbort="() => {deleteDialog.display = false}"
+      />
     </div>
   </q-page>
 </template>
 
 <script>
+import ProjectService from "src/service/ProjectService";
+import CQuestion from "components/CQuestion";
+
 export default {
   name: "Projects",
+  components: {CQuestion},
   data: () => {
     return {
       loading: true,
-      projects: []
+      projects: [],
+      deleteDialog: {
+        project: '',
+        display: false,
+        loading: false
+      }
     }
   },
   created() {
@@ -110,17 +124,34 @@ export default {
       this.loading = true;
       this.projects = [];
       this.$q.loadingBar.start()
-      setTimeout(() => {
-        this.loading = false;
-        this.projects = [
-          {
-            id: 1,
-            name: "TestProject",
-            lastUpdate: new Date()
-          }
-        ];
-        this.$q.loadingBar.stop();
-      }, 2000)
+      ProjectService.getProjects()
+        .then(projects => {
+          this.projects = projects;
+        })
+        .finally(() => {
+          this.loading = false;
+          this.$q.loadingBar.stop();
+        });
+    },
+    onDeleteProject() {
+      this.deleteDialog.loading = true;
+      ProjectService.deleteProject(this.deleteDialog.project.id)
+        .then(() => {
+          this.deleteDialog.project = '';
+          this.deleteDialog.display = false;
+          this.loadProjects();
+          this.$q.notify({
+            type: 'positive',
+            message: 'Project deleted!'
+          });
+        }, (error) => {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Couldn\'t delete project: ' + error.response.data.message
+          });
+      }).finally(() => {
+        this.deleteDialog.loading = false;
+      })
     }
   }
 }
