@@ -3,7 +3,9 @@ package de.hskl.repominer.service.logparser;
 import de.hskl.repominer.models.File;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class FileTracker {
 
@@ -17,11 +19,13 @@ public class FileTracker {
         }
     }
 
+    private final Set<File> deletedFiles;
     private final Map<String, Branch> hashToBranchMap;
 
 
     public FileTracker(String lastCommitHash) {
         this.hashToBranchMap = new HashMap<>();
+        this.deletedFiles = new HashSet<>();
         Branch initBranch = new Branch();
         this.hashToBranchMap.put(lastCommitHash, initBranch);
     }
@@ -88,7 +92,8 @@ public class FileTracker {
      */
     public File getFile(String commitHash, String path) {
         Branch branch = this.hashToBranchMap.get(commitHash);
-        if(!branch.pathToFileMap.containsKey(path)) {
+        if(!branch.pathToFileMap.containsKey(path)
+                || deletedFiles.contains(branch.pathToFileMap.get(path))) {
             File addFile = new File(0, 0);
             /*this.allBranches.forEach(x -> {
                 x.pathToFileMap.put(path, addFile);
@@ -120,8 +125,10 @@ public class FileTracker {
         Branch branch = this.hashToBranchMap.get(commitHash);
         File file = branch.pathToFileMap.remove(filePath);
         //Wir haben die Datei hier erstellt. Also kann die fileID auf keinem anderem Branch existieren -> löschen
-        this.hashToBranchMap.values().forEach(b -> b.pathToFileMap
-                .entrySet().removeIf(x -> x.getValue() == file));
+        //löschen wäre zu aufwendig. Also blacklist
+        this.deletedFiles.add(file);
+        /*this.hashToBranchMap.values().forEach(b -> b.pathToFileMap
+                .entrySet().removeIf(x -> x.getValue() == file));*/
         return file;
     }
 }

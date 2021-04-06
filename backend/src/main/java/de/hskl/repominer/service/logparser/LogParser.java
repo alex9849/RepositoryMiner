@@ -24,11 +24,14 @@ public class LogParser {
 
 
         boolean isNewestCommit = true;
-        for(ParsedCommit pc : toParsedCommits(toUnparsedCommits(logInputStream))) {
+        double index = 0;
+        List<ParsedCommit> parsedCommits = toParsedCommits(toUnparsedCommits(logInputStream));
+        for(ParsedCommit pc : parsedCommits) {
             if(isNewestCommit) {
                 fileTracker = new FileTracker(pc.hash);
                 isNewestCommit = false;
             }
+            System.out.println("Parsing commit: " + pc.hash + " (" + ++index / parsedCommits.size() * 100 + "%)");
 
             boolean isMerge = pc instanceof ParsedMergeCommit;
 
