@@ -1,8 +1,6 @@
 <template>
   <q-page padding>
-    <q-page-container>
-      <router-view/>
-    </q-page-container>
+    <router-view/>
   </q-page>
 </template>
 
