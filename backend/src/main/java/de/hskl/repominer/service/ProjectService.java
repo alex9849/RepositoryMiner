@@ -72,5 +72,5 @@ public class ProjectService {
         return projectRepo.deleteProject(projectId);
     }
 
-    public List<CurrentPath> getAllPaths() { return currPathRepo.getAllPaths();}
+    public List<CurrentPath> getAllCurrentPaths() { return currPathRepo.getAllCurrentPaths();}
 }

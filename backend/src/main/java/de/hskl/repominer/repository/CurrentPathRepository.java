@@ -22,7 +22,7 @@ public class CurrentPathRepository {
         this.ds = ds;
     }
 
-    public List<CurrentPath> getAllPaths() {
+    public List<CurrentPath> getAllCurrentPaths() {
         List<CurrentPath> pathList = new ArrayList<>();
 
         try {
@@ -31,7 +31,7 @@ public class CurrentPathRepository {
                     "from FileChange fc\n" +
                     "         join \"Commit\" c on c.id = fc.commitId\n" +
                     "group by fc.fileId\n" +
-                    "having c.timestamp = max(c.timestamp);");
+                    "having c.timestamp = max(c.timestamp);");  //aka SELECT * FROM CurrentPath (VIEW)
             ResultSet rs = pstmt.executeQuery();
 
 
