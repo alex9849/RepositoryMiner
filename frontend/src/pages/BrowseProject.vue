@@ -5,7 +5,7 @@
     <file-browser
       v-model="currentPath"
       :file-tree="fileTree"
-      @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event}})"
+      @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
     />
   </q-page>
 </template>

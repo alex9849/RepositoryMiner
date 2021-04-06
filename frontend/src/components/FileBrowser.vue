@@ -44,9 +44,11 @@
       >
         <q-icon
           size="100px"
-          name="description"
+          :color="!!currentFiles? '':'negative'"
+          :name="!!currentFiles? 'description':'warning'"
         />
-        {{ currentFiles.name }}
+        <p v-if="!!currentFiles">{{ currentFiles.name }}</p>
+        <p v-else>File doesn't exist!</p>
       </q-card-actions>
 
       <q-list
@@ -123,6 +125,7 @@ export default {
           }
         }
       }
+      return null;
     },
     appendCurrentPath(folderOrFileName) {
       if(this.value === "") {
@@ -162,7 +165,6 @@ export default {
         || (pathParts.length === 1 && !pathParts[0])) {
         return this.fileTree;
       }
-
       for(let file of this.fileTree) {
         if(file.name === pathParts[0]) {
           pathParts.splice(0, 1);
@@ -173,7 +175,7 @@ export default {
           }
         }
       }
-      return this.fileTree;
+      return null;
     }
   }
 }
