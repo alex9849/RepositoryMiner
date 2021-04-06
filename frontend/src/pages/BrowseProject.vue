@@ -4,6 +4,7 @@
   >
     <file-browser
       v-model="currentPath"
+      :file-tree="fileTree"
       @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event}})"
     />
   </q-page>
@@ -20,24 +21,24 @@ export default {
     return {
       fileTree: [{
         "name": "TestOrdner",
-        "isFolder": true,
+        "folder": true,
         "children": [{
           "name": "TestUnterOrdner",
-          "isFolder": true,
+          "folder": true,
           "children": [{
             "name": "FunnyFile.txt",
-            "isFolder": false
+            "folder": false
           }]
         },
           {
             "name": "LeererUnterOrdner",
-            "isFolder": true,
+            "folder": true,
             "children": []
           }]
       },
         {
           "name": "RootFile.txt",
-          "isFolder": false
+          "folder": false
         }
       ],
       currentPath: "test/test"
