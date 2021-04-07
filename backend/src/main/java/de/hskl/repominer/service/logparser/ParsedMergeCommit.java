@@ -3,7 +3,7 @@ package de.hskl.repominer.service.logparser;
 import java.sql.Date;
 
 public class ParsedMergeCommit extends ParsedCommit {
-    FileModificationHolder changedFilesFromLeftTreeSide = new FileModificationHolder();
+    FileModificationHolder changedFilesFromLeftTreeSide;
     //Das wo wir rein mergen. Das Y -> (YYYYY XXXXX)
     final String mergeSourceHash;
 

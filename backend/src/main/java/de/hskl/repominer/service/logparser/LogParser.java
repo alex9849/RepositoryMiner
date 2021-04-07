@@ -24,11 +24,14 @@ public class LogParser {
 
 
         boolean isNewestCommit = true;
-        for(ParsedCommit pc : toParsedCommits(toUnparsedCommits(logInputStream))) {
+        double index = 0;
+        List<ParsedCommit> parsedCommits = toParsedCommits(toUnparsedCommits(logInputStream));
+        for(ParsedCommit pc : parsedCommits) {
             if(isNewestCommit) {
                 fileTracker = new FileTracker(pc.hash);
                 isNewestCommit = false;
             }
+            System.out.println("Parsing commit: " + pc.hash + " (" + ++index / parsedCommits.size() * 100 + "%)");
 
             boolean isMerge = pc instanceof ParsedMergeCommit;
 
@@ -36,6 +39,12 @@ public class LogParser {
             Author author = nameToAuthorMap.computeIfAbsent(pc.author, x -> new Author(0, 0, pc.author));
             Commit currentCommit = new Commit(0, 0, pc.hash, isMerge, 0, pc.date, pc.commitMessage);
             currentCommit.setAuthor(author);
+
+            if(!isMerge) {
+                fileTracker.addCommit(pc);
+            } else {
+                fileTracker.addMerge((ParsedMergeCommit) pc);
+            }
 
             for(ParsedFileChange pFc : pc.changedFiles.fileChanges) {
                 String path = pFc.newPath;
@@ -51,17 +60,13 @@ public class LogParser {
                 int deletedLines = isMerge? 0:pFc.deletions;
                 FileChange currentFileChange = new FileChange(0, 0, path, addedLines, deletedLines);
 
-                File file = fileTracker.getFile(pc.hash, pFc.newPath);
+                File file = fileTracker.getFile(pc.hash, pFc.oldPath);
 
                 currentFileChange.setFile(file);
                 fileChanges.add(currentFileChange);
             }
 
-            if(!isMerge) {
-                fileTracker.addCommit(pc);
-            } else {
-                fileTracker.addMerge((ParsedMergeCommit) pc);
-            }
+            fileTracker.afterParsingTasks(pc);
 
             currentCommit.setFileChanges(fileChanges);
             commits.add(currentCommit);
@@ -118,6 +123,9 @@ public class LogParser {
 
     private static List<ParsedCommit> toParsedCommits(List<UnparsedCommit> unparsedCommits) throws ParseException {
         List<ParsedCommit> parsedCommits = new LinkedList<>();
+        List<ParsedMergeCommit> unsafeParentDiffMerges = new ArrayList<>();
+        //GitTreeBuilder gitTreeBuilder = null;
+
         ParsedCommit currentParsedCommit = null;
 
         for (UnparsedCommit uc : unparsedCommits) {
@@ -126,8 +134,31 @@ public class LogParser {
                     && (nextCommit instanceof ParsedMergeCommit)
                     && nextCommit.hash.equals(currentParsedCommit.hash);
             if(!appendCommit) {
+                /* If the next diff of a merge commit is not a commit we have to check if the parents
+                   have been ordered correctly, because we can't surely tell if the diff came from the
+                   source or the target parent */
+                if(currentParsedCommit instanceof ParsedMergeCommit) {
+                    ParsedMergeCommit mergeCommit = (ParsedMergeCommit) currentParsedCommit;
+                    if(mergeCommit.changedFilesFromLeftTreeSide == null) {
+                        boolean isUnsafe = false;
+                        mergeCommit.changedFilesFromLeftTreeSide = new FileModificationHolder();
+                        for(ParsedFileChange fileChange : mergeCommit.changedFiles.fileChanges) {
+                            //We only have to double check mergecommits, is any files have been renamed
+                            isUnsafe |= fileChange.isRename();
+                        }
+                        if(isUnsafe) {
+                            unsafeParentDiffMerges.add(mergeCommit);
+                        }
+                    }
+                }
                 currentParsedCommit = nextCommit;
                 parsedCommits.add(currentParsedCommit);
+
+                /*if(gitTreeBuilder == null) {
+                    gitTreeBuilder = new GitTreeBuilder(currentParsedCommit);
+                } else {
+                    gitTreeBuilder.append(currentParsedCommit);
+                }*/
             }
 
             FileModificationHolder fmh = new FileModificationHolder();
@@ -141,6 +172,48 @@ public class LogParser {
                 currentParsedCommit.changedFiles = fmh;
             }
         }
+        /*if(gitTreeBuilder == null) {
+            return parsedCommits;
+        }
+
+        GitTreeBuilder.GitTree gitTree = gitTreeBuilder.build();
+
+        for(int i = unsafeParentDiffMerges.size() - 1; i >= 0; i--) {
+            boolean isLeftSideDiff = false;
+            ParsedMergeCommit checkMerge = unsafeParentDiffMerges.get(i);
+            GitTreeBuilder.TreeNode currMergeNode = gitTree.getCommitNode(checkMerge.hash);
+            ParsedFileChange searchRename = null;
+            for(ParsedFileChange fc : checkMerge.changedFiles.fileChanges) {
+                if(fc.isRename()) {
+                    searchRename = fc;
+                    break;
+                }
+            }
+            if(searchRename == null) {
+                checkMerge.changedFilesFromLeftTreeSide = new FileModificationHolder();
+                continue;
+            }
+
+            GitTreeBuilder.TreeNode compareNode = currMergeNode;
+            nodeComparisons:
+            while (compareNode.getTargetParent() != null) {
+                compareNode = compareNode.getTargetParent();
+                for(ParsedFileChange fc : compareNode.getCommit().changedFiles.fileChanges) {
+                    if(!fc.isRename()) {
+                        continue;
+                    }
+                    if(fc.newPath.equals(searchRename.newPath)) {
+                        isLeftSideDiff = true;
+                        break nodeComparisons;
+                    }
+                }
+            }
+
+            if(isLeftSideDiff) {
+                checkMerge.changedFilesFromLeftTreeSide = checkMerge.changedFiles;
+                checkMerge.changedFiles = new FileModificationHolder();
+            }
+        }*/
 
         return parsedCommits;
     }

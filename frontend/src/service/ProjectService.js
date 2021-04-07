@@ -33,6 +33,11 @@ class ProjectService {
     return axios.delete(API_PATH + id);
   }
 
+  getProjectFileTree(projectId) {
+    return axios.get(API_PATH + projectId + "/structure")
+      .then(response => response.data);
+  }
+
   _parseProject(project) {
     project.lastUpdate = new Date(project.lastUpdate);
   }

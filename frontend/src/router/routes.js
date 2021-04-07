@@ -10,16 +10,26 @@ const routes = [
         redirect : {name: 'projects'},
       }, {
         name: 'projects',
-        path: '/project',
+        path: 'project',
         component: () => import('pages/Projects')
       }, {
-        name: 'editProject',
-        path: '/project/:id/edit',
+        name: 'addProject',
+        path: 'project/add',
         component: () => import('pages/EditProject')
       }, {
-        name: 'addProject',
-        path: '/project/add',
-        component: () => import('pages/EditProject')
+        name: 'project',
+        path: 'project/:id',
+        component: () => import('layouts/ProjectLayout'),
+        children: [
+          {
+            path: '',
+            redirect: {name: 'browseProject'}
+          }, {
+            name: 'browseProject',
+            path: 'browse',
+            component: () => import('pages/BrowseProject')
+          }
+        ]
       }
     ]
   },
