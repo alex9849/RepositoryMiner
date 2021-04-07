@@ -7,7 +7,9 @@
       :file-tree="browser.fileTree"
       :loading="browser.loading"
       @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
-    />
+    >
+      <chart/>
+    </file-browser>
   </q-page>
 </template>
 
@@ -15,10 +17,11 @@
 
 import FileBrowser from "components/FileBrowser";
 import ProjectService from "src/service/ProjectService";
+import Chart from "components/Chart";
 
 export default {
   name: "BrowseProject",
-  components: {FileBrowser},
+  components: {Chart, FileBrowser},
   data: () => {
     return {
       browser: {
