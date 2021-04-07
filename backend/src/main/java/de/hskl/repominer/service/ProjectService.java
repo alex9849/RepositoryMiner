@@ -89,6 +89,8 @@ public class ProjectService {
             if(ps != null ) {
                 projStructureList.add(ps);
             }
+
+            ProjectStructure.sortProjectStructureListAlphabeticalWithFolderPriority(projStructureList);
         }
         return projStructureList;
     }
