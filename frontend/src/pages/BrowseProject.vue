@@ -8,7 +8,13 @@
       :loading="browser.loading"
       @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
     >
-      <chart/>
+      <chart-dialog
+        v-model="chartDialog.show"
+        chart-name="Test"
+        description="Test"
+        :loading="chartDialog.loading"
+        :chart-options="chartDialog.chartOptions"
+      />
     </file-browser>
   </q-page>
 </template>
@@ -17,17 +23,26 @@
 
 import FileBrowser from "components/FileBrowser";
 import ProjectService from "src/service/ProjectService";
-import Chart from "components/Chart";
+import ChartDialog from "components/ChartDialog";
 
 export default {
   name: "BrowseProject",
-  components: {Chart, FileBrowser},
+  components: {ChartDialog, FileBrowser},
   data: () => {
     return {
       browser: {
         fileTree: [],
         currentPath: "",
         loading: true
+      },
+      chartDialog: {
+        show: true,
+        loading: false,
+        chartOptions: {
+          series: [{
+            data: [1, 2, 3]
+          }]
+        }
       }
     }
   },
