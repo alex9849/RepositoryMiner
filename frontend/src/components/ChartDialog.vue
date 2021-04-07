@@ -29,18 +29,23 @@
           </q-tooltip>
         </q-btn>
       </q-bar>
-      <q-card-section v-if="!!description">
+      <q-card-section v-if="!!description && !loading">
         <div class="text-h6">Description:</div>
         {{ description }}
       </q-card-section>
       <q-separator/>
-      <q-inner-loading
-        v-if="loading"
-      >
-        <q-spinner-pie size="lg"/>
-      </q-inner-loading>
       <q-card-section
-        v-else
+        v-if="loading"
+        style="height: 200px"
+      >
+        <q-inner-loading
+          showing
+        >
+          <q-spinner-pie size="50px"/>
+        </q-inner-loading>
+      </q-card-section>
+      <q-card-section
+        v-if="!loading"
         class="row justify-center items-center"
       >
         <highcharts :options="chartOptions" :highcharts="hcInstance" />
