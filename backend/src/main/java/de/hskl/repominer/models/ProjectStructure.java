@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ProjectStructure {
 
@@ -23,48 +24,94 @@ public class ProjectStructure {
         this.children = children;
     }
 
-    public static ProjectStructure pathToProjectStructure(String path) {
-
-        //path without folders
-        if (!path.contains("/")) {
-            return new ProjectStructure(
-                    path,
-                    false,
-                    new ArrayList<>()
-            );
-        }
-
+    /*  - transforms the given path in the scanner into a projectStructure an returns it.
+        - returns null and appends the projectstrucutre to the projectStructureList if a directory in the path already exists
+          in the projectStructureList
+     */
+    public static ProjectStructure pathToProjectStructure(Scanner scanner, List<ProjectStructure> projectStructureList, boolean duplicate) {
+        String dirName = null;
+        boolean isFile = false;
+        boolean loop = true;
+        boolean isDuplicate = false;
+        ProjectStructure resultProjectStructure = null;
         ProjectStructure currentProjectStructure = null;
         ProjectStructure lastProjectStructure = null;
-        boolean loop = true;
-        while (loop) {
-            currentProjectStructure = new ProjectStructure();
-            String name;
+        ProjectStructure file = null;
 
-            if (path.contains("/")) {
-                name = path.substring(path.lastIndexOf("/") + 1);
-                path = path.substring(0, path.lastIndexOf("/"));
+        scanner.useDelimiter("/");
+
+        //go through every path component
+        while (scanner.hasNext()) {
+            dirName = scanner.next();
+
+            //hasNext == false => is file
+            if (!scanner.hasNext()) {
+                file = new ProjectStructure(
+                        dirName,
+                        false,
+                        new ArrayList<>()
+                );
             } else {
-                name = path;
-                loop = false;
+                currentProjectStructure = new ProjectStructure(
+                        dirName,
+                        true,
+                        new ArrayList<>()
+                );
+            }//folder
+
+            if (loop) {
+                //check if folder already exists
+                for (ProjectStructure ps : projectStructureList) {
+                    String psName = ps.getName();
+
+                    //if folder exists
+                    if (psName.equals(dirName)) {
+                        isDuplicate = true;
+                        return pathToProjectStructure(scanner, ps.getChildren(), isDuplicate);
+                    }
+                }
+                //no folder with the same name exists -> no duplicates -> no more iterations
+                if (!isDuplicate) {
+                    loop = false;
+                }
             }
 
-            currentProjectStructure.setName(name);
+            //recursion (duplicate) and no duplicates found (!isDuplicate) => create folder strucutre or file and append to list
+            if (duplicate && !isDuplicate) {
+                //folder exists and contains file
+                if (resultProjectStructure != null && file != null) {
+                    lastProjectStructure.getChildren().add(file);
+                    projectStructureList.add(resultProjectStructure);
+                    return null;
+                }
+                //no folders only file
+                if (file != null) {
+                    projectStructureList.add(file);
+                    return null;
+                }
+            }
 
-            if (lastProjectStructure != null) {
-                currentProjectStructure.getChildren().add(lastProjectStructure);
-                currentProjectStructure.setFolder(true);
-            } else {
-                currentProjectStructure.setName(name);
-                currentProjectStructure.setFolder(false);
-                currentProjectStructure.setChildren(new ArrayList<>());
+            //init result projectStructure
+            if (resultProjectStructure == null)
+                resultProjectStructure = currentProjectStructure;
+
+            //"file.txt"
+            if (lastProjectStructure == null && file != null)
+                return file;
+            else {
+                if (file != null) {
+                    lastProjectStructure.getChildren().add(file);
+                    return resultProjectStructure;
+                }//end of path reached
+
+                if (lastProjectStructure != null) {
+                    lastProjectStructure.getChildren().add(currentProjectStructure);
+                }//insert folder into childrenList
             }
 
             lastProjectStructure = currentProjectStructure;
-
         }
-
-        return currentProjectStructure;
+        return resultProjectStructure;
     }
 
 
