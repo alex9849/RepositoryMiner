@@ -41,8 +41,8 @@ CREATE TABLE FileChange
 );
 
 CREATE VIEW CurrentPath AS
-SELECT fc.fileId, c.hash, fc.path
+SELECT c.projectId, fc.fileId, c.hash, fc.path
 from FileChange fc
          join "Commit" c on c.id = fc.commitId
 group by fc.fileId
-having c.timestamp = max(c.timestamp);
+having c.timestamp = max(c.timestamp)

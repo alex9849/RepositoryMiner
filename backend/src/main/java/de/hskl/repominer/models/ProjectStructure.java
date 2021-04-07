@@ -1,7 +1,5 @@
 package de.hskl.repominer.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,8 +13,6 @@ public class ProjectStructure {
     public ProjectStructure() {
         this.children = new ArrayList<>();
     }
-
-    ;
 
     public ProjectStructure(String name, boolean isFolder, List<ProjectStructure> children) {
         this.name = name;

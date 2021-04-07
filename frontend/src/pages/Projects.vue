@@ -75,6 +75,7 @@
                 icon="search"
                 color="positive"
                 label="Select"
+                @click="$router.push({name: 'browseProject', params: {id: project.id}})"
               />
               <q-btn
                 icon="delete"

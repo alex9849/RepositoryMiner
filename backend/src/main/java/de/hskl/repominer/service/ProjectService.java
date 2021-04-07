@@ -9,7 +9,9 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 @Service
 @Transactional
@@ -72,5 +74,23 @@ public class ProjectService {
         return projectRepo.deleteProject(projectId);
     }
 
-    public List<CurrentPath> getAllCurrentPaths() { return currPathRepo.getAllCurrentPaths();}
+    public List<CurrentPath> getAllCurrentPaths(int projectId) { return currPathRepo.getAllCurrentPaths(projectId);}
+
+    public List<ProjectStructure> generateFileTree(int projectId) {
+        List<CurrentPath> pathList = this.getAllCurrentPaths(projectId);
+        List<ProjectStructure> projStructureList = new ArrayList<>();
+
+        //parse paths to projectstructure
+        for(CurrentPath cp : pathList){
+            if(cp.getPath() == null) {
+                continue;
+            }
+            Scanner sc = new Scanner(cp.getPath());
+            ProjectStructure ps = ProjectStructure.pathToProjectStructure(sc, projStructureList,false);
+            if(ps != null ) {
+                projStructureList.add(ps);
+            }
+        }
+        return projStructureList;
+    }
 }
