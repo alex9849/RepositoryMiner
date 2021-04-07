@@ -1,10 +1,15 @@
 package de.hskl.repominer.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ProjectStructure {
+
+    private static class SortByName implements Comparator<ProjectStructure> {
+
+        public int compare(ProjectStructure ps1, ProjectStructure ps2){
+            return ps1.getName().toLowerCase().compareTo(ps2.getName().toLowerCase(Locale.ROOT));
+        }
+    }
 
     private String name;
     private boolean isFolder;
@@ -76,13 +81,16 @@ public class ProjectStructure {
             if (duplicate && !isDuplicate) {
                 //folder exists and contains file
                 if (resultProjectStructure != null && file != null) {
-                    lastProjectStructure.getChildren().add(file);
-                    projectStructureList.add(resultProjectStructure);
+                    //lastProjectStructure.getChildren().add(file);
+                    addToProjectStructureListAndSort(file, lastProjectStructure.getChildren() );
+                   //projectStructureList.add(resultProjectStructure);
+                    addToProjectStructureListAndSort(resultProjectStructure, projectStructureList);
                     return null;
                 }
                 //no folders only file
                 if (file != null) {
-                    projectStructureList.add(file);
+                    //projectStructureList.add(file);
+                    addToProjectStructureListAndSort(file, projectStructureList);
                     return null;
                 }
             }
@@ -93,21 +101,29 @@ public class ProjectStructure {
 
             //"file.txt"
             if (lastProjectStructure == null && file != null)
-                return file;
+                //return file;
+                addToProjectStructureListAndSort( file, projectStructureList);
             else {
                 if (file != null) {
-                    lastProjectStructure.getChildren().add(file);
+                    //lastProjectStructure.getChildren().add(file);
+                    addToProjectStructureListAndSort(file, lastProjectStructure.getChildren());
                     return resultProjectStructure;
                 }//end of path reached
 
                 if (lastProjectStructure != null) {
-                    lastProjectStructure.getChildren().add(currentProjectStructure);
+                    //lastProjectStructure.getChildren().add(currentProjectStructure);
+                    addToProjectStructureListAndSort(currentProjectStructure, lastProjectStructure.getChildren());
                 }//insert folder into childrenList
             }
 
             lastProjectStructure = currentProjectStructure;
         }
         return resultProjectStructure;
+    }
+
+    private static void addToProjectStructureListAndSort(ProjectStructure ps, List<ProjectStructure> psList){
+        psList.add(ps);
+        Collections.sort(psList, new SortByName());
     }
 
 

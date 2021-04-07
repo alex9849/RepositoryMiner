@@ -16,7 +16,6 @@ import java.util.Scanner;
 @Service
 @Transactional
 public class ProjectService {
-
     private final ProjectRepository projectRepo;
     private final CommitRepository commitRepo;
     private final FileChangeRepository fileChangeRepo;
