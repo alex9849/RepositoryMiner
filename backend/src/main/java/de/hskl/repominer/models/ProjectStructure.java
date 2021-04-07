@@ -7,7 +7,7 @@ public class ProjectStructure {
     private static class SortByName implements Comparator<ProjectStructure> {
 
         public int compare(ProjectStructure ps1, ProjectStructure ps2){
-            return ps1.getName().compareTo(ps2.getName());
+            return ps1.getName().toLowerCase().compareTo(ps2.getName().toLowerCase(Locale.ROOT));
         }
     }
 
