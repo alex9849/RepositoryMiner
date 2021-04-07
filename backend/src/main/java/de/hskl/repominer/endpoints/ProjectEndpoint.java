@@ -1,8 +1,6 @@
 package de.hskl.repominer.endpoints;
 
-import de.hskl.repominer.models.CurrentPath;
 import de.hskl.repominer.models.Project;
-import de.hskl.repominer.models.ProjectStructure;
 import de.hskl.repominer.service.ProjectService;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +10,10 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 @RestController()
 @RequestMapping( "/api/project")
@@ -57,19 +51,7 @@ public class ProjectEndpoint {
 
     @RequestMapping(value = "{id}/structure", method = RequestMethod.GET)
     public ResponseEntity<?> getProjectStructure(@PathVariable(value = "id") int projectId) {
-        List<CurrentPath> pathList = projectService.getAllCurrentPaths();
-        List<ProjectStructure> projStructureList = new ArrayList<>();
-        ;
-
-        //parse paths to projectstructure
-        for(CurrentPath cp : pathList){
-            Scanner sc = new Scanner(cp.getPath());
-            ProjectStructure ps = ProjectStructure.pathToProjectStructure(sc, projStructureList,false);
-            if(ps != null ) projStructureList.add(ps);
-        }
-
-
-        return ResponseEntity.ok(projStructureList);
+        return ResponseEntity.ok(projectService.generateFileTree(projectId));
     }
 
 }
