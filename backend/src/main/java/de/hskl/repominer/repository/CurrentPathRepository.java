@@ -22,16 +22,14 @@ public class CurrentPathRepository {
         this.ds = ds;
     }
 
-    public List<CurrentPath> getAllCurrentPaths() {
+    public List<CurrentPath> getAllCurrentPaths(int projectId) {
         List<CurrentPath> pathList = new ArrayList<>();
 
         try {
             Connection con = DataSourceUtils.getConnection(ds);
-            PreparedStatement pstmt = con.prepareStatement("SELECT fc.fileId, c.hash, fc.path\n" +
-                    "from FileChange fc\n" +
-                    "         join \"Commit\" c on c.id = fc.commitId\n" +
-                    "group by fc.fileId\n" +
-                    "having c.timestamp = max(c.timestamp);");  //aka SELECT * FROM CurrentPath (VIEW)
+            PreparedStatement pstmt = con.prepareStatement("SELECT projectId, fileId, hash, path " +
+                    "From CurrentPath WHERE projectId = ?");
+            pstmt.setInt(1, projectId);
             ResultSet rs = pstmt.executeQuery();
 
 

@@ -78,7 +78,7 @@
               flat
               dense
               no-caps
-              style="max-width: min-content"
+              style="max-width: max-content"
               @click="$emit('input', appendCurrentPath(item.name))"
             >
               {{ item.name }}
