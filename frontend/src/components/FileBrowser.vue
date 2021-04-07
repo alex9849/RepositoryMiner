@@ -34,6 +34,7 @@
         </q-breadcrumbs>
       </q-toolbar>
     </q-card>
+    <slot/>
     <q-card
       class="bg-grey-3"
     >
