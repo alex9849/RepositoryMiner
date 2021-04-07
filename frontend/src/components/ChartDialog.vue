@@ -34,14 +34,17 @@
         {{ description }}
       </q-card-section>
       <q-separator/>
+      <q-inner-loading
+        v-if="loading"
+      >
+        <q-spinner-pie size="lg"/>
+      </q-inner-loading>
       <q-card-section
+        v-else
         class="row justify-center items-center"
       >
         <highcharts :options="chartOptions" :highcharts="hcInstance" />
       </q-card-section>
-      <q-inner-loading :showing="loading">
-        <q-spinner-pie size="lg"/>
-      </q-inner-loading>
     </q-card>
   </q-dialog>
 </template>
@@ -69,7 +72,11 @@ export default {
       type: Boolean,
       default: false
     },
-    chartOptions: {
+    chartType: {
+      type: String,
+      required: true
+    },
+    chartSeries: {
       type: Object,
       required: true
     }
@@ -77,6 +84,29 @@ export default {
   data() {
     return {
       hcInstance: Highcharts
+    }
+  },
+  computed: {
+    chartOptions() {
+      return {
+        yAxis: {
+          title: {
+            text: 'Number of Employees'
+          }
+        },
+        xAxis: {
+          title: {
+            text: 'X-Achse'
+          },
+          accessibility: {
+            rangeDescription: 'Range: 2010 to 2017'
+          }
+        },
+        chart: {
+          type: this.chartType
+        },
+        series: this.chartSeries
+      }
     }
   }
 }
