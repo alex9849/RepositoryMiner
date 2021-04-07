@@ -6,7 +6,14 @@ public class ProjectStructure {
 
     private static class SortByName implements Comparator<ProjectStructure> {
 
+
         public int compare(ProjectStructure ps1, ProjectStructure ps2){
+            if(ps1.isFolder() && !ps2.isFolder())
+                return -1;
+
+            if(!ps1.isFolder() && ps2.isFolder())
+                return 1;
+
             return ps1.getName().toLowerCase().compareTo(ps2.getName().toLowerCase(Locale.ROOT));
         }
     }
