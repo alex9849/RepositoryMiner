@@ -20,15 +20,18 @@ public class ProjectService {
     private final FileChangeRepository fileChangeRepo;
     private final FileRepository fileRepo;
     private final AuthorRepository authorRepo;
+    private final CurrentPathRepository currPathRepo;
+
 
     public ProjectService(ProjectRepository projectRepo, CommitRepository commitRepo,
                           FileChangeRepository fileChangeRepo, FileRepository fileRepo,
-                          AuthorRepository authorRepo) {
+                          AuthorRepository authorRepo, CurrentPathRepository currPathRepo) {
         this.projectRepo = projectRepo;
         this.commitRepo = commitRepo;
         this.fileChangeRepo = fileChangeRepo;
         this.fileRepo = fileRepo;
         this.authorRepo = authorRepo;
+        this.currPathRepo = currPathRepo;
     }
 
     public Project addProject(String projectName, BufferedReader logInputStream) throws IOException, ParseException {
@@ -68,4 +71,6 @@ public class ProjectService {
     public boolean deleteProject(int projectId) {
         return projectRepo.deleteProject(projectId);
     }
+
+    public List<CurrentPath> getAllCurrentPaths() { return currPathRepo.getAllCurrentPaths();}
 }
