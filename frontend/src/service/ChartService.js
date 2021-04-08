@@ -5,6 +5,7 @@ class ChartService {
     if(backendData.type === 'packedbubble') {
       return PackedBubbleService.parseBackendToOptions(backendData);
     }
+    return null;
   }
 }
 

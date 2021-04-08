@@ -13,7 +13,7 @@
         <div
           class="col text-center text-weight-bold"
         >
-          {{ othertestOptions.name }}
+          {{ parsedChartOptions.name }}
         </div>
         <q-btn
           dense
@@ -29,9 +29,9 @@
           </q-tooltip>
         </q-btn>
       </q-bar>
-      <q-card-section v-if="!!description && !loading">
+      <q-card-section v-if="!!parsedChartOptions.description && !loading">
         <div class="text-h6">Description:</div>
-        {{ othertestOptions.description }}
+        {{ parsedChartOptions.description }}
       </q-card-section>
       <q-separator/>
       <q-card-section
@@ -48,7 +48,7 @@
         v-if="!loading"
         class="row justify-center items-center"
       >
-        <highcharts :options="othertestOptions.graphConfig" :highcharts="hcInstance" />
+        <highcharts :options="parsedChartOptions.graphConfig" :highcharts="hcInstance" />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -56,7 +56,7 @@
 
 <script>
 import Highcharts from 'highcharts'
-import PackedBubbleService from "src/service/chartServices/PackedBubbleService";
+import ChartService from "src/service/ChartService";
 
 require('highcharts/highcharts-more.js')(Highcharts);
 require('highcharts/modules/drilldown.js')(Highcharts);
@@ -69,23 +69,11 @@ export default {
       type: Boolean,
       required: true
     },
-    chartName: {
-      type: String,
-      required: true
-    },
-    description: {
-      type: String,
-      required: false
-    },
     loading: {
       type: Boolean,
       default: false
     },
-    chartType: {
-      type: String,
-      required: true
-    },
-    chartSeries: {
+    chartOptions: {
       type: Object,
       required: true
     }
@@ -96,117 +84,14 @@ export default {
     }
   },
   computed: {
-    othertestOptions() {
-      let recieveData = {
-        name: 'TestGraph',
-        description: 'Test description',
-        series: [{
-          name: 'Europa',
-          data: [{
-            name: 'DE',
-            value: 20,
-            drilldown: {
-              name: 'DE',
-              data: [{
-                name: 'RLP',
-                value: 5
-              }, {
-                name: 'BW',
-                value: 10
-              }]
-            }
-          }, {
-            name: 'FR',
-            value: 25
-          }, {
-            name: 'ES',
-            value: 15
-          }]
-        }, {
-          name: 'Europa2',
-          data: [{
-            name: 'DE',
-            value: 20,
-            drilldown: {
-              name: 'DEee',
-              data: [{
-                name: 'RLP',
-                value: 5
-              }, {
-                name: 'BW',
-                value: 10
-              }]
-            }
-          }, {
-            name: 'FR',
-            value: 25
-          }, {
-            name: 'ES',
-            value: 15
-          }]
-        }]
+    parsedChartOptions() {
+      let options = ChartService.parseBackendToOptions(this.chartOptions);
+      if(!options) {
+        return {
+          name: 'Loading...'
+        }
       }
-      return PackedBubbleService.parseBackendToOptions(recieveData);
-    },
-    testOptions() {
-      return {
-        chart: {
-          type: 'packedbubble'
-        },
-        tooltip: {
-          useHTML: true,
-          pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
-        },
-        series: [{
-          name: 'Europe',
-          data: [{
-            drilldown: 'testdrill',
-            name: 'Germany',
-            value: 767.1
-          }, {
-            name: 'Croatia',
-            value: 20.7
-          },
-            {
-              name: "Belgium",
-              value: 97.2
-            }]
-        }],
-        drilldown: {
-          series: [{
-            id: 'testdrill',
-            type: 'packedbubble',
-            name: 'EU2',
-            data: [{
-              name: 'Germany',
-              value: 767.1,
-            }, {
-              name: 'Croatia',
-              value: 20.7
-            }]
-          }]}
-      }
-    },
-    chartOptions() {
-      return {
-        yAxis: {
-          title: {
-            text: 'Number of Employees'
-          }
-        },
-        xAxis: {
-          title: {
-            text: 'X-Achse'
-          },
-          accessibility: {
-            rangeDescription: 'Range: 2010 to 2017'
-          }
-        },
-        chart: {
-          type: this.chartType
-        },
-        series: this.chartSeries
-      }
+      return options;
     }
   }
 }
