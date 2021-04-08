@@ -10,21 +10,6 @@ const defaultOptions = {
   },
   title: {
     text: null
-  },
-  plotOptions: {
-    pie: {
-      allowPointSelect: true,
-      cursor: 'pointer',
-      dataLabels: {
-        enabled: true,
-        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-      }
-    },
-    packedBubble: {
-      layoutAlgorithm: {
-        enableSimulation: false
-      }
-    }
   }
 };
 

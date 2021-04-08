@@ -1,21 +1,27 @@
 package de.hskl.repominer.models.chart.line;
 
 import de.hskl.repominer.models.chart.IChart;
-import de.hskl.repominer.models.chart.ISeries;
+import de.hskl.repominer.models.chart.INamedAxisChart;
 
-public class LineChart implements IChart {
+import java.util.List;
+
+public class LineChart implements IChart, INamedAxisChart {
     private String xAxisTitle;
     private String yAxisTitle;
+    private List<LineChartSeriesEntry> series;
 
     @Override
     public String getType() {
         return "line";
     }
 
+    public void setSeries(List<LineChartSeriesEntry> series) {
+        this.series = series;
+    }
+
     @Override
-    public ISeries getSeries() {
-        //Todo Implement
-        return null;
+    public List<LineChartSeriesEntry> getSeries() {
+        return series;
     }
 
     public String getxAxisTitle() {

@@ -1,10 +1,10 @@
 package de.hskl.repominer.models.chart.pie;
 
-import de.hskl.repominer.models.chart.ISeries;
+import de.hskl.repominer.models.chart.ISeriesEntry;
 
 import java.util.List;
 
-public class PieChartSeries implements ISeries {
+public class PieChartSeriesEntry implements ISeriesEntry {
     private String name;
     private List<PieChartDatum> data;
 

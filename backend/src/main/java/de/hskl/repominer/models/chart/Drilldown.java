@@ -1,4 +1,4 @@
 package de.hskl.repominer.models.chart;
 
-public interface ISeries {
+public class Drilldown {
 }

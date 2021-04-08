@@ -2,8 +2,11 @@ package de.hskl.repominer.models.chart.pie;
 
 import de.hskl.repominer.models.chart.IChart;
 
+import java.util.Collections;
+import java.util.List;
+
 public class PieChart implements IChart {
-    private PieChartSeries series;
+    private PieChartSeriesEntry series;
     private String unit;
 
     @Override
@@ -19,12 +22,12 @@ public class PieChart implements IChart {
         this.unit = unit;
     }
 
-    public void setSeries(PieChartSeries series) {
+    public void setSeries(PieChartSeriesEntry series) {
         this.series = series;
     }
 
     @Override
-    public PieChartSeries getSeries() {
-        return series;
+    public List<PieChartSeriesEntry> getSeries() {
+        return Collections.singletonList(series);
     }
 }
