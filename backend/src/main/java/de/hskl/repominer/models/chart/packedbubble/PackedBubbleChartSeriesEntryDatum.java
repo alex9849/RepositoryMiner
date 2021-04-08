@@ -1,31 +1,16 @@
 package de.hskl.repominer.models.chart.packedbubble;
 
-public class PackedBubbleChartSeriesEntryDatum {
-    private String name;
-    private int value;
-    private PackedBubbleChartSeriesEntry drilldown;
+import de.hskl.repominer.models.chart.NameValueSeriesEntry;
+import de.hskl.repominer.models.chart.SeriesEntry;
 
-    public String getName() {
-        return name;
-    }
+public class PackedBubbleChartSeriesEntryDatum extends NameValueSeriesEntry {
+    private SeriesEntry<PackedBubbleChartSeriesEntryDatum> drilldown;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public PackedBubbleChartSeriesEntry getDrilldown() {
+    public SeriesEntry<PackedBubbleChartSeriesEntryDatum> getDrilldown() {
         return drilldown;
     }
 
-    public void setDrilldown(PackedBubbleChartSeriesEntry drilldown) {
+    public void setDrilldown(SeriesEntry<PackedBubbleChartSeriesEntryDatum> drilldown) {
         this.drilldown = drilldown;
     }
 }
