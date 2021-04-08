@@ -4,7 +4,7 @@ import java.util.*;
 
 public class ProjectStructure {
 
-    private static class SortByName implements Comparator<ProjectStructure> {
+    private static class SortByNameAndFolder implements Comparator<ProjectStructure> {
 
 
         public int compare(ProjectStructure ps1, ProjectStructure ps2){
@@ -88,16 +88,20 @@ public class ProjectStructure {
             if (duplicate && !isDuplicate) {
                 //folder exists and contains file
                 if (resultProjectStructure != null && file != null) {
-                    //lastProjectStructure.getChildren().add(file);
-                    addToProjectStructureListAndSort(file, lastProjectStructure.getChildren() );
-                   //projectStructureList.add(resultProjectStructure);
-                    addToProjectStructureListAndSort(resultProjectStructure, projectStructureList);
+                    //add file to folder structure
+                    addToProjectStructureList(file, lastProjectStructure.getChildren() );
+                    Collections.sort(lastProjectStructure.getChildren(), new SortByNameAndFolder());
+
+                    //add folder structure to projectStrucutreList
+                    addToProjectStructureList(resultProjectStructure, projectStructureList);
+                    Collections.sort(projectStructureList, new SortByNameAndFolder());
                     return null;
                 }
                 //no folders only file
                 if (file != null) {
                     //projectStructureList.add(file);
-                    addToProjectStructureListAndSort(file, projectStructureList);
+                    addToProjectStructureList(file, projectStructureList);
+                    Collections.sort(projectStructureList, new SortByNameAndFolder());
                     return null;
                 }
             }
@@ -109,17 +113,17 @@ public class ProjectStructure {
             //"file.txt"
             if (lastProjectStructure == null && file != null)
                 //return file;
-                addToProjectStructureListAndSort( file, projectStructureList);
+                addToProjectStructureList( file, projectStructureList);
             else {
                 if (file != null) {
                     //lastProjectStructure.getChildren().add(file);
-                    addToProjectStructureListAndSort(file, lastProjectStructure.getChildren());
+                    addToProjectStructureList(file, lastProjectStructure.getChildren());
                     return resultProjectStructure;
                 }//end of path reached
 
                 if (lastProjectStructure != null) {
                     //lastProjectStructure.getChildren().add(currentProjectStructure);
-                    addToProjectStructureListAndSort(currentProjectStructure, lastProjectStructure.getChildren());
+                    addToProjectStructureList(currentProjectStructure, lastProjectStructure.getChildren());
                 }//insert folder into childrenList
             }
 
@@ -128,9 +132,12 @@ public class ProjectStructure {
         return resultProjectStructure;
     }
 
-    private static void addToProjectStructureListAndSort(ProjectStructure ps, List<ProjectStructure> psList){
+    private static void addToProjectStructureList(ProjectStructure ps, List<ProjectStructure> psList){
         psList.add(ps);
-        Collections.sort(psList, new SortByName());
+    }
+
+    public static void sortProjectStructureListAlphabeticalWithFolderPriority(List<ProjectStructure> psList){
+        Collections.sort(psList, new SortByNameAndFolder());
     }
 
 
