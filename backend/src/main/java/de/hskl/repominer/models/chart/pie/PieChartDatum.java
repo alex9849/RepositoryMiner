@@ -1,6 +1,6 @@
-package de.hskl.repominer.models.chart;
+package de.hskl.repominer.models.chart.pie;
 
-public class NameValueSeriesEntry {
+public class PieChartDatum {
     private String name;
     private double value;
 
