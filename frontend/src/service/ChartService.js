@@ -1,5 +1,6 @@
 import PackedBubbleService from "src/service/chartServices/PackedBubbleService";
 import PieChartService from "src/service/chartServices/PieChartService";
+import LineChartService from "src/service/chartServices/LineChartService";
 
 class ChartService {
   parseBackendToOptions(backendData) {
@@ -8,6 +9,9 @@ class ChartService {
     }
     if(backendData.type === 'pie') {
       return PieChartService.parseBackendToOptions(backendData);
+    }
+    if(backendData.type === 'line') {
+      return LineChartService.parseBackendToOptions(backendData);
     }
     return null;
   }
