@@ -63,7 +63,6 @@ require('highcharts/modules/drilldown.js')(Highcharts);
 
 export default {
   name: "ChartDialog",
-  components: [Highcharts],
   props: {
     value: {
       type: Boolean,
