@@ -7,7 +7,13 @@
       :file-tree="browser.fileTree"
       :loading="browser.loading"
       @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
-    />
+    >
+      <chart-dialog
+        v-model="chartDialog.show"
+        :loading="chartDialog.loading"
+        :chart-options="chartDialog.chartOptions"
+      />
+    </file-browser>
   </q-page>
 </template>
 
@@ -15,16 +21,23 @@
 
 import FileBrowser from "components/FileBrowser";
 import ProjectService from "src/service/ProjectService";
+import ChartDialog from "components/ChartDialog";
+import PackedBubbleService from "src/service/chartServices/PackedBubbleService";
 
 export default {
   name: "BrowseProject",
-  components: {FileBrowser},
+  components: {ChartDialog, FileBrowser},
   data: () => {
     return {
       browser: {
         fileTree: [],
         currentPath: "",
         loading: true
+      },
+      chartDialog: {
+        show: true,
+        loading: false,
+        chartOptions: {}
       }
     }
   },
@@ -34,6 +47,7 @@ export default {
     } else {
       this.browser.currentPath = "";
     }
+    this.chartDialog.chartOptions = PackedBubbleService.exampleBackendData;
     ProjectService.getProjectFileTree(this.projectId)
       .then(fileTree => this.browser.fileTree = fileTree)
       .finally(() => this.browser.loading = false);
