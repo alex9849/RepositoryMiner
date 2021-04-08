@@ -8,7 +8,27 @@ import java.util.List;
 public class BarChart implements IChart, INamedAxisChart {
     private String xAxisTitle;
     private String yAxisTitle;
+    private String name;
+    private String description;
     private List<BarChartSeriesEntry> series;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public String getType() {
