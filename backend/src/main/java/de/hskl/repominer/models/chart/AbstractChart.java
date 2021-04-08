@@ -2,7 +2,7 @@ package de.hskl.repominer.models.chart;
 
 import java.util.List;
 
-public abstract class Chart<SeriesDataType> {
+public abstract class AbstractChart<SeriesDataType> {
     private String name;
     private String description;
     private List<SeriesEntry<SeriesDataType>> series;
