@@ -13,7 +13,17 @@ class PackedBubbleService {
           name: 'DE',
           data: [{
             name: 'RLP',
-            value: 5
+            value: 5,
+            drilldown: {
+              name: 'RLP',
+              data: [{
+                name: 'KL',
+                value: 2
+              }, {
+                name: 'Mainz',
+                value: 3
+              }]
+            }
           }, {
             name: 'BW',
             value: 10
@@ -30,17 +40,7 @@ class PackedBubbleService {
       name: 'Europa2',
       data: [{
         name: 'DE',
-        value: 20,
-        drilldown: {
-          name: 'DEee',
-          data: [{
-            name: 'RLP',
-            value: 5
-          }, {
-            name: 'BW',
-            value: 10
-          }]
-        }
+        value: 20
       }, {
         name: 'FR',
         value: 25
@@ -60,9 +60,6 @@ class PackedBubbleService {
       chart: {
         type: 'packedbubble'
       },
-      tooltip: {
-        useHTML: true
-      },
       plotOptions: {
         series: {
           draggable: false,
@@ -70,6 +67,10 @@ class PackedBubbleService {
             gravitationalConstant: 0.05,
             enableSimulation: false,
             splitSeries: true,
+          },
+          tooltip: {
+            useHTML: true,
+            pointFormat: '<b>{point.name}:</b> {point.value}'
           },
           dataLabels: {
             enabled: true,
@@ -113,7 +114,7 @@ class PackedBubbleService {
     graphConfig.drilldown = drilldown;
     options.graphConfig = graphConfig;
     return options;
-  }
+  };
 
   recProcessDrillDown(target, pushData, drilldown) {
     let data = [];
@@ -132,12 +133,12 @@ class PackedBubbleService {
       }
 
       if(!!dataEntry.drilldown && dataEntry.drilldown.length !== 0) {
-        this.recProcessDrilldown(target, ddPushData, dataEntry.drilldown)
+        this.recProcessDrillDown(target, ddPushData, dataEntry.drilldown)
       }
 
       data.push(ddPushData)
     }
-  }
+  };
 
 }
 
