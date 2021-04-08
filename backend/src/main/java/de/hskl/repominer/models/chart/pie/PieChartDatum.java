@@ -2,7 +2,7 @@ package de.hskl.repominer.models.chart.pie;
 
 public class PieChartDatum {
     private String name;
-    private double y;
+    private double value;
 
     public String getName() {
         return name;
@@ -12,11 +12,11 @@ public class PieChartDatum {
         this.name = name;
     }
 
-    public double getY() {
-        return y;
+    public double getValue() {
+        return value;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void setValue(double value) {
+        this.value = value;
     }
 }

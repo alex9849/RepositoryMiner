@@ -7,7 +7,6 @@ import java.util.List;
 
 public class PieChart implements IChart {
     private PieChartSeriesEntry series;
-    private String unit;
     private String name;
     private String description;
 
@@ -32,14 +31,6 @@ public class PieChart implements IChart {
     @Override
     public String getType() {
         return "pie";
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
     }
 
     public void setSeries(PieChartSeriesEntry series) {

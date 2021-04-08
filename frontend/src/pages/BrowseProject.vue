@@ -22,6 +22,7 @@
 import FileBrowser from "components/FileBrowser";
 import ProjectService from "src/service/ProjectService";
 import ChartDialog from "components/ChartDialog";
+import PieChartService from "src/service/chartServices/PieChartService";
 
 export default {
   name: "BrowseProject",
@@ -35,7 +36,7 @@ export default {
       },
       chartDialog: {
         show: true,
-        loading: true,
+        loading: false,
         chartOptions: {}
       }
     }
@@ -46,6 +47,7 @@ export default {
     } else {
       this.browser.currentPath = "";
     }
+    this.chartDialog.chartOptions = PieChartService.exampleBackendData;
     ProjectService.getProjectFileTree(this.projectId)
       .then(fileTree => this.browser.fileTree = fileTree)
       .finally(() => this.browser.loading = false);
