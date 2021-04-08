@@ -1,5 +1,56 @@
 class PackedBubbleService {
 
+  exampleBackendData = {
+    name: 'TestGraph',
+    description: 'Test description',
+    type: 'packedbubble',
+    series: [{
+      name: 'Europa',
+      data: [{
+        name: 'DE',
+        value: 20,
+        drilldown: {
+          name: 'DE',
+          data: [{
+            name: 'RLP',
+            value: 5
+          }, {
+            name: 'BW',
+            value: 10
+          }]
+        }
+      }, {
+        name: 'FR',
+        value: 25
+      }, {
+        name: 'ES',
+        value: 15
+      }]
+    }, {
+      name: 'Europa2',
+      data: [{
+        name: 'DE',
+        value: 20,
+        drilldown: {
+          name: 'DEee',
+          data: [{
+            name: 'RLP',
+            value: 5
+          }, {
+            name: 'BW',
+            value: 10
+          }]
+        }
+      }, {
+        name: 'FR',
+        value: 25
+      }, {
+        name: 'ES',
+        value: 15
+      }]
+    }]
+  };
+
   parseBackendToOptions(backendData) {
     let options = {
       name: backendData.name,
