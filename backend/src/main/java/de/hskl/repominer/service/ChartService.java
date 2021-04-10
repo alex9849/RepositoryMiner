@@ -32,7 +32,13 @@ public class ChartService {
 
 
     public AbstractChart<?> getChart(int projectId, String chartName, ChartRequestMeta crm) {
-        return requestableCharts.get(chartName).getData(projectId, crm, projectService);
+        RequestableChart rc = requestableCharts.get(chartName);
+        if(rc == null) {
+            //Exception
+            return null;
+        }
+
+        return rc.getData(projectId, crm, projectService);
     }
 
 

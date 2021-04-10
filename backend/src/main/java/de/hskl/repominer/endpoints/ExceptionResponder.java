@@ -1,5 +1,6 @@
 package de.hskl.repominer.endpoints;
 
+import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,18 +15,27 @@ public class ExceptionResponder extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<?> handleBadRequest(RuntimeException ex, WebRequest request) {
-        ex.printStackTrace();
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
-                request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return handleDefault(ex, request, HttpStatus.BAD_REQUEST, true);
+    }
+
+    @ExceptionHandler(value = {NotFoundException.class})
+    public ResponseEntity<?> handleNotFound(RuntimeException ex, WebRequest request) {
+        return handleDefault(ex, request, HttpStatus.NOT_FOUND, false);
     }
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<ErrorDetails> handleException(RuntimeException ex, WebRequest request) {
-        ex.printStackTrace();
+        return handleDefault(ex, request, HttpStatus.INTERNAL_SERVER_ERROR, true);
+    }
+
+    private ResponseEntity<ErrorDetails> handleDefault(Exception ex, WebRequest request, HttpStatus status,
+                                                       boolean printStackTrace) {
+        if(printStackTrace) {
+            ex.printStackTrace();
+        }
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
                 request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorDetails, status);
     }
 
     public static class ErrorDetails {

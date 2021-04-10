@@ -3,6 +3,7 @@ package de.hskl.repominer.endpoints;
 import de.hskl.repominer.models.Project;
 import de.hskl.repominer.models.chart.ChartContext;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
+import de.hskl.repominer.models.chart.data.AbstractChart;
 import de.hskl.repominer.service.ChartService;
 import de.hskl.repominer.service.ProjectService;
 import javassist.NotFoundException;
@@ -66,12 +67,16 @@ public class ProjectEndpoint {
     }
 
     @RequestMapping(value = "{id}/chart/{name}", method = RequestMethod.GET)
-    public ResponseEntity<?> getCharts(@PathVariable("id") int projectId,
+    public ResponseEntity<?> getChart(@PathVariable("id") int projectId,
                                        @PathVariable("name") String chartName,
-                                       @RequestParam(value = "path", required = false) String path) {
+                                       @RequestParam(value = "path", required = false) String path) throws NotFoundException {
         ChartRequestMeta crm = new ChartRequestMeta();
         crm.path = path;
-        return ResponseEntity.ok(chartService.getChart(projectId, chartName, crm));
+        AbstractChart<?> chartData = chartService.getChart(projectId, chartName, crm);
+        if(chartData == null) {
+            throw new NotFoundException("Chart couldn't be found!");
+        }
+        return ResponseEntity.ok(chartData);
     }
 
 }
