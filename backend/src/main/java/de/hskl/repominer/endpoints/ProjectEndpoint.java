@@ -66,13 +66,13 @@ public class ProjectEndpoint {
         return ResponseEntity.ok(chartService.getByContext(vContext));
     }
 
-    @RequestMapping(value = "{id}/chart/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}/chart/{identifier}", method = RequestMethod.GET)
     public ResponseEntity<?> getChart(@PathVariable("id") int projectId,
-                                       @PathVariable("name") String chartName,
+                                       @PathVariable("identifier") String chartIdentifier,
                                        @RequestParam(value = "path", required = false) String path) throws NotFoundException {
         ChartRequestMeta crm = new ChartRequestMeta();
         crm.path = path;
-        AbstractChart<?> chartData = chartService.getChart(projectId, chartName, crm);
+        AbstractChart<?> chartData = chartService.getChart(projectId, chartIdentifier, crm);
         if(chartData == null) {
             throw new NotFoundException("Chart couldn't be found!");
         }

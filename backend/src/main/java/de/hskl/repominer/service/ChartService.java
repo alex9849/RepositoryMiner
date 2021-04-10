@@ -7,6 +7,7 @@ import de.hskl.repominer.models.chart.data.AbstractChart;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +23,9 @@ public class ChartService {
     }
 
     public Set<RequestableChart> getByContext(ChartContext.ViewContext viewContext) {
+        if(viewContext == null) {
+            return new HashSet<>(this.requestableCharts.values());
+        }
         return this.requestableCharts.values()
                 .stream()
                 .filter(x -> x.getAvailableContext()
@@ -31,8 +35,8 @@ public class ChartService {
     }
 
 
-    public AbstractChart<?> getChart(int projectId, String chartName, ChartRequestMeta crm) {
-        RequestableChart rc = requestableCharts.get(chartName);
+    public AbstractChart<?> getChart(int projectId, String chartIdentifier, ChartRequestMeta crm) {
+        RequestableChart rc = requestableCharts.get(chartIdentifier);
         if(rc == null) {
             //Exception
             return null;
