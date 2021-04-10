@@ -1,4 +1,4 @@
-package de.hskl.repominer.models.chart.pie;
+package de.hskl.repominer.models.chart.data.pie;
 
 public class PieChartDatum {
     private String name;

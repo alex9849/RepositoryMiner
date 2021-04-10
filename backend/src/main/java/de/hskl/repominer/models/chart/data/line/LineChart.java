@@ -1,6 +1,6 @@
-package de.hskl.repominer.models.chart.line;
+package de.hskl.repominer.models.chart.data.line;
 
-import de.hskl.repominer.models.chart.AbstractChart;
+import de.hskl.repominer.models.chart.data.AbstractChart;
 
 public class LineChart extends AbstractChart<Integer> {
     private String xAxisTitle;

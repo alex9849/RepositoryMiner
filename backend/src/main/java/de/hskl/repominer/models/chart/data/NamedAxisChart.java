@@ -1,4 +1,4 @@
-package de.hskl.repominer.models.chart;
+package de.hskl.repominer.models.chart.data;
 
 public abstract class NamedAxisChart<SeriesDataType> extends AbstractChart<SeriesDataType> {
     private String xAxisTitle;

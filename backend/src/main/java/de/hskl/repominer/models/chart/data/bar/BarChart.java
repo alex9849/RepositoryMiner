@@ -1,6 +1,6 @@
-package de.hskl.repominer.models.chart.bar;
+package de.hskl.repominer.models.chart.data.bar;
 
-import de.hskl.repominer.models.chart.AbstractChart;
+import de.hskl.repominer.models.chart.data.AbstractChart;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
-package de.hskl.repominer.models.chart.pie;
+package de.hskl.repominer.models.chart.data.pie;
 
-import de.hskl.repominer.models.chart.AbstractChart;
+import de.hskl.repominer.models.chart.data.AbstractChart;
 
 public class PieChart extends AbstractChart<PieChartDatum> {
 

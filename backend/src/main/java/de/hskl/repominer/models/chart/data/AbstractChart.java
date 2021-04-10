@@ -1,4 +1,4 @@
-package de.hskl.repominer.models.chart;
+package de.hskl.repominer.models.chart.data;
 
 import java.util.List;
 
