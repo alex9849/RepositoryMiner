@@ -4,6 +4,7 @@ import de.hskl.repominer.models.chart.ChartContext;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
 import de.hskl.repominer.models.chart.RequestableChart;
 import de.hskl.repominer.models.chart.data.AbstractChart;
+import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipGetter;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,7 +18,9 @@ public class ChartService {
     private final Map<String, RequestableChart> requestableCharts;
 
     public ChartService(ProjectService projectService) {
+        RequestableChart ownerShipChart = new RequestableChart("", "ownerShip", null, new CodeOwnerShipGetter());
         this.requestableCharts = new HashMap<>();
+        requestableCharts.put(ownerShipChart.getName(), ownerShipChart);
         this.projectService = projectService;
     }
 

@@ -94,4 +94,28 @@ public class ProjectService {
         }
         return projStructureList;
     }
+
+    public ProjectRepository getProjectRepo() {
+        return projectRepo;
+    }
+
+    public CommitRepository getCommitRepo() {
+        return commitRepo;
+    }
+
+    public FileChangeRepository getFileChangeRepo() {
+        return fileChangeRepo;
+    }
+
+    public FileRepository getFileRepo() {
+        return fileRepo;
+    }
+
+    public AuthorRepository getAuthorRepo() {
+        return authorRepo;
+    }
+
+    public CurrentPathRepository getCurrPathRepo() {
+        return currPathRepo;
+    }
 }

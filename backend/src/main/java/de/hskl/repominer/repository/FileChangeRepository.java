@@ -2,11 +2,14 @@ package de.hskl.repominer.repository;
 
 import de.hskl.repominer.models.FileChange;
 import de.hskl.repominer.models.exception.DaoException;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -31,6 +34,26 @@ public class FileChangeRepository {
             return null;
         }catch (SQLException e){
             throw new DaoException("Error loading FileChange", e);
+        }
+    }
+
+    public List<FileChange> loadAllFileChangesByFileId(int fileId){
+        List<FileChange> resultList = new ArrayList<>();
+        try{
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM FileChange WHERE fileId = ?");
+            pstmt.setInt(1, fileId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                FileChange fc = parseFileChange(rs);
+                if( fc != null )
+                    resultList.add(fc);
+            }
+
+            return resultList;
+        } catch (SQLException throwables) {
+            throw new DaoException("Error loading FileChanges");
         }
     }
 
@@ -68,6 +91,7 @@ public class FileChangeRepository {
             throw new DaoException("Error deleting FileChange", e);
         }
     }
+
 
 
     public FileChange parseFileChange(ResultSet rs) throws SQLException {

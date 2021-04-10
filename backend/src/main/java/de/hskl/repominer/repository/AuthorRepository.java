@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AuthorRepository {
@@ -32,6 +34,29 @@ public class AuthorRepository {
         }
     }
 
+    public List<Author> loadAllAuthorsForPorject(int projectId) {
+        List<Author> resultList = new ArrayList<>();
+
+        try{
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM Author WHERE projectId = ?");
+            pstmt.setInt(1, projectId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                Author author = parseAuthor(rs);
+                resultList.add(author);
+            }
+
+            return resultList;
+
+        }catch(SQLException throwables){
+            throw new DaoException("Error loading allAuthorsForPorject");
+        }
+
+    }
+
+
     public Author saveAuthor(Author author) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
@@ -56,5 +81,6 @@ public class AuthorRepository {
                 rs.getString("name")
         );
     }
+
 
 }
