@@ -5,6 +5,7 @@ import de.hskl.repominer.models.exception.DaoException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 
 @Service
+@Transactional
 public class FileChangeRepository {
 
     private final DataSource ds;

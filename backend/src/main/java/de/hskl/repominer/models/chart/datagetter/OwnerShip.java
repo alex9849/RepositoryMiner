@@ -35,10 +35,10 @@ public class OwnerShip {
         if(getDeletions() + getInsertions() == 0)
             return 0.0;
 
-        System.out.println("insertions: " +  insert + ", deletions: "+ del + ",nrOfLineChagnes = " + nrOfChangedLinesInFile);
+        //SSystem.out.println("insertions: " +  insert + ", deletions: "+ del + ",nrOfLineChagnes = " + nrOfChangedLinesInFile);
         double ownerShipInPercent = ( ( insert +  del ) / nrOfChangedLinesInFile  ) * 100;
 
-        return Math.round(ownerShipInPercent)  ;
+        return ownerShipInPercent  ;
     }
 
     public File getFile() {

@@ -24,14 +24,18 @@ public class CodeOwnerShipGetter implements ChartDataGetter {
         //calc for single file
         List<OwnerShip> ownerShips = calcOwnershipForProject(projectId, projectService);
 
+
+
         for(OwnerShip o : ownerShips){
-            System.out.println("OwnerShip for Project: " + projectId + " and Author: " + o.getName() + " is : " + o.getOwnerShipInPercent() + "%");
+            System.out.format("[RESULT] Project: " + projectId +  ", Author: " + o.getName() + " => Ownership is : %.2f %%\n" , o.getOwnerShipInPercent());
         }
 
         return null;
     }
 
     private List<OwnerShip> calcOwnershipForProject(int projectId,  ProjectService projectService) {
+        System.out.println("calcOwnerShip for Project: " + projectId);
+
         List<File> fileList = projectService.getFileRepo().loadAllFilesFromProject(projectId);
         List<Author> authorList = projectService.getAuthorRepo().loadAllAuthorsForProject(projectId);
         List<Commit> commitList = projectService.getCommitRepo().loadAllCommitsForProject(projectId);
@@ -39,10 +43,14 @@ public class CodeOwnerShipGetter implements ChartDataGetter {
         List<OwnerShipOneFile> listOfFileOwnerShips = new ArrayList<>();
         List<OwnerShip> ownerList = new ArrayList<>();
 
+        System.out.println("Alle Listen erstellt (init)");
+
         //hole liste aller fileChanges fuer jedes file
         for (File f : fileList) {
             List<FileChange> fileChangeList = projectService.getFileChangeRepo().loadAllFileChangesByFileId(f.getId());
             int nrOfChangedLinesInFile = calcNrOfLinesChangedInFile(f, fileChangeList);
+
+            System.out.println("List of FileChanges for FileId: " + f.getId() + " created. NumberOfFiles: " + fileList.size());
 
             OwnerShipOneFile ownerShipOfOneFile = new OwnerShipOneFile(f);
             for(Author author: authorList){
@@ -53,12 +61,15 @@ public class CodeOwnerShipGetter implements ChartDataGetter {
             listOfFileOwnerShips.add(ownerShipOfOneFile);
         }
 
+        System.out.println("Liste aller FileOwnerShips erzeugt");
+
         //weise jedem Author die Summer seiner OwnerShips zu
         List<OwnerShip> ownerShips = new ArrayList<>();
         for(Author author: authorList){
             OwnerShip ownership = calcOwnerShipForAuthor(listOfFileOwnerShips, author);
             ownerShips.add(ownership);
         }
+        System.out.println("OwnerShips wurden zugewiesen");
 
         return ownerShips;
 
