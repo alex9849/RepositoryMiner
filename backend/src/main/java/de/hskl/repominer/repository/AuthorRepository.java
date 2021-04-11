@@ -34,7 +34,7 @@ public class AuthorRepository {
         }
     }
 
-    public List<Author> loadAllAuthorsForPorject(int projectId) {
+    public List<Author> loadAllAuthorsForProject(int projectId) {
         List<Author> resultList = new ArrayList<>();
 
         try{
@@ -76,8 +76,8 @@ public class AuthorRepository {
 
     private Author parseAuthor(ResultSet rs) throws SQLException {
         return new Author(
-                rs.getInt("id"),
                 rs.getInt("projectId"),
+                rs.getInt("id"),
                 rs.getString("name")
         );
     }

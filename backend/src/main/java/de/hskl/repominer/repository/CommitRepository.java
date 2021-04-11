@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CommitRepository  {
@@ -29,6 +31,25 @@ public class CommitRepository  {
             return null;
         } catch (SQLException e) {
             throw new DaoException("Error loading Commit", e);
+        }
+    }
+
+    public List<Commit> loadAllCommitsForProject(int projectId){
+            List<Commit> resultList = new ArrayList<>();
+        try{
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM \"Commit\" WHERE projectId = ?");
+            pstmt.setInt(1, projectId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                Commit c = parseCommit(rs);
+                if(c != null) resultList.add(c);
+            }
+
+            return resultList;
+        }catch(SQLException throwables){
+            throw new DaoException("Error loading Commits for Project with id: " + projectId);
         }
     }
 
