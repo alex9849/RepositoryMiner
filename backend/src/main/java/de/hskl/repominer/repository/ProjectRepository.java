@@ -1,6 +1,7 @@
 package de.hskl.repominer.repository;
 
 import de.hskl.repominer.models.Project;
+import de.hskl.repominer.models.chart.datagetter.OwnerShip;
 import de.hskl.repominer.models.exception.DaoException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
@@ -85,5 +86,35 @@ public class ProjectRepository {
         );
         p.setName(rs.getString("name"));
         return p;
+    }
+
+    public List<OwnerShip> getOwnerShip(int projectId, String path) {
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT a.name as author, " +
+                    "sum(fc.insertions) as insertions, sum(fc.deletions) as deletions " +
+                    "from CurrentPath cp " +
+                    "    join FileChange fc on fc.fileId = cp.fileId " +
+                    "    join \"Commit\" c on fc.commitId = c.id " +
+                    "    join Author a on a.id = c.authorId " +
+                    "where cp.projectId = ? and cp.path like (? || '%') " +
+                    "group by a.id " +
+                    "order by insertions + deletions desc");
+            pstmt.setInt(1, projectId);
+            pstmt.setString(2, path);
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            List<OwnerShip> ownerShips = new ArrayList<>();
+            while (rs.next()) {
+                OwnerShip ownerShip = new OwnerShip();
+                ownerShip.setAuthorName(rs.getString("author"));
+                ownerShip.setInsertions(rs.getInt("insertions"));
+                ownerShip.setDeletions(rs.getInt("deletions"));
+                ownerShips.add(ownerShip);
+            }
+            return ownerShips;
+        } catch (SQLException e) {
+            throw new DaoException("Error calculating ownership", e);
+        }
     }
 }

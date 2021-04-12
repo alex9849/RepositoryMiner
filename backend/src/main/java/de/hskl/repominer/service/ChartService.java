@@ -7,9 +7,7 @@ import de.hskl.repominer.models.chart.data.AbstractChart;
 import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipGetter;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,10 +16,14 @@ public class ChartService {
     private final Map<String, RequestableChart> requestableCharts;
 
     public ChartService(ProjectService projectService) {
-        RequestableChart ownerShipChart = new RequestableChart("", "ownerShip", null, new CodeOwnerShipGetter());
         this.requestableCharts = new HashMap<>();
-        requestableCharts.put(ownerShipChart.getName(), ownerShipChart);
         this.projectService = projectService;
+
+        RequestableChart ownerShipChart = new RequestableChart("folder", "ownerShip",
+                Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
+                        new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER, ChartContext.SubContext.FILE)))),
+                new CodeOwnerShipGetter());
+        requestableCharts.put(ownerShipChart.getName(), ownerShipChart);
     }
 
     public Set<RequestableChart> getByContext(ChartContext.ViewContext viewContext) {

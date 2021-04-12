@@ -1,17 +1,15 @@
 package de.hskl.repominer.models.chart.datagetter;
 
-import de.hskl.repominer.models.Author;
-import de.hskl.repominer.models.Commit;
-import de.hskl.repominer.models.File;
-import de.hskl.repominer.models.FileChange;
 import de.hskl.repominer.models.chart.ChartDataGetter;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
 import de.hskl.repominer.models.chart.data.AbstractChart;
+import de.hskl.repominer.models.chart.data.SeriesEntry;
+import de.hskl.repominer.models.chart.data.pie.PieChart;
+import de.hskl.repominer.models.chart.data.pie.PieChartDatum;
 import de.hskl.repominer.service.ProjectService;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.security.acl.Owner;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CodeOwnerShipGetter implements ChartDataGetter {
@@ -20,113 +18,28 @@ public class CodeOwnerShipGetter implements ChartDataGetter {
 
     @Override
     public AbstractChart<?> get(int projectId, ChartRequestMeta crm, ProjectService projectService) {
+        if(crm.path == null) {
+            throw new IllegalArgumentException("Meta path required!");
+        }
+        List<OwnerShip> ownerShips = projectService.getOwnerShip(projectId, crm.path);
 
-        //calc for single file
-        List<OwnerShip> ownerShips = calcOwnershipForProject(projectId, projectService);
+        PieChart pieChart = new PieChart();
+        pieChart.setName("Code ownership");
+        pieChart.setDescription("Changed lines of code by author at the path " + crm.path);
+        SeriesEntry<PieChartDatum> series = new SeriesEntry<>();
+        pieChart.setSeries(Collections.singletonList(series));
+        series.setName("changed lines");
+        List<PieChartDatum> data = new ArrayList<>();
+        series.setData(data);
 
-
-
-        for(OwnerShip o : ownerShips){
-            System.out.format("[RESULT] Project: " + projectId +  ", Author: " + o.getName() + " => Ownership is : %.2f %%\n" , o.getOwnerShipInPercent());
+        for(OwnerShip ownerShip : ownerShips) {
+            PieChartDatum datum = new PieChartDatum();
+            datum.setName(ownerShip.getAuthorName());
+            datum.setValue(ownerShip.getChangedCode());
+            data.add(datum);
         }
 
-        return null;
+        return pieChart;
     }
 
-    private List<OwnerShip> calcOwnershipForProject(int projectId,  ProjectService projectService) {
-        System.out.println("calcOwnerShip for Project: " + projectId);
-
-        List<File> fileList = projectService.getFileRepo().loadAllFilesFromProject(projectId);
-        List<Author> authorList = projectService.getAuthorRepo().loadAllAuthorsForProject(projectId);
-        List<Commit> commitList = projectService.getCommitRepo().loadAllCommitsForProject(projectId);
-
-        List<OwnerShipOneFile> listOfFileOwnerShips = new ArrayList<>();
-        List<OwnerShip> ownerList = new ArrayList<>();
-
-        System.out.println("Alle Listen erstellt (init)");
-
-        //hole liste aller fileChanges fuer jedes file
-        for (File f : fileList) {
-            List<FileChange> fileChangeList = projectService.getFileChangeRepo().loadAllFileChangesByFileId(f.getId());
-            int nrOfChangedLinesInFile = calcNrOfLinesChangedInFile(f, fileChangeList);
-
-            System.out.println("List of FileChanges for FileId: " + f.getId() + " created. NumberOfFiles: " + fileList.size());
-
-            OwnerShipOneFile ownerShipOfOneFile = new OwnerShipOneFile(f);
-            for(Author author: authorList){
-                OwnerShip owner = getOwnerShip(author, commitList, fileChangeList, nrOfChangedLinesInFile);
-                ownerShipOfOneFile.add(owner);
-            }
-
-            listOfFileOwnerShips.add(ownerShipOfOneFile);
-        }
-
-        System.out.println("Liste aller FileOwnerShips erzeugt");
-
-        //weise jedem Author die Summer seiner OwnerShips zu
-        List<OwnerShip> ownerShips = new ArrayList<>();
-        for(Author author: authorList){
-            OwnerShip ownership = calcOwnerShipForAuthor(listOfFileOwnerShips, author);
-            ownerShips.add(ownership);
-        }
-        System.out.println("OwnerShips wurden zugewiesen");
-
-        return ownerShips;
-
-    }
-
-    private OwnerShip calcOwnerShipForAuthor(List<OwnerShipOneFile> listOfOwnerShips, Author author) {
-        OwnerShip resultOwnerShip = new OwnerShip(author);
-
-        for(OwnerShipOneFile ownerShipOneFile : listOfOwnerShips){
-            OwnerShip tmpOwnerShip = ownerShipOneFile.getOwnerShipOfAuthor(author);
-            resultOwnerShip.addOwnerShip(tmpOwnerShip);
-        }
-
-        return resultOwnerShip;
-    }
-
-    /**
-     * calc ownership for specific author with the given list of commits and the list of fileChanges
-     * @param author specific author
-     * @param commitList list of commits
-     * @param fileChangeList list of fileChanges for the commits
-     * @param nrOfChangedLinesInFile sum of all insertions and deletions for the file
-     * @return ownership for the author
-     */
-    private OwnerShip getOwnerShip(Author author, List<Commit> commitList, List<FileChange> fileChangeList, int nrOfChangedLinesInFile) {
-        OwnerShip ownerShip = new OwnerShip();
-        ownerShip.setNrOfChangedLinesInFile(nrOfChangedLinesInFile);
-        ownerShip.setName(author.getName());
-
-        //gehe jeden fileChange durch
-        for(FileChange fc : fileChangeList){
-            //suche nach passendem commit
-            for(Commit c: commitList){
-                if(c.getId() == fc.getCommitId()){
-                    //beachte nur commits, mit id = author.id
-                    if(c.getAuthorId() == author.getId()){
-                        ownerShip.addInsertions(fc.getInsertions());
-                        ownerShip.addDeletions(fc.getDeletions());
-                    }
-                    //verlasse schleife, sobald commit gefunden
-                    break;
-                }
-            }
-        }
-
-        return ownerShip;
-    }
-
-    //berechnet, wie viele zeilen in einem file insgesamt hinzugefuegt bzw. geloescht wurden (insertions + deletions)
-    private int calcNrOfLinesChangedInFile(File f, List<FileChange> fileChangeList) {
-        int nrOfLinesChanged = 0;
-
-        for (FileChange fc : fileChangeList) {
-            nrOfLinesChanged += fc.getInsertions() + fc.getDeletions();
-        }
-
-        return nrOfLinesChanged;
-
-    }
 }

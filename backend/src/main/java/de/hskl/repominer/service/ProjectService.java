@@ -1,6 +1,7 @@
 package de.hskl.repominer.service;
 
 import de.hskl.repominer.models.*;
+import de.hskl.repominer.models.chart.datagetter.OwnerShip;
 import de.hskl.repominer.repository.*;
 import de.hskl.repominer.service.logparser.LogParser;
 import org.springframework.stereotype.Service;
@@ -95,27 +96,7 @@ public class ProjectService {
         return projStructureList;
     }
 
-    public ProjectRepository getProjectRepo() {
-        return projectRepo;
-    }
-
-    public CommitRepository getCommitRepo() {
-        return commitRepo;
-    }
-
-    public FileChangeRepository getFileChangeRepo() {
-        return fileChangeRepo;
-    }
-
-    public FileRepository getFileRepo() {
-        return fileRepo;
-    }
-
-    public AuthorRepository getAuthorRepo() {
-        return authorRepo;
-    }
-
-    public CurrentPathRepository getCurrPathRepo() {
-        return currPathRepo;
+    public List<OwnerShip> getOwnerShip(int projectId, String path) {
+        return projectRepo.getOwnerShip(projectId, path);
     }
 }
