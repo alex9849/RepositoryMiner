@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FileRepository {
@@ -31,6 +33,29 @@ public class FileRepository {
             throw new DaoException("Error loading File", e);
         }
     }
+
+    public List<File> loadAllFilesFromProject(int projectId){
+        List<File> resultList = new ArrayList<>();
+
+        try{
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM File WHERE projectId = ?");
+            pstmt.setInt(1, projectId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                File file = parseFile(rs);
+                if(file != null) resultList.add(file);
+            }
+
+            return resultList;
+
+        }catch(SQLException ex){
+            throw new DaoException("Error loading files with projectId");
+        }
+    }
+
+
 
     public File saveFile(File file) {
         try {
