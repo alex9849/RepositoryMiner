@@ -44,7 +44,10 @@ class ProjectService {
   }
 
   getChart(projectId, chartName, requestMeta) {
-    return axios.get(API_PATH + projectId + "/chart/" + chartName, { params: requestMeta})
+    let config = {
+      params: requestMeta
+    }
+    return axios.get(API_PATH + projectId + "/chart/" + chartName, config)
       .then(response => response.data);
   }
 

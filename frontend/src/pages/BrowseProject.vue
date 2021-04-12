@@ -105,7 +105,7 @@ export default {
     requestChart(identifier) {
       this.chartDialog.loading = true;
       this.chartDialog.show = true;
-      ProjectService.getChart(this.projectId, identifier, {path: this.currentPath})
+      ProjectService.getChart(this.projectId, identifier, {path: this.browser.currentPath})
         .then(chartData => {
           this.chartDialog.chartOptions = ChartService.parseBackendToOptions(chartData);
           this.chartDialog.loading = false;

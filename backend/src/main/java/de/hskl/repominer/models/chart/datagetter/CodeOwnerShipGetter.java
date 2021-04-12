@@ -24,11 +24,11 @@ public class CodeOwnerShipGetter implements ChartDataGetter {
         List<OwnerShip> ownerShips = projectService.getOwnerShip(projectId, crm.path);
 
         PieChart pieChart = new PieChart();
-        pieChart.setName("Code ownership");
-        pieChart.setDescription("Changed lines of code by author at the path " + crm.path);
+        pieChart.setName("Code-Ownership");
+        pieChart.setDescription("Changed lines of code by author at the current path " + crm.path);
         SeriesEntry<PieChartDatum> series = new SeriesEntry<>();
         pieChart.setSeries(Collections.singletonList(series));
-        series.setName("changed lines");
+        series.setName("Changed lines");
         List<PieChartDatum> data = new ArrayList<>();
         series.setData(data);
 

@@ -19,11 +19,12 @@ public class ChartService {
         this.requestableCharts = new HashMap<>();
         this.projectService = projectService;
 
-        RequestableChart ownerShipChart = new RequestableChart("folder", "ownerShip",
+        RequestableChart ownerShipChart = new RequestableChart(
+                "groups", "ownerShip", "Code ownership",
                 Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
                         new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER, ChartContext.SubContext.FILE)))),
                 new CodeOwnerShipGetter());
-        requestableCharts.put(ownerShipChart.getName(), ownerShipChart);
+        requestableCharts.put(ownerShipChart.getIdentifier(), ownerShipChart);
     }
 
     public Set<RequestableChart> getByContext(ChartContext.ViewContext viewContext) {
