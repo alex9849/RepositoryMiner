@@ -9,27 +9,41 @@
       @isCurrentFileAFile="browser.isFile = $event"
       @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
     >
-      <div
-        class="row justify-center q-gutter-x-lg"
+      <q-card
+        class="bg-grey-3"
       >
-        <q-inner-loading
-          showing
-          v-if="chartOptions.loading"
+        <q-card-section
+          class="text-weight-bold"
         >
-          <q-spinner-pie size="50px"/>
-        </q-inner-loading>
-        <q-btn
-          v-else
-          v-for="chart of requestableChartsByPath"
-          size="md"
-          class="bg-amber"
-          no-caps
-          rounded
-          :label="chart.name"
-          :icon="chart.icon"
-          @click="requestChart(chart.identifier)"
-        />
-      </div>
+          Available graphs:
+        </q-card-section>
+        <q-splitter horizontal/>
+        <q-card-section
+          class="row justify-center q-gutter-x-lg"
+        >
+          <q-inner-loading
+            showing
+            v-if="chartOptions.loading"
+          >
+            <q-spinner-pie size="50px"/>
+          </q-inner-loading>
+          <div
+            v-else-if="requestableChartsByPath.length === 0"
+          >
+            No graphs available!
+          </div>
+          <q-btn
+            v-else
+            v-for="chart of requestableChartsByPath"
+            size="md"
+            class="bg-cyan-3 btn-fixed-width"
+            no-caps
+            :label="chart.name"
+            :icon="chart.icon"
+            @click="requestChart(chart.identifier)"
+          />
+        </q-card-section>
+      </q-card>
       <chart-dialog
         v-model="chartDialog.show"
         :loading="chartDialog.loading"
