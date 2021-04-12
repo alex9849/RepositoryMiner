@@ -6,6 +6,7 @@
       v-model="browser.currentPath"
       :file-tree="browser.fileTree"
       :loading="browser.loading"
+      @isCurrentFileAFile="browser.isFile = $event"
       @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
     >
       <div
@@ -26,12 +27,15 @@
           rounded
           :label="chart.name"
           :icon="chart.icon"
+          @click="requestChart(chart.identifier)"
         />
       </div>
       <chart-dialog
         v-model="chartDialog.show"
         :loading="chartDialog.loading"
-        :chart-options="chartDialog.chartOptions"
+        :name="chartDialog.chartOptions.name"
+        :description="chartDialog.chartOptions.description"
+        :hc-chart-options="chartDialog.chartOptions.graphConfig"
       />
     </file-browser>
   </q-page>
@@ -42,7 +46,7 @@
 import FileBrowser from "components/FileBrowser";
 import ProjectService from "src/service/ProjectService";
 import ChartDialog from "components/ChartDialog";
-import PackedBubbleService from "src/service/chartServices/PackedBubbleService";
+import ChartService from "src/service/ChartService";
 
 export default {
   name: "BrowseProject",
@@ -52,12 +56,17 @@ export default {
       browser: {
         fileTree: [],
         currentPath: "",
-        loading: true
+        loading: true,
+        isFile: false
       },
       chartDialog: {
-        show: true,
-        loading: false,
-        chartOptions: {}
+        show: false,
+        loading: true,
+        chartOptions: {
+          name: '',
+          description: '',
+          graphConfig: {}
+        }
       },
       chartOptions: {
         requestableCharts: [],
@@ -71,7 +80,6 @@ export default {
     } else {
       this.browser.currentPath = "";
     }
-    this.chartDialog.chartOptions = PackedBubbleService.exampleBackendData;
     ProjectService.getProjectFileTree(this.projectId)
       .then(fileTree => this.browser.fileTree = fileTree)
       .finally(() => this.browser.loading = false);
@@ -79,37 +87,35 @@ export default {
       .then(charts => this.chartOptions.requestableCharts = charts)
       .finally(() => this.chartOptions.loading = false);
   },
+  methods: {
+    requestChart(identifier) {
+      this.chartDialog.loading = true;
+      this.chartDialog.show = true;
+      ProjectService.getChart(this.projectId, identifier, {path: this.currentPath})
+        .then(chartData => {
+          this.chartDialog.chartOptions = ChartService.parseBackendToOptions(chartData);
+          this.chartDialog.loading = false;
+        });
+    }
+  },
   computed: {
     projectId() {
       return this.$route.params.id;
     },
     requestableChartsByPath() {
+      let availableSubContext = new Set;
+      if(this.browser.isFile) {
+        availableSubContext.add("FILE")
+      } else {
+        availableSubContext.add("FOLDER")
+      }
       //return this.chartOptions.requestableCharts;
       let returnMe = [];
-      returnMe.push({
-        name: "File and folder chart",
-        icon: "folder",
-        availableContext: [{
-          viewContext: "FILE_BROWSER",
-          subContext: ["FILE", "FOLDER"]
-        }]
-      });
-      returnMe.push({
-        name: "Folder-chart",
-        icon: "folder",
-        availableContext: [{
-          viewContext: "FILE_BROWSER",
-          subContext: "FOLDER"
-        }]
-      });
-      returnMe.push({
-        name: "File-chart",
-        icon: "folder",
-        availableContext: [{
-          viewContext: "FILE_BROWSER",
-          subContext: "FILE"
-        }]
-      });
+      for(let graph of this.chartOptions.requestableCharts) {
+        if(graph.availableContext.some(ctx => ctx.subContext.some( x => availableSubContext.has(x)))) {
+          returnMe.push(graph);
+        }
+      }
       return returnMe;
     }
   }

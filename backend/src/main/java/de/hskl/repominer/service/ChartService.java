@@ -1,15 +1,16 @@
 package de.hskl.repominer.service;
 
 import de.hskl.repominer.models.chart.ChartContext;
+import de.hskl.repominer.models.chart.ChartDataGetter;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
 import de.hskl.repominer.models.chart.RequestableChart;
 import de.hskl.repominer.models.chart.data.AbstractChart;
+import de.hskl.repominer.models.chart.data.SeriesEntry;
+import de.hskl.repominer.models.chart.data.pie.PieChart;
+import de.hskl.repominer.models.chart.data.pie.PieChartDatum;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +21,26 @@ public class ChartService {
     public ChartService(ProjectService projectService) {
         this.requestableCharts = new HashMap<>();
         this.projectService = projectService;
+        RequestableChart testChart = new RequestableChart("folder", "testChart", "Test",
+                Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
+                        Collections.singleton(ChartContext.SubContext.FOLDER))), new ChartDataGetter() {
+            @Override
+            public AbstractChart<?> get(int projectId, ChartRequestMeta crm, ProjectService projectService) {
+                PieChart pieChart = new PieChart();
+                SeriesEntry<PieChartDatum> series = new SeriesEntry<>();
+                series.setName("TestSeries");
+                List<PieChartDatum> data = new ArrayList<>();
+                data.add(new PieChartDatum().setName("Datum 1").setValue(20));
+                data.add(new PieChartDatum().setName("Datum 2").setValue(30));
+                data.add(new PieChartDatum().setName("Datum 3").setValue(50));
+                series.setData(data);
+                pieChart.setName("Test");
+                pieChart.setDescription("Test description");
+                pieChart.setSeries(Collections.singletonList(series));
+                return pieChart;
+            }
+        });
+        this.requestableCharts.put(testChart.getIdentifier(), testChart);
     }
 
     public Set<RequestableChart> getByContext(ChartContext.ViewContext viewContext) {

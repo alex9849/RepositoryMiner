@@ -52,10 +52,6 @@ class PackedBubbleService {
   };
 
   parseBackendToOptions(backendData) {
-    let options = {
-      name: backendData.name,
-      description: backendData.description
-    };
     let graphConfig = {
       chart: {
         type: 'packedbubble'
@@ -112,8 +108,12 @@ class PackedBubbleService {
 
     graphConfig.series = series;
     graphConfig.drilldown = drilldown;
-    options.graphConfig = graphConfig;
-    return options;
+
+    return {
+      graphConfig: graphConfig,
+      name: backendData.name,
+      description: backendData.description
+    }
   };
 
   recProcessDrillDown(target, pushData, drilldown) {
