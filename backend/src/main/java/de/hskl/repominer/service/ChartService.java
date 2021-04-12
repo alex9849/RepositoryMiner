@@ -5,6 +5,7 @@ import de.hskl.repominer.models.chart.ChartRequestMeta;
 import de.hskl.repominer.models.chart.RequestableChart;
 import de.hskl.repominer.models.chart.data.AbstractChart;
 import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipGetter;
+import de.hskl.repominer.models.chart.datagetter.ComeOwnershipDevelopmentGetter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,11 +21,17 @@ public class ChartService {
         this.projectService = projectService;
 
         RequestableChart ownerShipChart = new RequestableChart(
-                "groups", "ownerShip", "Code ownership",
+                "groups", "ownership", "Code ownership",
                 Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
                         new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER, ChartContext.SubContext.FILE)))),
                 new CodeOwnerShipGetter());
         requestableCharts.put(ownerShipChart.getIdentifier(), ownerShipChart);
+        RequestableChart ownerShipDevelopmentChart = new RequestableChart("groups", "ownershipDevelopment",
+                "Code ownership development",
+                Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
+                        new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER, ChartContext.SubContext.FILE)))),
+                new ComeOwnershipDevelopmentGetter());
+        requestableCharts.put(ownerShipDevelopmentChart.getIdentifier(), ownerShipDevelopmentChart);
     }
 
     public Set<RequestableChart> getByContext(ChartContext.ViewContext viewContext) {

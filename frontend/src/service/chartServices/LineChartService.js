@@ -27,7 +27,8 @@ class LineChartService {
       },
       xAxis: {
         title: {
-          text: backendData.xAxisTitle
+          text: backendData.xAxisTitle,
+          categories: backendData.categories
         }
       }
     }

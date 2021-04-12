@@ -1,18 +1,9 @@
 package de.hskl.repominer.models.chart.data.line;
 
-import de.hskl.repominer.models.chart.data.AbstractChart;
+import de.hskl.repominer.models.chart.data.CategoriesChart;
 
-public class LineChart extends AbstractChart<Integer> {
-    private String xAxisTitle;
+public class LineChart extends CategoriesChart<Integer> {
     private String yAxisTitle;
-
-    public String getxAxisTitle() {
-        return xAxisTitle;
-    }
-
-    public void setxAxisTitle(String xAxisTitle) {
-        this.xAxisTitle = xAxisTitle;
-    }
 
     public String getyAxisTitle() {
         return yAxisTitle;

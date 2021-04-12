@@ -1,9 +1,21 @@
 package de.hskl.repominer.models.chart.datagetter;
 
+import java.sql.Date;
+
 public class OwnerShip {
-    String authorName;
-    int insertions;
-    int deletions;
+    private Date date;
+
+    private String authorName;
+    private int insertions;
+    private int deletions;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     public int getChangedCode() {
         return insertions + deletions;

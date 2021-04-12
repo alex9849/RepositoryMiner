@@ -99,4 +99,8 @@ public class ProjectService {
     public List<OwnerShip> getOwnerShip(int projectId, String path) {
         return projectRepo.getOwnerShip(projectId, path);
     }
+
+    public List<OwnerShip> getOwnerShipDevelopment(int projectId, String path) {
+        return projectRepo.getOwnerShipDevelopment(projectId, path);
+    }
 }
