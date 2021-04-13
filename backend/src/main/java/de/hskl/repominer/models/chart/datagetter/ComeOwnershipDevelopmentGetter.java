@@ -21,7 +21,7 @@ public class ComeOwnershipDevelopmentGetter implements ChartDataGetter {
 
         LineChart lineChart = new LineChart();
         lineChart.setName("Code-Ownership-Development");
-        lineChart.setDescription("Changed lines of code by author at the current path " + crm.path);
+        lineChart.setDescription("Changed lines of code by author at the current path /" + crm.path);
         lineChart.setCategories(new ArrayList<>());
         lineChart.setxAxisTitle("Time");
         lineChart.setyAxisTitle("Changed lines");

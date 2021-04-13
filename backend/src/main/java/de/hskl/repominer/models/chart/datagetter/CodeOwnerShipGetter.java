@@ -25,7 +25,7 @@ public class CodeOwnerShipGetter implements ChartDataGetter {
 
         PieChart pieChart = new PieChart();
         pieChart.setName("Code-Ownership");
-        pieChart.setDescription("Changed lines of code by author at the current path " + crm.path);
+        pieChart.setDescription("Changed lines of code by author at the current path /" + crm.path);
         SeriesEntry<PieChartDatum> series = new SeriesEntry<>();
         pieChart.setSeries(Collections.singletonList(series));
         series.setName("Changed lines");
