@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +93,7 @@ public class ProjectRepository {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("SELECT a.name as author, " +
-                    "sum(fc.insertions) as insertions, sum(fc.deletions) as deletions " +
+                    "total(fc.insertions) as insertions, total(fc.deletions) as deletions " +
                     "from CurrentPath cp " +
                     "    join FileChange fc on fc.fileId = cp.fileId " +
                     "    join \"Commit\" c on fc.commitId = c.id " +
@@ -128,14 +127,15 @@ public class ProjectRepository {
                 "    FROM dates\n" +
                 "    WHERE date < (SELECT max(date(timestamp / 1000, 'unixepoch', 'localtime', '+1 day')) from \"Commit\" where projectId = ?)\n" +
                 ")\n" +
-                "SELECT d.date as date, a.name as author, sum(fc.insertions) as insertions, sum(fc.deletions) as deletions\n" +
+                "SELECT CAST(strftime('%s', d.date, 'localtime') AS INT) * 1000 as date, a.name as author, " +
+                "total(case when cp.path is null then 0 else fc.insertions end) as insertions, " +
+                "total(case when cp.path is null then 0 else fc.deletions end) as deletions\n" +
                 "from dates d\n" +
                 "         join Author a on a.projectId = ?\n" +
                 "         left join \"Commit\" c on d.date >= date(c.timestamp / 1000, 'unixepoch', 'localtime') AND c.authorId = a.id\n" +
                 "         left join FileChange fc on fc.commitId = c.id\n" +
                 "         left join CurrentPath cp on fc.fileId = cp.fileId\n" +
-                "where cp.projectId = ?\n" +
-                "  and cp.path like (? || '%') or cp.path is null\n" +
+                "where cp.path like (? || '%') or cp.path is null\n" +
                 "group by d.date, a.id\n" +
                 "order by d.date asc, a.name asc";
         try {
@@ -144,8 +144,7 @@ public class ProjectRepository {
             pstmt.setInt(1, projectId);
             pstmt.setInt(2, projectId);
             pstmt.setInt(3, projectId);
-            pstmt.setInt(4, projectId);
-            pstmt.setString(5, path);
+            pstmt.setString(4, path);
             pstmt.execute();
             ResultSet rs = pstmt.getResultSet();
             List<OwnerShip> ownerShips = new ArrayList<>();
@@ -155,11 +154,11 @@ public class ProjectRepository {
                 ownerShip.setAuthorName(rs.getString("author"));
                 ownerShip.setInsertions(rs.getInt("insertions"));
                 ownerShip.setDeletions(rs.getInt("deletions"));
-                ownerShip.setDate(new Date(sdf.parse(rs.getString("date")).getTime()));
+                ownerShip.setDate(rs.getDate("date"));
                 ownerShips.add(ownerShip);
             }
             return ownerShips;
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException  e) {
             throw new DaoException("Error calculating ownership", e);
         }
     }

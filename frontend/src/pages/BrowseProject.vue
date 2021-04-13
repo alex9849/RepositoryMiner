@@ -130,6 +130,7 @@ export default {
           returnMe.push(graph);
         }
       }
+      returnMe.sort((x, y) => x.name.localeCompare(y.name))
       return returnMe;
     }
   }

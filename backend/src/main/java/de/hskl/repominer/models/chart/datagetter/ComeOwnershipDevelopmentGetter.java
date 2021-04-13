@@ -8,10 +8,7 @@ import de.hskl.repominer.models.chart.data.line.LineChart;
 import de.hskl.repominer.service.ProjectService;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ComeOwnershipDevelopmentGetter implements ChartDataGetter {
     @Override
@@ -20,6 +17,7 @@ public class ComeOwnershipDevelopmentGetter implements ChartDataGetter {
             throw new IllegalArgumentException("Meta path required!");
         }
         List<OwnerShip> ownerShips = projectService.getOwnerShipDevelopment(projectId, crm.path);
+        Set<String> seenDates = new HashSet<>();
 
         LineChart lineChart = new LineChart();
         lineChart.setName("Code-Ownership-Development");
@@ -28,7 +26,7 @@ public class ComeOwnershipDevelopmentGetter implements ChartDataGetter {
         lineChart.setxAxisTitle("Time");
         lineChart.setyAxisTitle("Changed lines");
         Map<String, SeriesEntry<Integer>> authors = new HashMap<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 
         for(OwnerShip os : ownerShips) {
             SeriesEntry<Integer> series = authors.computeIfAbsent(os.getAuthorName(), name -> {
@@ -38,9 +36,9 @@ public class ComeOwnershipDevelopmentGetter implements ChartDataGetter {
                 return seriesEntry;
             });
             series.getData().add(os.getChangedCode());
-            if(authors.size() == 1) {
-                //Add the Date-Axis (only for the first Author to prevent duplicates
-                lineChart.getCategories().add(sdf.format(os.getDate()));
+            String stringDate = sdf.format(os.getDate());
+            if(seenDates.add(stringDate)) {
+                lineChart.getCategories().add(stringDate);
             }
         }
 
