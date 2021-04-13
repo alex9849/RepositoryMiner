@@ -85,7 +85,6 @@
             </q-btn>
           </q-item-section>
           <q-item-section side>
-            last commit/author?
           </q-item-section>
         </q-item>
         <q-item
