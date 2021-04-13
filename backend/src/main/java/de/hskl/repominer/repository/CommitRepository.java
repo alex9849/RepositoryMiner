@@ -70,7 +70,8 @@ public class CommitRepository  {
 
             ResultSet rs = pstmt.getGeneratedKeys();
             if(rs.next()){
-                return loadCommit(rs.getInt(1));
+                commit.setId(rs.getInt(1));
+                return commit;
             }
             throw new DaoException("Error saving Commit");
         }catch (SQLException e){

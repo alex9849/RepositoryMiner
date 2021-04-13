@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.util.List;
 
 public class Project {
-    private final Integer id;
+    private Integer id;
     private String name;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date lastUpdate;
@@ -63,5 +63,9 @@ public class Project {
 
     public void setCommits(List<Commit> commits) {
         this.commits = commits;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

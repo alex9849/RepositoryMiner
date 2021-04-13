@@ -2,7 +2,6 @@ package de.hskl.repominer.repository;
 
 import de.hskl.repominer.models.FileChange;
 import de.hskl.repominer.models.exception.DaoException;
-import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +72,7 @@ public class FileChangeRepository {
 
             ResultSet rs = pstmt.getGeneratedKeys();
             if(rs.next()){
-                return loadFileChange(fileChange.getCommitId(), fileChange.getFileId());
+                return fileChange;
             }
             throw new DaoException("Errror saving FileChange");
         } catch(SQLException e){

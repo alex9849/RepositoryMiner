@@ -66,7 +66,8 @@ public class AuthorRepository {
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                return loadAuthor(rs.getInt(1));
+                author.setId(rs.getInt(1));
+                return author;
             }
             throw new DaoException("Error saving Author");
         } catch (SQLException e) {

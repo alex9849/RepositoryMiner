@@ -66,7 +66,8 @@ public class FileRepository {
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if(rs.next()){
-                return loadFile(rs.getInt(1));
+                file.setId(rs.getInt(1));
+                return file;
             }
             throw new DaoException("Error saving File");
         } catch (SQLException e) {

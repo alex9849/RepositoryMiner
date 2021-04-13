@@ -31,7 +31,8 @@ public class ProjectRepository {
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                return loadProject(rs.getInt(1));
+                project.setId(rs.getInt(1));
+                return project;
             }
             throw new DaoException("Error saving Project");
         } catch (SQLException e) {
