@@ -4,7 +4,7 @@ import java.sql.Date;
 
 public class OwnerShip {
     private Date date;
-
+    private String path;
     private String authorName;
     private int insertions;
     private int deletions;
@@ -43,5 +43,13 @@ public class OwnerShip {
 
     public void setDeletions(int deletions) {
         this.deletions = deletions;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
