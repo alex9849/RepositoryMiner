@@ -18,7 +18,8 @@ class LineChartService {
   parseBackendToOptions(backendData) {
     let graphConfig = {
       chart: {
-        type: 'line'
+        type: 'line',
+        zoomType: 'x'
       },
       yAxis: {
         title: {
@@ -28,7 +29,8 @@ class LineChartService {
       xAxis: {
         title: {
           text: backendData.xAxisTitle
-        }
+        },
+        categories: backendData.categories
       }
     }
 

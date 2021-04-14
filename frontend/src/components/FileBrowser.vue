@@ -85,7 +85,6 @@
             </q-btn>
           </q-item-section>
           <q-item-section side>
-            last commit/author?
           </q-item-section>
         </q-item>
         <q-item
@@ -144,6 +143,11 @@ export default {
       }
     }
   },
+  watch: {
+    isCurrentFileAFile(value) {
+      this.$emit('isCurrentFileAFile', value);
+    }
+  },
   computed: {
     currentPathBreadCrumbs() {
       let pathParts = this.value.split("/");
@@ -185,6 +189,12 @@ export default {
         }
       }
       return null;
+    },
+    isCurrentFileAFile() {
+      if(!this.currentFiles) {
+        return false;
+      }
+      return !Array.isArray(this.currentFiles);
     }
   }
 }

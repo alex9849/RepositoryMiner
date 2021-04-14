@@ -1,7 +1,7 @@
-package de.hskl.repominer.models.chart.packedbubble;
+package de.hskl.repominer.models.chart.data.packedbubble;
 
-import de.hskl.repominer.models.chart.SeriesEntry;
-import de.hskl.repominer.models.chart.pie.PieChartDatum;
+import de.hskl.repominer.models.chart.data.SeriesEntry;
+import de.hskl.repominer.models.chart.data.pie.PieChartDatum;
 
 public class PackedBubbleChartDatum extends PieChartDatum {
     private SeriesEntry<PackedBubbleChartDatum> drilldown;

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AuthorRepository {
@@ -32,6 +34,29 @@ public class AuthorRepository {
         }
     }
 
+    public List<Author> loadAllAuthorsForProject(int projectId) {
+        List<Author> resultList = new ArrayList<>();
+
+        try{
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM Author WHERE projectId = ?");
+            pstmt.setInt(1, projectId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                Author author = parseAuthor(rs);
+                resultList.add(author);
+            }
+
+            return resultList;
+
+        }catch(SQLException throwables){
+            throw new DaoException("Error loading allAuthorsForPorject");
+        }
+
+    }
+
+
     public Author saveAuthor(Author author) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
@@ -41,7 +66,8 @@ public class AuthorRepository {
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                return loadAuthor(rs.getInt(1));
+                author.setId(rs.getInt(1));
+                return author;
             }
             throw new DaoException("Error saving Author");
         } catch (SQLException e) {
@@ -51,10 +77,11 @@ public class AuthorRepository {
 
     private Author parseAuthor(ResultSet rs) throws SQLException {
         return new Author(
-                rs.getInt("id"),
                 rs.getInt("projectId"),
+                rs.getInt("id"),
                 rs.getString("name")
         );
     }
+
 
 }

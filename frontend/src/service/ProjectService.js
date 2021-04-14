@@ -38,6 +38,19 @@ class ProjectService {
       .then(response => response.data);
   }
 
+  getRequestableProjectCharts(projectId, context) {
+    return axios.get(API_PATH + projectId + "/chart", { params: { context } })
+      .then(response => response.data);
+  }
+
+  getChart(projectId, chartName, requestMeta) {
+    let config = {
+      params: requestMeta
+    }
+    return axios.get(API_PATH + projectId + "/chart/" + chartName, config)
+      .then(response => response.data);
+  }
+
   _parseProject(project) {
     project.lastUpdate = new Date(project.lastUpdate);
   }

@@ -1,4 +1,4 @@
-package de.hskl.repominer.models.chart.pie;
+package de.hskl.repominer.models.chart.data.pie;
 
 public class PieChartDatum {
     private String name;
@@ -8,15 +8,17 @@ public class PieChartDatum {
         return name;
     }
 
-    public void setName(String name) {
+    public PieChartDatum setName(String name) {
         this.name = name;
+        return this;
     }
 
     public double getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public PieChartDatum setValue(double value) {
         this.value = value;
+        return this;
     }
 }

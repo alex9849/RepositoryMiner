@@ -1,12 +1,14 @@
 package de.hskl.repominer.repository;
 
 import de.hskl.repominer.models.Project;
+import de.hskl.repominer.models.chart.datagetter.OwnerShip;
 import de.hskl.repominer.models.exception.DaoException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,8 @@ public class ProjectRepository {
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                return loadProject(rs.getInt(1));
+                project.setId(rs.getInt(1));
+                return project;
             }
             throw new DaoException("Error saving Project");
         } catch (SQLException e) {
@@ -85,5 +88,79 @@ public class ProjectRepository {
         );
         p.setName(rs.getString("name"));
         return p;
+    }
+
+    public List<OwnerShip> getOwnerShip(int projectId, String path) {
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT a.name as author, " +
+                    "total(fc.insertions) as insertions, total(fc.deletions) as deletions " +
+                    "from CurrentPath cp " +
+                    "    join FileChange fc on fc.fileId = cp.fileId " +
+                    "    join \"Commit\" c on fc.commitId = c.id " +
+                    "    join Author a on a.id = c.authorId " +
+                    "where cp.projectId = ? and cp.path like (? || '%') " +
+                    "group by a.id " +
+                    "order by insertions + deletions desc");
+            pstmt.setInt(1, projectId);
+            pstmt.setString(2, path);
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            List<OwnerShip> ownerShips = new ArrayList<>();
+            while (rs.next()) {
+                OwnerShip ownerShip = new OwnerShip();
+                ownerShip.setAuthorName(rs.getString("author"));
+                ownerShip.setInsertions(rs.getInt("insertions"));
+                ownerShip.setDeletions(rs.getInt("deletions"));
+                ownerShips.add(ownerShip);
+            }
+            return ownerShips;
+        } catch (SQLException e) {
+            throw new DaoException("Error calculating ownership", e);
+        }
+    }
+
+    public List<OwnerShip> getOwnerShipDevelopment(int projectId, String path) {
+        String query = "WITH RECURSIVE dates(date) AS (\n" +
+                "    VALUES ((SELECT min(date(timestamp / 1000, 'unixepoch', 'localtime', '+1 day')) from \"Commit\" where projectId = ?))\n" +
+                "    UNION ALL\n" +
+                "    SELECT date(date, '+1 day')\n" +
+                "    FROM dates\n" +
+                "    WHERE date < (SELECT max(date(timestamp / 1000, 'unixepoch', 'localtime', '+1 day')) from \"Commit\" where projectId = ?)\n" +
+                ")\n" +
+                "SELECT CAST(strftime('%s', d.date, 'localtime') AS INT) * 1000 as date, a.name as author, " +
+                "total(case when cp.path is null then 0 else fc.insertions end) as insertions, " +
+                "total(case when cp.path is null then 0 else fc.deletions end) as deletions\n" +
+                "from dates d\n" +
+                "         join Author a on a.projectId = ?\n" +
+                "         left join \"Commit\" c on d.date >= date(c.timestamp / 1000, 'unixepoch', 'localtime') AND c.authorId = a.id\n" +
+                "         left join FileChange fc on fc.commitId = c.id\n" +
+                "         left join CurrentPath cp on fc.fileId = cp.fileId\n" +
+                "where cp.path like (? || '%') or cp.path is null\n" +
+                "group by d.date, a.id\n" +
+                "order by d.date asc, a.name asc";
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, projectId);
+            pstmt.setInt(2, projectId);
+            pstmt.setInt(3, projectId);
+            pstmt.setString(4, path);
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            List<OwnerShip> ownerShips = new ArrayList<>();
+            SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
+            while (rs.next()) {
+                OwnerShip ownerShip = new OwnerShip();
+                ownerShip.setAuthorName(rs.getString("author"));
+                ownerShip.setInsertions(rs.getInt("insertions"));
+                ownerShip.setDeletions(rs.getInt("deletions"));
+                ownerShip.setDate(rs.getDate("date"));
+                ownerShips.add(ownerShip);
+            }
+            return ownerShips;
+        } catch (SQLException  e) {
+            throw new DaoException("Error calculating ownership", e);
+        }
     }
 }

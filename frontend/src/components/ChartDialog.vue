@@ -13,7 +13,7 @@
         <div
           class="col text-center text-weight-bold"
         >
-          {{ parsedChartOptions.name }}
+          {{ loading? 'Loading...' : name }}
         </div>
         <q-btn
           dense
@@ -29,9 +29,9 @@
           </q-tooltip>
         </q-btn>
       </q-bar>
-      <q-card-section v-if="!!parsedChartOptions.description && !loading">
+      <q-card-section v-if="!!description && !loading">
         <div class="text-h6">Description:</div>
-        {{ parsedChartOptions.description }}
+        {{ description }}
       </q-card-section>
       <q-separator/>
       <q-card-section
@@ -48,7 +48,7 @@
         v-if="!loading"
         class="row justify-center items-center"
       >
-        <highcharts :options="parsedChartOptions.graphConfig" :highcharts="hcInstance" />
+        <highcharts :options="hcChartOptions" :highcharts="hcInstance" />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -56,7 +56,6 @@
 
 <script>
 import Highcharts from 'highcharts'
-import ChartService from "src/service/ChartService";
 
 require('highcharts/highcharts-more.js')(Highcharts);
 require('highcharts/modules/drilldown.js')(Highcharts);
@@ -72,7 +71,14 @@ export default {
       type: Boolean,
       default: false
     },
-    chartOptions: {
+    description: {
+      type: String
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    hcChartOptions: {
       type: Object,
       required: true
     }
@@ -80,17 +86,6 @@ export default {
   data() {
     return {
       hcInstance: Highcharts
-    }
-  },
-  computed: {
-    parsedChartOptions() {
-      let options = ChartService.parseBackendToOptions(this.chartOptions);
-      if(!options) {
-        return {
-          name: 'Loading...'
-        }
-      }
-      return options;
     }
   }
 }
