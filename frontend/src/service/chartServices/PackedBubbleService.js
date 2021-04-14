@@ -59,6 +59,10 @@ class PackedBubbleService {
       plotOptions: {
         series: {
           draggable: false,
+          minSize: '20%',
+          maxSize: '100%',
+          zMin: 0,
+          zMax: 1000,
           layoutAlgorithm: {
             gravitationalConstant: 0.05,
             enableSimulation: false,

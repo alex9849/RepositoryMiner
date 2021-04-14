@@ -4,6 +4,7 @@ import de.hskl.repominer.models.chart.ChartContext;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
 import de.hskl.repominer.models.chart.RequestableChart;
 import de.hskl.repominer.models.chart.data.AbstractChart;
+import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipFolderGetter;
 import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipGetter;
 import de.hskl.repominer.models.chart.datagetter.ComeOwnershipDevelopmentGetter;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,20 @@ public class ChartService {
         this.requestableCharts = new HashMap<>();
         this.projectService = projectService;
 
-        RequestableChart ownerShipChart = new RequestableChart(
-                "groups", "ownership", "Code ownership",
+        RequestableChart ownerShipFileChart = new RequestableChart(
+                "groups", "ownershipFile", "Code ownership",
                 Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
-                        new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER, ChartContext.SubContext.FILE)))),
+                        new HashSet<>(Arrays.asList(ChartContext.SubContext.FILE)))),
                 new CodeOwnerShipGetter());
-        requestableCharts.put(ownerShipChart.getIdentifier(), ownerShipChart);
+        requestableCharts.put(ownerShipFileChart.getIdentifier(), ownerShipFileChart);
+
+        RequestableChart ownerShipFolderChart = new RequestableChart("groups", "ownershipFolder",
+                "Code ownership",
+                Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
+                        new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER)))),
+                new CodeOwnerShipFolderGetter());
+        requestableCharts.put(ownerShipFolderChart.getIdentifier(), ownerShipFolderChart);
+
         RequestableChart ownerShipDevelopmentChart = new RequestableChart("groups", "ownershipDevelopment",
                 "Code ownership development",
                 Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,

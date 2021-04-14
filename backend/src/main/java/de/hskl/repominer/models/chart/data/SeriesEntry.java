@@ -10,15 +10,17 @@ public class SeriesEntry<T> {
         return name;
     }
 
-    public void setName(String name) {
+    public SeriesEntry<T> setName(String name) {
         this.name = name;
+        return this;
     }
 
     public List<T> getData() {
         return data;
     }
 
-    public void setData(List<T> data) {
+    public SeriesEntry<T> setData(List<T> data) {
         this.data = data;
+        return this;
     }
 }

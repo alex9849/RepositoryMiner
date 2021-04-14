@@ -127,7 +127,7 @@ public class ProjectRepository {
         }
         try {
             Connection con = DataSourceUtils.getConnection(ds);
-            PreparedStatement pstmt = con.prepareStatement("SELECT folderContent.path as path,\n" +
+            PreparedStatement pstmt = con.prepareStatement("SELECT substr(folderContent.path, length(?) + 1) as path,\n" +
                     "       a.name               as author,\n" +
                     "       total(fc.insertions) as insertions,\n" +
                     "       total(fc.deletions)  as deletions\n" +
@@ -138,7 +138,7 @@ public class ProjectRepository {
                     "                                      length(substr(path, length(?) + 1)) end) as path\n" +
                     "      from CurrentPath\n" +
                     "      where path like ? || '%'\n" +
-                    "        and projectId = 1\n" +
+                    "        and projectId = ?\n" +
                     "      group by substr(path, length(?) + 1, case\n" +
                     "                                                            when instr(substr(path, length(?) + 1), '/') != 0\n" +
                     "                                                                then instr(substr(path, length(?) + 1), '/')\n" +
@@ -157,9 +157,12 @@ public class ProjectRepository {
             pstmt.setString(5, folderPath);
             pstmt.setString(6, folderPath);
             pstmt.setString(7, folderPath);
-            pstmt.setString(8, folderPath);
+            pstmt.setInt(8, projectId);
             pstmt.setString(9, folderPath);
-            pstmt.setInt(10, projectId);
+            pstmt.setString(10, folderPath);
+            pstmt.setString(11, folderPath);
+            pstmt.setString(12, folderPath);
+            pstmt.setInt(13, projectId);
             pstmt.execute();
             ResultSet rs = pstmt.getResultSet();
             List<OwnerShip> ownerShips = new ArrayList<>();
