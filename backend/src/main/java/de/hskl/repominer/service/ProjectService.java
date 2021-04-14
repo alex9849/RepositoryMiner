@@ -103,4 +103,8 @@ public class ProjectService {
     public List<OwnerShip> getOwnerShipDevelopment(int projectId, String path) {
         return projectRepo.getOwnerShipDevelopment(projectId, path);
     }
+
+    public List<OwnerShip> getOwnerShipForFolder(int projectId, String path) {
+        return projectRepo.getOwnerShipForFolder(projectId, path);
+    }
 }

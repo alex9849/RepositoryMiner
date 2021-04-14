@@ -109,7 +109,67 @@ public class ProjectRepository {
             List<OwnerShip> ownerShips = new ArrayList<>();
             while (rs.next()) {
                 OwnerShip ownerShip = new OwnerShip();
+                ownerShip.setPath(path);
                 ownerShip.setAuthorName(rs.getString("author"));
+                ownerShip.setInsertions(rs.getInt("insertions"));
+                ownerShip.setDeletions(rs.getInt("deletions"));
+                ownerShips.add(ownerShip);
+            }
+            return ownerShips;
+        } catch (SQLException e) {
+            throw new DaoException("Error calculating ownership", e);
+        }
+    }
+
+    public List<OwnerShip> getOwnerShipForFolder(int projectId, String folderPath) {
+        if(!folderPath.isEmpty()) {
+            folderPath += "/";
+        }
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("SELECT substr(folderContent.path, length(?) + 1) as path,\n" +
+                    "       a.name               as author,\n" +
+                    "       total(fc.insertions) as insertions,\n" +
+                    "       total(fc.deletions)  as deletions\n" +
+                    "from (select substr(path, 1, case\n" +
+                    "                                 when instr(substr(path, length(?) + 1), '/') != 0\n" +
+                    "                                     then length(?) + instr(substr(path, length(?) + 1), '/')\n" +
+                    "                                 else length(?) + 1 +\n" +
+                    "                                      length(substr(path, length(?) + 1)) end) as path\n" +
+                    "      from CurrentPath\n" +
+                    "      where path like ? || '%'\n" +
+                    "        and projectId = ?\n" +
+                    "      group by substr(path, length(?) + 1, case\n" +
+                    "                                                            when instr(substr(path, length(?) + 1), '/') != 0\n" +
+                    "                                                                then instr(substr(path, length(?) + 1), '/')\n" +
+                    "                                                            else length(substr(path, length(?) + 1)) end)) folderContent\n" +
+                    "         join CurrentPath cp on cp.path like folderContent.path || '%'\n" +
+                    "         join FileChange fc on fc.fileId = cp.fileId\n" +
+                    "         join \"Commit\" c on fc.commitId = c.id\n" +
+                    "         join Author a on a.id = c.authorId\n" +
+                    "where cp.projectId = ?\n" +
+                    "group by a.id, folderContent.path\n" +
+                    "order by folderContent.path desc, a.name asc");
+            pstmt.setString(1, folderPath);
+            pstmt.setString(2, folderPath);
+            pstmt.setString(3, folderPath);
+            pstmt.setString(4, folderPath);
+            pstmt.setString(5, folderPath);
+            pstmt.setString(6, folderPath);
+            pstmt.setString(7, folderPath);
+            pstmt.setInt(8, projectId);
+            pstmt.setString(9, folderPath);
+            pstmt.setString(10, folderPath);
+            pstmt.setString(11, folderPath);
+            pstmt.setString(12, folderPath);
+            pstmt.setInt(13, projectId);
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            List<OwnerShip> ownerShips = new ArrayList<>();
+            while (rs.next()) {
+                OwnerShip ownerShip = new OwnerShip();
+                ownerShip.setAuthorName(rs.getString("author"));
+                ownerShip.setPath(rs.getString("path"));
                 ownerShip.setInsertions(rs.getInt("insertions"));
                 ownerShip.setDeletions(rs.getInt("deletions"));
                 ownerShips.add(ownerShip);
@@ -152,6 +212,7 @@ public class ProjectRepository {
             SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
             while (rs.next()) {
                 OwnerShip ownerShip = new OwnerShip();
+                ownerShip.setPath(path);
                 ownerShip.setAuthorName(rs.getString("author"));
                 ownerShip.setInsertions(rs.getInt("insertions"));
                 ownerShip.setDeletions(rs.getInt("deletions"));

@@ -17,7 +17,7 @@
         >
           Available graphs:
         </q-card-section>
-        <q-splitter horizontal/>
+        <q-splitter :value="10" horizontal/>
         <q-card-section
           class="row justify-center q-gutter-x-lg"
         >
