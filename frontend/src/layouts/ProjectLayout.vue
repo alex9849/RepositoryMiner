@@ -21,7 +21,7 @@
           :ripple="false"
         />
         <q-route-tab
-          :to="{name: 'ProjectSettings'}"
+          :to="{name: 'ProjectSettingsAuthors'}"
           label="Settings"
           icon="settings"
           append

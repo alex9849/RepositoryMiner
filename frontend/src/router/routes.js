@@ -31,7 +31,15 @@ const routes = [
           }, {
             name: 'ProjectSettings',
             path: 'settings',
-            component: () => import('pages/ProjectSettings')
+            component: () => import('pages/ProjectSettings'),
+            redirect: {name: 'ProjectSettingsAuthors'},
+            children: [
+              {
+                name: 'ProjectSettingsAuthors',
+                path: 'authors',
+                component: () => import('pages/ProjectSettingsAuthors'),
+              }
+            ]
           }
         ]
       }

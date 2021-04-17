@@ -15,6 +15,8 @@
             clickable
             v-ripple
             v-for="section of menuSections"
+            :to="section.route"
+            active-class="menuSelected"
           >
             <q-item-section>
               <q-item-label>
@@ -29,9 +31,9 @@
         class="col-12 col-md"
       >
         <div
-          class="bg-amber-1 rounded-borders"
+          class="rounded-borders q-gutter-sm"
         >
-          Content
+          <router-view/>
         </div>
       </div>
     </div>
@@ -45,8 +47,9 @@ export default {
     return {
       menuSections: [
         {
-          name: 'authors',
-          route: {name: ''}
+          name: 'Authors',
+          headline: 'Authors',
+          route: {name: 'ProjectSettingsAuthors'}
         }
       ]
     }
@@ -55,5 +58,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .menuSelected {
+    border-left: 3px solid #f9836d;
+  }
 </style>
