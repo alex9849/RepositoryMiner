@@ -7,12 +7,19 @@
     </div>
     <q-separator :value="10"/>
 
-    <div class="row justify-end">
+    <div class="row justify-end q-gutter-x-sm">
+      <q-btn
+        no-caps
+        class="bg-positive text-white"
+        @click="newGroupDialog.show = true"
+      >
+        New Group
+      </q-btn>
       <q-btn
         no-caps
         class="bg-positive text-white"
       >
-        New Group
+        Save Groups
       </q-btn>
     </div>
     <draggable
@@ -37,10 +44,21 @@
             icon="delete"
             dense
             flat
+            @click="clickGroupDelete(authorGroup)"
           />
         </q-item-section>
       </q-item>
       <q-item
+        v-if="authorGroup.authors.length === 0"
+      >
+        <q-item-section
+          class="text-center"
+        >
+          No author assigned!
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-else
         v-for="author of authorGroup.authors"
         class="item"
         style="cursor: move"
@@ -98,6 +116,49 @@
         </q-item-section>
       </q-item>
     </draggable>
+    <q-dialog
+      v-model="newGroupDialog.show"
+      @hide="clickGroupAddAbort"
+    >
+      <q-card
+        style="width: 400px"
+      >
+        <q-card-section
+          class="q-gutter-md"
+        >
+          <div
+            class="text-center text-h6"
+          >
+            New Group
+          </div>
+          <q-form
+            @submit.prevent="clickGroupAdd"
+          >
+            <q-input
+              label="Name"
+              v-model="newGroupDialog.name"
+              outlined
+            />
+          </q-form>
+        </q-card-section>
+        <q-card-actions
+          align="center"
+        >
+          <q-btn
+            color="positive"
+            label="Add"
+            no-caps
+            type="submit"
+          />
+          <q-btn
+            color="negative"
+            label="Abort"
+            no-caps
+            @click="clickGroupAddAbort"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -110,6 +171,10 @@ export default {
   components: {draggable},
   data() {
     return {
+      newGroupDialog: {
+        show: false,
+        name: ""
+      },
       authorGroups: [
         {
           id: 1,
@@ -134,6 +199,23 @@ export default {
         }
       ],
       allAuthors: []
+    }
+  },
+  methods: {
+    clickGroupAdd() {
+      this.authorGroups.push({
+        id: 0,
+        name: this.newGroupDialog.name,
+        authors: []
+      });
+      this.clickGroupAddAbort();
+    },
+    clickGroupDelete(group) {
+      this.authorGroups = this.authorGroups.filter(x => x !== group)
+    },
+    clickGroupAddAbort() {
+      this.newGroupDialog.name = "";
+      this.newGroupDialog.show = false;
     }
   },
   computed: {
