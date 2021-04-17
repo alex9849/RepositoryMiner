@@ -15,6 +15,7 @@ CREATE TABLE LogAuthor
 (
     id        INTEGER PRIMARY KEY,
     projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
+    authorId  INTEGER REFERENCES Author,
     name      TEXT    NOT NULL
 );
 
@@ -23,13 +24,6 @@ CREATE TABLE Author
     id        INTEGER PRIMARY KEY,
     projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
     name      TEXT    NOT NULL
-);
-
-CREATE TABLE AuthorLogAuthor
-(
-    authorId    INTEGER REFERENCES Author,
-    logAuthorId INTEGER REFERENCES LogAuthor,
-    CONSTRAINT author_log_author_pk PRIMARY KEY (authorId, logAuthorId)
 );
 
 CREATE TABLE "Commit"

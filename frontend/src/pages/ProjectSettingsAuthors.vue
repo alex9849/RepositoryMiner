@@ -13,13 +13,13 @@
         class="bg-positive text-white"
         @click="newGroupDialog.show = true"
       >
-        New Group
+        New author
       </q-btn>
       <q-btn
         no-caps
         class="bg-positive text-white"
       >
-        Save Groups
+        Save authors
       </q-btn>
     </div>
     <draggable
@@ -37,7 +37,7 @@
         class="bg-blue-2"
       >
         <q-item-section>
-          <q-item-label overline>Group: {{ authorGroup.name }}</q-item-label>
+          <q-item-label overline>Author: {{ authorGroup.name }}</q-item-label>
         </q-item-section>
         <q-item-section side>
           <q-btn
@@ -54,7 +54,7 @@
         <q-item-section
           class="text-center"
         >
-          No author assigned!
+          No log-author assigned!
         </q-item-section>
       </q-item>
       <q-item
@@ -89,7 +89,7 @@
         class="bg-blue-2"
       >
         <q-item-section>
-          <q-item-label overline>Unassociated authors</q-item-label>
+          <q-item-label overline>Unassociated log-authors</q-item-label>
         </q-item-section>
       </q-item>
       <q-item v-if="unassociatedAuthors.length === 0">
@@ -129,7 +129,7 @@
           <div
             class="text-center text-h6"
           >
-            New Group
+            New Author
           </div>
           <q-form
             @submit.prevent="clickGroupAdd"
