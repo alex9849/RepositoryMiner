@@ -56,7 +56,7 @@ class ProjectService {
       .then(response => response.data);
   }
 
-  getAuthors() {
+  getAuthors(projectId) {
     return axios.get(API_PATH + projectId + "/author")
       .then(response => response.data);
   }
