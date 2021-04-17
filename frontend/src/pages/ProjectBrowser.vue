@@ -1,7 +1,5 @@
 <template>
-  <q-page
-    padding
-  >
+  <q-page>
     <file-browser
       v-model="browser.currentPath"
       :file-tree="browser.fileTree"
@@ -63,7 +61,7 @@ import ChartDialog from "components/ChartDialog";
 import ChartService from "src/service/ChartService";
 
 export default {
-  name: "BrowseProject",
+  name: "ProjectBrowser",
   components: {ChartDialog, FileBrowser},
   data: () => {
     return {
