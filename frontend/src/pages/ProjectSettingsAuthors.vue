@@ -115,7 +115,27 @@
         </q-item-section>
       </q-item>
     </draggable>
-    <q-dialog
+    <c-question
+      v-model="addAuthorDialog.show"
+      question="New author"
+      :disable-ok="$v.addAuthorDialog.$invalid"
+      @clickOk="clickAddAuthor"
+      @clickAbort="clickAddAuthorAbort"
+      abort-color="red"
+    >
+      <q-form
+        @submit.prevent="clickAddAuthor"
+      >
+        <q-input
+          label="Name"
+          v-model="addAuthorDialog.name"
+          @input="$v.addAuthorDialog.name.$touch()"
+          outlined
+          :rules="[val => $v.addAuthorDialog.name.required || 'Required']"
+        />
+      </q-form>
+    </c-question>
+    <!--<q-dialog
       v-model="addAuthorDialog.show"
       @hide="clickAddAuthorAbort"
     >
@@ -141,26 +161,24 @@
               :rules="[val => $v.addAuthorDialog.name.required || 'Required']"
             />
           </q-form>
+          <div class="row justify-evenly">
+            <q-btn
+              color="positive"
+              label="Add"
+              no-caps
+              :disable="$v.addAuthorDialog.$invalid"
+              @click="clickAddAuthor"
+            />
+            <q-btn
+              color="negative"
+              label="Abort"
+              no-caps
+              @click="clickAddAuthorAbort"
+            />
+          </div>
         </q-card-section>
-        <q-card-actions
-          align="center"
-        >
-          <q-btn
-            color="positive"
-            label="Add"
-            no-caps
-            :disable="$v.addAuthorDialog.$invalid"
-            @click="clickAddAuthor"
-          />
-          <q-btn
-            color="negative"
-            label="Abort"
-            no-caps
-            @click="clickAddAuthorAbort"
-          />
-        </q-card-actions>
       </q-card>
-    </q-dialog>
+    </q-dialog>-->
   </div>
 </template>
 
@@ -169,10 +187,11 @@
 import draggable from 'vuedraggable'
 import {required} from "vuelidate/lib/validators";
 import ProjectService from "src/service/ProjectService";
+import CQuestion from "components/CQuestion";
 
 export default {
   name: "ProjectSettingsAuthors",
-  components: {draggable},
+  components: {CQuestion, draggable},
   data() {
     return {
       addAuthorDialog: {
