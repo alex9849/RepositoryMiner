@@ -51,6 +51,16 @@ class ProjectService {
       .then(response => response.data);
   }
 
+  getAuthors(projectId) {
+    return axios.get(API_PATH + projectId + "/author")
+      .then(response => response.data);
+  }
+
+  getAuthorGroups() {
+    return axios.get(API_PATH + projectId + "/authorGroup")
+      .then(response => response.data);
+  }
+
   _parseProject(project) {
     project.lastUpdate = new Date(project.lastUpdate);
   }

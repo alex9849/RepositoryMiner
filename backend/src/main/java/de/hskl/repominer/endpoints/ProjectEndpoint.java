@@ -79,4 +79,9 @@ public class ProjectEndpoint {
         return ResponseEntity.ok(chartData);
     }
 
+    @RequestMapping(value = "{id}/author", method = RequestMethod.GET)
+    public ResponseEntity<?> getChart(@PathVariable("id") int projectId) throws NotFoundException {
+        return ResponseEntity.ok(projectService.getAuthors(projectId));
+    }
+
 }

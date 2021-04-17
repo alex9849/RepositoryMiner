@@ -169,6 +169,7 @@
 
 import draggable from 'vuedraggable'
 import {required} from "vuelidate/lib/validators";
+import ProjectService from "src/service/ProjectService";
 
 export default {
   name: "ProjectSettingsAuthors",
@@ -202,19 +203,7 @@ export default {
           }]
         }
       ],
-      allAuthors: [{
-        id: 1,
-        name: "DanielDobby"
-      }, {
-        id: 4,
-        name: "Daniel Poslon"
-      }, {
-        id: 2,
-        name: "alex9849"
-      }, {
-        id: 3,
-        name: "Alexander Liggesmeyer"
-      }]
+      allAuthors: []
     }
   },
   methods: {
@@ -233,6 +222,10 @@ export default {
       this.newGroupDialog.name = "";
       this.newGroupDialog.show = false;
     }
+  },
+  created() {
+    ProjectService.getAuthors(this.$route.params.id)
+      .then(data => this.allAuthors = data);
   },
   computed: {
     unassociatedAuthors() {

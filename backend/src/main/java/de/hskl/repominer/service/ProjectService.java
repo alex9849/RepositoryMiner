@@ -107,4 +107,8 @@ public class ProjectService {
     public List<OwnerShip> getOwnerShipForFolder(int projectId, String path) {
         return projectRepo.getOwnerShipForFolder(projectId, path);
     }
+
+    public List<Author> getAuthors(int projectId) {
+        return authorRepo.loadAllAuthorsForProject(projectId);
+    }
 }
