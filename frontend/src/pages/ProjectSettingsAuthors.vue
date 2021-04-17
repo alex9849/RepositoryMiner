@@ -1,17 +1,146 @@
 <template>
-  <div>
+  <div class="q-gutter-md">
     <div
       class="text-h5"
     >
       Authors
     </div>
     <q-separator :value="10"/>
+
+    <div class="row justify-end">
+      <q-btn
+        no-caps
+        class="bg-positive text-white"
+      >
+        New Group
+      </q-btn>
+    </div>
+    <draggable
+      v-for="authorGroup of authorGroups"
+      :list="authorGroup.authors"
+      group="authors"
+      draggable=".item"
+      :animation="200"
+      class="rounded-borders q-list q-list--bordered q-list--separator"
+    >
+      <q-item
+        slot="header"
+        dense
+        style="border-radius: 3px 3px 0 0"
+        class="bg-blue-2"
+      >
+        <q-item-section>
+          <q-item-label overline>Group: {{ authorGroup.name }}</q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            icon="delete"
+            dense
+            flat
+          />
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-for="author of authorGroup.authors"
+        class="item"
+        style="cursor: move"
+      >
+        <q-item-section
+          avatar
+          style="min-width: 0"
+        >
+          <q-icon size="xs" name="drag_indicator" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ author.name }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </draggable>
+
+    <draggable
+      :list="unassociatedAuthors"
+      group="authors"
+      draggable=".item"
+      :animation="200"
+      class="rounded-borders q-list q-list--bordered q-list--separator"
+    >
+      <q-item
+        slot="header"
+        dense
+        style="border-radius: 3px 3px 0 0"
+        class="bg-blue-2"
+      >
+        <q-item-section>
+          <q-item-label overline>Unassociated authors</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item v-if="unassociatedAuthors.length === 0">
+        <q-item-section
+          class="text-center"
+        >
+          All authors assigned!
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-else
+        v-for="author of unassociatedAuthors"
+        class="item"
+        style="cursor: move"
+      >
+        <q-item-section
+          avatar
+          style="min-width: 0"
+        >
+          <q-icon size="xs" name="drag_indicator" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ author.name }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </draggable>
   </div>
 </template>
 
 <script>
+
+import draggable from 'vuedraggable'
+
 export default {
-  name: "ProjectSettingsAuthors"
+  name: "ProjectSettingsAuthors",
+  components: {draggable},
+  data() {
+    return {
+      authorGroups: [
+        {
+          id: 1,
+          name: "Gruppe 1",
+          authors: [{
+            id: 1,
+            name: "DanielDobby"
+          }, {
+            id: 4,
+            name: "Daniel Poslon"
+          }]
+        }, {
+          id: 2,
+          name: "Gruppe 2",
+          authors: [{
+            id: 2,
+            name: "alex9849"
+          }, {
+            id: 3,
+            name: "Alexander Liggesmeyer"
+          }]
+        }
+      ],
+      allAuthors: []
+    }
+  },
+  computed: {
+    unassociatedAuthors() {
+      return []
+    }
+  }
 }
 </script>
 
