@@ -7,23 +7,16 @@
       <q-tabs
         no-caps
         inline-label
-        dense
-        class="bg-grey-5 text-black shadow-2 rounded-borders"
+        indicator-color="red"
+        class="bg-grey-3 text-black shadow-2 rounded-borders"
         align="justify"
         switch-indicator
-        active-bg-color="grey-2"
       >
         <q-route-tab
-          :to="{name: 'ProjectBrowser'}"
-          label="Browse"
-          icon="code"
-          append
-          :ripple="false"
-        />
-        <q-route-tab
-          :to="{name: 'ProjectSettingsAuthors'}"
-          label="Settings"
-          icon="settings"
+          v-for="tab in tabs"
+          :to="tab.to"
+          :label="tab.label"
+          :icon="tab.icon"
           append
           :ripple="false"
         />
@@ -37,7 +30,20 @@
 
 <script>
 export default {
-  name: "ProjectLayout"
+  name: "ProjectLayout",
+  data() {
+    return {
+      tabs: [{
+        label: 'Browse',
+        icon: 'code',
+        to: {name: 'ProjectBrowser'}
+      }, {
+        label: 'Settings',
+        icon: 'settings',
+        to: {name: 'ProjectSettingsAuthors'}
+      }]
+    }
+  }
 }
 </script>
 
