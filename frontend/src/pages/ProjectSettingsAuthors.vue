@@ -23,6 +23,47 @@
       </q-btn>
     </div>
     <draggable
+      :list="unassociatedLogAuthors"
+      group="authors"
+      draggable=".item"
+      :animation="200"
+      class="rounded-borders q-list q-list--bordered q-list--separator"
+    >
+      <q-item
+        slot="header"
+        dense
+        style="border-radius: 3px 3px 0 0"
+        class="bg-red-3"
+      >
+        <q-item-section>
+          <q-item-label overline>Unassociated Log-Authors</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item v-if="unassociatedLogAuthors.length === 0">
+        <q-item-section
+          class="text-center"
+        >
+          All authors assigned!
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-else
+        v-for="logAuthor of unassociatedLogAuthors"
+        class="item"
+        style="cursor: move"
+      >
+        <q-item-section
+          avatar
+          style="min-width: 0"
+        >
+          <q-icon size="xs" name="drag_indicator" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ logAuthor.name }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </draggable>
+    <draggable
       v-for="author of authors"
       :list="author.logAuthors"
       group="authors"
@@ -60,48 +101,6 @@
       <q-item
         v-else
         v-for="logAuthor of author.logAuthors"
-        class="item"
-        style="cursor: move"
-      >
-        <q-item-section
-          avatar
-          style="min-width: 0"
-        >
-          <q-icon size="xs" name="drag_indicator" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ logAuthor.name }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </draggable>
-
-    <draggable
-      :list="unassociatedLogAuthors"
-      group="authors"
-      draggable=".item"
-      :animation="200"
-      class="rounded-borders q-list q-list--bordered q-list--separator"
-    >
-      <q-item
-        slot="header"
-        dense
-        style="border-radius: 3px 3px 0 0"
-        class="bg-blue-2"
-      >
-        <q-item-section>
-          <q-item-label overline>Unassociated log-authors</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item v-if="unassociatedLogAuthors.length === 0">
-        <q-item-section
-          class="text-center"
-        >
-          All authors assigned!
-        </q-item-section>
-      </q-item>
-      <q-item
-        v-else
-        v-for="logAuthor of unassociatedLogAuthors"
         class="item"
         style="cursor: move"
       >
