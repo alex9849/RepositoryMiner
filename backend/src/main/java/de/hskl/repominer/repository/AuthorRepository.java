@@ -1,6 +1,6 @@
 package de.hskl.repominer.repository;
 
-import de.hskl.repominer.models.Author;
+import de.hskl.repominer.models.LogAuthor;
 import de.hskl.repominer.models.exception.DaoException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class AuthorRepository {
         this.ds = ds;
     }
 
-    public Author loadAuthor(int id) {
+    public LogAuthor loadAuthor(int id) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("SELECT * from Author where id = ?");
@@ -34,8 +34,8 @@ public class AuthorRepository {
         }
     }
 
-    public List<Author> loadAllAuthorsForProject(int projectId) {
-        List<Author> resultList = new ArrayList<>();
+    public List<LogAuthor> loadAllAuthorsForProject(int projectId) {
+        List<LogAuthor> resultList = new ArrayList<>();
 
         try{
             Connection con = DataSourceUtils.getConnection(ds);
@@ -44,8 +44,8 @@ public class AuthorRepository {
             ResultSet rs = pstmt.executeQuery();
 
             while(rs.next()){
-                Author author = parseAuthor(rs);
-                resultList.add(author);
+                LogAuthor logAuthor = parseAuthor(rs);
+                resultList.add(logAuthor);
             }
 
             return resultList;
@@ -57,17 +57,17 @@ public class AuthorRepository {
     }
 
 
-    public Author saveAuthor(Author author) {
+    public LogAuthor saveAuthor(LogAuthor logAuthor) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO Author (projectId, name) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, author.getProjectId());
-            pstmt.setString(2, author.getName());
+            pstmt.setInt(1, logAuthor.getProjectId());
+            pstmt.setString(2, logAuthor.getName());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                author.setId(rs.getInt(1));
-                return author;
+                logAuthor.setId(rs.getInt(1));
+                return logAuthor;
             }
             throw new DaoException("Error saving Author");
         } catch (SQLException e) {
@@ -75,8 +75,8 @@ public class AuthorRepository {
         }
     }
 
-    private Author parseAuthor(ResultSet rs) throws SQLException {
-        return new Author(
+    private LogAuthor parseAuthor(ResultSet rs) throws SQLException {
+        return new LogAuthor(
                 rs.getInt("projectId"),
                 rs.getInt("id"),
                 rs.getString("name")

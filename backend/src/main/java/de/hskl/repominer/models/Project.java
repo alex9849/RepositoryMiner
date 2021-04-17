@@ -12,7 +12,7 @@ public class Project {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date lastUpdate;
     @JsonIgnore
-    private List<Author> authors;
+    private List<LogAuthor> logAuthors;
     @JsonIgnore
     private List<Commit> commits;
 
@@ -49,12 +49,12 @@ public class Project {
         this.lastUpdate = lastUpdate;
     }
 
-    public List<Author> getAuthors() {
-        return authors;
+    public List<LogAuthor> getAuthors() {
+        return logAuthors;
     }
 
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
+    public void setAuthors(List<LogAuthor> logAuthors) {
+        this.logAuthors = logAuthors;
     }
 
     public List<Commit> getCommits() {

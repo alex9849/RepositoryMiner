@@ -1,13 +1,13 @@
 package de.hskl.repominer.models;
 
-public class Author {
+public class LogAuthor {
 
 
     private int projectId;
     private int id;
     private String name;
 
-    public Author(int projectId, int id, String name) {
+    public LogAuthor(int projectId, int id, String name) {
         this.projectId = projectId;
         this.id = id;
         this.name = name;

@@ -40,10 +40,10 @@ public class ProjectService {
         Project project = LogParser.parseLogStream(logInputStream);
         project.setName(projectName);
         Project savedProject = projectRepo.saveProject(project);
-        for (Author author : project.getAuthors()) {
-            author.setProjectId(savedProject.getId());
-            Author savedAuthor = authorRepo.saveAuthor(author);
-            author.setId(savedAuthor.getId());
+        for (LogAuthor logAuthor : project.getAuthors()) {
+            logAuthor.setProjectId(savedProject.getId());
+            LogAuthor savedLogAuthor = authorRepo.saveAuthor(logAuthor);
+            logAuthor.setId(savedLogAuthor.getId());
         }
         for(Commit commit : project.getCommits()) {
             commit.setAuthorId(commit.getAuthor().getId());
@@ -108,7 +108,7 @@ public class ProjectService {
         return projectRepo.getOwnerShipForFolder(projectId, path);
     }
 
-    public List<Author> getAuthors(int projectId) {
+    public List<LogAuthor> getAuthors(int projectId) {
         return authorRepo.loadAllAuthorsForProject(projectId);
     }
 }
