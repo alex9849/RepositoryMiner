@@ -5,7 +5,7 @@
       :file-tree="browser.fileTree"
       :loading="browser.loading"
       @isCurrentFileAFile="browser.isFile = $event"
-      @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
+      @input="$router.push({name: 'ProjectBrowser', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
     >
       <q-card
         class="bg-grey-3"
