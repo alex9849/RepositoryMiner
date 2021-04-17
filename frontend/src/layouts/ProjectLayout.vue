@@ -8,7 +8,7 @@
         no-caps
         inline-label
         indicator-color="red"
-        class="bg-grey-3 text-black shadow-2 rounded-borders"
+        class="bg-grey-5 text-black shadow-2 rounded-borders"
         align="justify"
         switch-indicator
       >
