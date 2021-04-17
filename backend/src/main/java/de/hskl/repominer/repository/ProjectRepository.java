@@ -21,7 +21,7 @@ public class ProjectRepository {
         this.ds = ds;
     }
 
-    public Project saveProject(Project project) {
+    public Project addProject(Project project) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO Project (name, lastUpdate) VALUES (?, ?)",

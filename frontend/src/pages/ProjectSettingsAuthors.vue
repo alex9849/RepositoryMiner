@@ -224,7 +224,7 @@ export default {
     }
   },
   created() {
-    ProjectService.getAuthors(this.$route.params.id)
+    ProjectService.getLogAuthors(this.$route.params.id)
       .then(data => this.allAuthors = data);
   },
   computed: {

@@ -51,13 +51,13 @@ class ProjectService {
       .then(response => response.data);
   }
 
-  getAuthors(projectId) {
-    return axios.get(API_PATH + projectId + "/author")
+  getLogAuthors(projectId) {
+    return axios.get(API_PATH + projectId + "/logauthor")
       .then(response => response.data);
   }
 
-  getAuthorGroups() {
-    return axios.get(API_PATH + projectId + "/authorGroup")
+  getAuthors() {
+    return axios.get(API_PATH + projectId + "/author")
       .then(response => response.data);
   }
 

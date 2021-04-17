@@ -58,7 +58,7 @@ public class FileChangeRepository {
         }
     }
 
-    public FileChange saveFileChange(FileChange fileChange) {
+    public FileChange addFileChange(FileChange fileChange) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO FileChange (commitId, fileId, path, insertions, deletions)"

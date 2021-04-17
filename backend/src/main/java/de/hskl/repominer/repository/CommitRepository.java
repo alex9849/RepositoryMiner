@@ -54,7 +54,7 @@ public class CommitRepository  {
     }
 
 
-    public Commit saveCommit(Commit commit){
+    public Commit addCommit(Commit commit){
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement(

@@ -57,7 +57,7 @@ public class FileRepository {
 
 
 
-    public File saveFile(File file) {
+    public File addFile(File file) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO File (projectId) VALUES (?)",
