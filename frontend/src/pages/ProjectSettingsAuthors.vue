@@ -137,7 +137,9 @@
             <q-input
               label="Name"
               v-model="newGroupDialog.name"
+              @input="$v.newGroupDialog.name.$touch()"
               outlined
+              :rules="[val => $v.newGroupDialog.name.required || 'Required']"
             />
           </q-form>
         </q-card-section>
@@ -148,7 +150,8 @@
             color="positive"
             label="Add"
             no-caps
-            type="submit"
+            :disable="$v.newGroupDialog.$invalid"
+            @click="clickGroupAdd"
           />
           <q-btn
             color="negative"
@@ -165,6 +168,7 @@
 <script>
 
 import draggable from 'vuedraggable'
+import {required} from "vuelidate/lib/validators";
 
 export default {
   name: "ProjectSettingsAuthors",
@@ -198,7 +202,19 @@ export default {
           }]
         }
       ],
-      allAuthors: []
+      allAuthors: [{
+        id: 1,
+        name: "DanielDobby"
+      }, {
+        id: 4,
+        name: "Daniel Poslon"
+      }, {
+        id: 2,
+        name: "alex9849"
+      }, {
+        id: 3,
+        name: "Alexander Liggesmeyer"
+      }]
     }
   },
   methods: {
@@ -220,7 +236,22 @@ export default {
   },
   computed: {
     unassociatedAuthors() {
-      return []
+      let allAssignedAuthorIds = new Set();
+      for(let authorGroup of this.authorGroups) {
+        for(let author of authorGroup.authors) {
+          allAssignedAuthorIds.add(author.id);
+        }
+      }
+      return this.allAuthors.filter(x => !allAssignedAuthorIds.has(x.id))
+    }
+  },
+  validations() {
+    return {
+      newGroupDialog: {
+        name: {
+          required
+        }
+      }
     }
   }
 }
