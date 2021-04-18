@@ -135,50 +135,6 @@
         />
       </q-form>
     </c-question>
-    <!--<q-dialog
-      v-model="addAuthorDialog.show"
-      @hide="clickAddAuthorAbort"
-    >
-      <q-card
-        style="width: 400px"
-      >
-        <q-card-section
-          class="q-gutter-md"
-        >
-          <div
-            class="text-center text-h6"
-          >
-            New Author
-          </div>
-          <q-form
-            @submit.prevent="clickAddAuthor"
-          >
-            <q-input
-              label="Name"
-              v-model="addAuthorDialog.name"
-              @input="$v.addAuthorDialog.name.$touch()"
-              outlined
-              :rules="[val => $v.addAuthorDialog.name.required || 'Required']"
-            />
-          </q-form>
-          <div class="row justify-evenly">
-            <q-btn
-              color="positive"
-              label="Add"
-              no-caps
-              :disable="$v.addAuthorDialog.$invalid"
-              @click="clickAddAuthor"
-            />
-            <q-btn
-              color="negative"
-              label="Abort"
-              no-caps
-              @click="clickAddAuthorAbort"
-            />
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>-->
   </div>
 </template>
 
