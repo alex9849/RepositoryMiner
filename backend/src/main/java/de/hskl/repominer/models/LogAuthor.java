@@ -2,6 +2,10 @@ package de.hskl.repominer.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 public class LogAuthor {
 
 
@@ -63,7 +67,22 @@ public class LogAuthor {
     public String toString() {
         return "[  ProjektId: " + getProjectId() +
                 ", id: " + getId() +
-                ",authorId: " + getAuthorId() +
-                ",name: " + getName() + "]";
+                ", authorId: " + getAuthorId() +
+                ", name: " + getName() + "]";
+    }
+
+    public static String logAuthorsListToOneLineString(List<LogAuthor> logAuthorList){
+        String result = "[ ";
+        if(logAuthorList == null)
+            return result + "]";
+
+        ListIterator<LogAuthor> it = logAuthorList.listIterator();
+
+        while(it.hasNext()){
+            if(it.hasNext()) result += it.next().toString() + ",";
+            else result += it.next().toString() + "]";
+        }
+
+        return result;
     }
 }

@@ -135,8 +135,22 @@ public class ProjectService {
         return authors;
     }
 
-    public void updateLogAuthors(int projectId, List<Author> authorList){
+    public void updateAuthorsAndLogAuthorsSettings(int projectId, List<Author> authorList){
+        //check if some authors got deleted
+        List<Author> currentAuthorsInDb = authorRepo.loadAuthorsForProject(projectId);
+        for(Author dbAuthor : currentAuthorsInDb){
+            boolean exists = false;
+            for(Author a : authorList){
+                if(a.getId() == dbAuthor.getId()) exists = true;
+            }
+            //loesche author, wenn er im frontendSettings geloescht wurde
+            if(!exists) authorRepo.deleteAuthor( dbAuthor.getId() );
+        }
+
         for(Author author : authorList){
+            if(author.getId() == 0)
+                authorRepo.addAuthor(author); //create new author, if id==0
+
             List<LogAuthor> logAuthorList = author.getLogAuthors();
             for(LogAuthor logAuthor : logAuthorList)
                 logAuthorRepo.updateLogAuthor(author.getId(), logAuthor);

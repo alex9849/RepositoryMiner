@@ -47,8 +47,14 @@ public class ProjectEndpoint {
     }
 
     @RequestMapping(value = "{id}/authors", method = RequestMethod.POST)
-    public ResponseEntity<?> saveAuthorsAngLogAuthors(@PathVariable(value="id") int id, @RequestBody List<Author> authorsList){
-        projectService.updateLogAuthors(id, authorsList);
+    public ResponseEntity<?> saveAuthorsAndLogAuthorsSettings(@PathVariable(value="id") int id, @RequestBody List<Author> authorsList){
+        System.out.println("-----ENDPOINT saveAuthorsAndLogAuthorsSettings");
+
+        //update projectId's for new created authors in authorsList
+        for(Author a : authorsList)
+            if(a.getProjectId() == 0) a.setProjectId(id);
+
+        projectService.updateAuthorsAndLogAuthorsSettings(id, authorsList);
 
         return ResponseEntity.ok().build();
     }
