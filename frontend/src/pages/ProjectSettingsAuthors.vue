@@ -204,7 +204,7 @@ export default {
   },
   methods: {
     clickAddAuthor() {
-      this.authors.push({
+      this.authors.unshift({
         id: 0,
         name: this.addAuthorDialog.name,
         logAuthors: []
