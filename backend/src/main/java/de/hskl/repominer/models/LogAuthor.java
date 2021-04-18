@@ -58,4 +58,12 @@ public class LogAuthor {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "[  ProjektId: " + getProjectId() +
+                ", id: " + getId() +
+                ",authorId: " + getAuthorId() +
+                ",name: " + getName() + "]";
+    }
 }

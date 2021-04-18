@@ -19,6 +19,13 @@ class ProjectService {
       .then(response => response.data);
   }
 
+  saveAuthorsAndLogAuthorGroups(projectId, authorList){
+    let formData = new FormData();
+    formData.append('authors', authorList)
+
+    return axios.post(API_PATH + projectId + "/authors", authorList );
+  }
+
   getProjects() {
     return axios.get(API_PATH)
       .then(response => {
@@ -55,6 +62,7 @@ class ProjectService {
     return axios.get(API_PATH + projectId + "/logauthor")
       .then(response => response.data);
   }
+
 
   getAuthors(projectId) {
     return axios.get(API_PATH + projectId + "/author")

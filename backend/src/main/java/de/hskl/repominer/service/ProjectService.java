@@ -134,4 +134,12 @@ public class ProjectService {
         }
         return authors;
     }
+
+    public void updateLogAuthors(int projectId, List<Author> authorList){
+        for(Author author : authorList){
+            List<LogAuthor> logAuthorList = author.getLogAuthors();
+            for(LogAuthor logAuthor : logAuthorList)
+                logAuthorRepo.updateLogAuthor(author.getId(), logAuthor);
+        }
+    }
 }

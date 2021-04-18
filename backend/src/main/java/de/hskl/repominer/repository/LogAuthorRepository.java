@@ -58,6 +58,25 @@ public class LogAuthorRepository {
         }
     }
 
+    public LogAuthor updateLogAuthor(int authorId, LogAuthor logAuthor){
+        String updateStmt = "   UPDATE LogAuthor" +
+                "               SET AuthorId = ? " +
+                "               WHERE id = ?";
+
+        try{
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement(updateStmt);
+            pstmt.setInt(1, authorId);
+            pstmt.setInt(2, logAuthor.getId());
+            pstmt.execute();
+
+        }catch(SQLException throwables){
+            throw new DaoException("Error updating LogAuthor");
+        }
+
+        return logAuthor;
+    }
+
     private LogAuthor parseLogAuthor(ResultSet rs) throws SQLException {
         return new LogAuthor(
                 rs.getInt("projectId"),

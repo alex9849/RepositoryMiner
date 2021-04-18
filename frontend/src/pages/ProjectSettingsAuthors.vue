@@ -18,6 +18,7 @@
       <q-btn
         no-caps
         class="bg-positive text-white"
+        @click="saveAuthorSettings()"
       >
         Save authors
       </q-btn>
@@ -203,6 +204,9 @@ export default {
     }
   },
   methods: {
+    saveAuthorSettings() {
+      ProjectService.saveAuthorsAndLogAuthorGroups(this.$route.params.id,this.authors)
+    },
     clickAddAuthor() {
       this.authors.unshift({
         id: 0,
@@ -221,9 +225,11 @@ export default {
   },
   created() {
     ProjectService.getLogAuthors(this.$route.params.id)
-      .then(data => this.allLogAuthors = data);
+      .then(data => this.allLogAuthors = data)
     ProjectService.getAuthors(this.$route.params.id)
-      .then(data => this.authors = data);
+      .then(data =>{
+        this.authors = data;
+      })
   },
   computed: {
     unassociatedLogAuthors() {

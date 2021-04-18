@@ -1,5 +1,7 @@
 package de.hskl.repominer.endpoints;
 
+import de.hskl.repominer.models.Author;
+import de.hskl.repominer.models.LogAuthor;
 import de.hskl.repominer.models.Project;
 import de.hskl.repominer.models.chart.ChartContext;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
@@ -13,11 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.xml.ws.Response;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.util.List;
 
 @RestController()
 @RequestMapping( "/api/project")
@@ -40,6 +44,13 @@ public class ProjectEndpoint {
 
         UriComponents uriComponents = uriBuilder.path("/api/project/{id}").buildAndExpand(project.getId());
         return ResponseEntity.created(uriComponents.toUri()).body(project);
+    }
+
+    @RequestMapping(value = "{id}/authors", method = RequestMethod.POST)
+    public ResponseEntity<?> saveAuthorsAngLogAuthors(@PathVariable(value="id") int id, @RequestBody List<Author> authorsList){
+        projectService.updateLogAuthors(id, authorsList);
+
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
