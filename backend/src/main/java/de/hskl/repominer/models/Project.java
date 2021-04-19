@@ -29,6 +29,10 @@ public class Project {
         this.lastUpdate = lastUpdate;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -53,8 +57,8 @@ public class Project {
         return authors;
     }
 
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
+    public void setAuthors(List<Author> logAuthors) {
+        this.authors = logAuthors;
     }
 
     public List<Commit> getCommits() {

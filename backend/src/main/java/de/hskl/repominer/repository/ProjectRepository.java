@@ -21,7 +21,7 @@ public class ProjectRepository {
         this.ds = ds;
     }
 
-    public Project saveProject(Project project) {
+    public Project addProject(Project project) {
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO Project (name, lastUpdate) VALUES (?, ?)",
@@ -98,7 +98,8 @@ public class ProjectRepository {
                     "from CurrentPath cp " +
                     "    join FileChange fc on fc.fileId = cp.fileId " +
                     "    join \"Commit\" c on fc.commitId = c.id " +
-                    "    join Author a on a.id = c.authorId " +
+                    "    join LogAuthor la on la.id = c.authorId " +
+                    "    join Author a on a.id = la.authorId " +
                     "where cp.projectId = ? and cp.path like (? || '%') " +
                     "group by a.id " +
                     "order by insertions + deletions desc");
@@ -146,7 +147,8 @@ public class ProjectRepository {
                     "         join CurrentPath cp on cp.path like folderContent.path || '%'\n" +
                     "         join FileChange fc on fc.fileId = cp.fileId\n" +
                     "         join \"Commit\" c on fc.commitId = c.id\n" +
-                    "         join Author a on a.id = c.authorId\n" +
+                    "         join LogAuthor la on la.id = c.authorId " +
+                    "         join Author a on a.id = la.authorId " +
                     "where cp.projectId = ?\n" +
                     "group by a.id, folderContent.path\n" +
                     "order by folderContent.path desc, a.name asc");
@@ -193,7 +195,8 @@ public class ProjectRepository {
                 "total(case when cp.path is null then 0 else fc.deletions end) as deletions\n" +
                 "from dates d\n" +
                 "         join Author a on a.projectId = ?\n" +
-                "         left join \"Commit\" c on d.date >= date(c.timestamp / 1000, 'unixepoch', 'localtime') AND c.authorId = a.id\n" +
+                "         join LogAuthor la on a.id = la.authorId\n" +
+                "         left join \"Commit\" c on d.date >= date(c.timestamp / 1000, 'unixepoch', 'localtime') AND c.authorId = la.id\n" +
                 "         left join FileChange fc on fc.commitId = c.id\n" +
                 "         left join CurrentPath cp on fc.fileId = cp.fileId\n" +
                 "where cp.path like (? || '%') or cp.path is null\n" +

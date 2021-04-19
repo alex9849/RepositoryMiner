@@ -5,15 +5,17 @@
     @hide="$emit('clickAbort')"
   >
     <q-card>
-      <q-card-section class="text-center text-h5 width-desktop">
-        {{ question }}
+      <q-card-section class="text-center text-h5 width-desktop q-gutter-y-md">
+        <div>
+          {{ question }}
+        </div>
         <q-splitter
           horizontal
           :value="10"
         />
         <slot name="error-area" />
         <slot />
-        <div class="q-pa-md q-gutter-sm">
+        <div class="q-gutter-sm">
           <slot name="buttons">
             <q-btn
               :color="abortColor"
@@ -25,6 +27,7 @@
             <q-btn
               :loading="loading"
               :color="okColor"
+              :disable="disableOk"
               style="width: 100px"
               @click="$emit('clickOk')"
             >
@@ -68,6 +71,10 @@ export default {
     okColor: {
       type: String,
       default: 'positive'
+    },
+    disableOk: {
+      type: Boolean,
+      default: false
     }
   }
 }

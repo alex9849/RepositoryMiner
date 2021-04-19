@@ -11,6 +11,14 @@ CREATE TABLE File
     id        INTEGER PRIMARY KEY
 );
 
+CREATE TABLE LogAuthor
+(
+    id        INTEGER PRIMARY KEY,
+    projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
+    authorId  INTEGER REFERENCES Author ON DELETE SET NULL,
+    name      TEXT    NOT NULL
+);
+
 CREATE TABLE Author
 (
     id        INTEGER PRIMARY KEY,

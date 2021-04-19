@@ -18,7 +18,7 @@ public class LogParser {
 
     public static Project parseLogStream(BufferedReader logInputStream) throws IOException, ParseException {
         Project project = new Project();
-        Map<String, Author> nameToAuthorMap = new HashMap<>();
+        Map<String, LogAuthor> nameToAuthorMap = new HashMap<>();
         List<Commit> commits = new LinkedList<>();
         FileTracker fileTracker = null;
 
@@ -36,9 +36,9 @@ public class LogParser {
             boolean isMerge = pc instanceof ParsedMergeCommit;
 
             List<FileChange> fileChanges = new LinkedList<>();
-            Author author = nameToAuthorMap.computeIfAbsent(pc.author, x -> new Author(0, 0, pc.author));
+            LogAuthor logAuthor = nameToAuthorMap.computeIfAbsent(pc.author, x -> new LogAuthor(0, 0, pc.author, 0));
             Commit currentCommit = new Commit(0, 0, pc.hash, isMerge, 0, pc.date, pc.commitMessage);
-            currentCommit.setAuthor(author);
+            currentCommit.setAuthor(logAuthor);
 
             if(!isMerge) {
                 fileTracker.addCommit(pc);
@@ -73,7 +73,15 @@ public class LogParser {
         }
 
         project.setCommits(commits);
-        project.setAuthors(new ArrayList<>(nameToAuthorMap.values()));
+        List<Author> authors = new ArrayList<>();
+        for(LogAuthor logAuthor : nameToAuthorMap.values()) {
+            Author author = new Author(0, 0, logAuthor.getName());
+            List<LogAuthor> authorLogAuthors = new ArrayList<>();
+            authorLogAuthors.add(logAuthor);
+            author.setLogAuthors(authorLogAuthors);
+            authors.add(author);
+        }
+        project.setAuthors(authors);
         return project;
     }
 
