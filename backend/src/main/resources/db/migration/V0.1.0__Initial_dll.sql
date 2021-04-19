@@ -15,7 +15,7 @@ CREATE TABLE LogAuthor
 (
     id        INTEGER PRIMARY KEY,
     projectId INTEGER NOT NULL REFERENCES Project ON DELETE CASCADE,
-    authorId  INTEGER REFERENCES Author,
+    authorId  INTEGER REFERENCES Author ON DELETE SET NULL,
     name      TEXT    NOT NULL
 );
 
