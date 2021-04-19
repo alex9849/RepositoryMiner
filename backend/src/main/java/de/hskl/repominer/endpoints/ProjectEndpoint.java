@@ -1,7 +1,6 @@
 package de.hskl.repominer.endpoints;
 
 import de.hskl.repominer.models.Author;
-import de.hskl.repominer.models.LogAuthor;
 import de.hskl.repominer.models.Project;
 import de.hskl.repominer.models.chart.ChartContext;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
@@ -15,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.xml.ws.Response;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -46,7 +44,7 @@ public class ProjectEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(project);
     }
 
-    @RequestMapping(value = "{id}/authors", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/author", method = RequestMethod.PUT)
     public ResponseEntity<?> saveAuthorsAndLogAuthorsSettings(@PathVariable(value="id") int id, @RequestBody List<Author> authorsList){
         System.out.println("-----ENDPOINT saveAuthorsAndLogAuthorsSettings");
 

@@ -20,10 +20,7 @@ class ProjectService {
   }
 
   saveAuthorsAndLogAuthorGroups(projectId, authorList){
-    let formData = new FormData();
-    formData.append('authors', authorList)
-
-    return axios.post(API_PATH + projectId + "/authors", authorList );
+    return axios.put(API_PATH + projectId + "/author", authorList );
   }
 
   getProjects() {

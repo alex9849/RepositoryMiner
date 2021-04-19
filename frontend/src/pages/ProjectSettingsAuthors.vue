@@ -10,6 +10,7 @@
     <div class="row justify-end q-gutter-x-sm">
       <q-btn
         no-caps
+        :disable="loadingAuthors"
         class="bg-positive text-white"
         @click="addAuthorDialog.show = true"
       >
@@ -17,13 +18,16 @@
       </q-btn>
       <q-btn
         no-caps
+        :disable="loadingAuthors"
+        :loading="savingAuthors"
         class="bg-positive text-white"
-        @click="saveAuthorSettings()"
+        @click="clickSaveAuthorSettings"
       >
         Save authors
       </q-btn>
     </div>
     <draggable
+      v-if="!loadingAuthors"
       :list="unassociatedLogAuthors"
       group="authors"
       draggable=".item"
@@ -65,6 +69,7 @@
       </q-item>
     </draggable>
     <draggable
+      v-if="!loadingAuthors"
       v-for="author of authors"
       :list="author.logAuthors"
       group="authors"
@@ -116,6 +121,14 @@
         </q-item-section>
       </q-item>
     </draggable>
+    <q-inner-loading
+      v-if="loadingAuthors"
+      showing
+    >
+      <q-spinner-pie
+        size="lg"
+      />
+    </q-inner-loading>
     <c-question
       v-model="addAuthorDialog.show"
       question="New author"
@@ -151,6 +164,8 @@ export default {
   components: {CQuestion, draggable},
   data() {
     return {
+      savingAuthors: false,
+      loadingAuthors: false,
       addAuthorDialog: {
         show: false,
         name: ""
@@ -160,8 +175,21 @@ export default {
     }
   },
   methods: {
-    saveAuthorSettings() {
+    clickSaveAuthorSettings() {
+      this.savingAuthors = true
       ProjectService.saveAuthorsAndLogAuthorGroups(this.$route.params.id,this.authors)
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Authors updated'
+          });
+          this.loadingAuthors = true;
+          this.fetchAndSetCurrentSettings()
+            .finally(() => this.loadingAuthors = false);
+        })
+        .finally(() => {
+          this.savingAuthors = false;
+        })
     },
     clickAddAuthor() {
       this.authors.unshift({
@@ -177,15 +205,35 @@ export default {
     clickAddAuthorAbort() {
       this.addAuthorDialog.name = "";
       this.addAuthorDialog.show = false;
+    },
+    fetchAndSetCurrentSettings() {
+      return new Promise(((resolve, reject) => {
+        let successes = 0;
+        ProjectService.getLogAuthors(this.$route.params.id)
+          .then(data => {
+            this.allLogAuthors = data;
+            successes++;
+            if(successes === 2) {
+              resolve();
+            }
+          })
+          .catch(err => reject(err));
+        ProjectService.getAuthors(this.$route.params.id)
+          .then(data =>{
+            this.authors = data;
+            successes++;
+            if(successes === 2) {
+              resolve();
+            }
+          })
+          .catch(err => reject(err));
+      }));
     }
   },
   created() {
-    ProjectService.getLogAuthors(this.$route.params.id)
-      .then(data => this.allLogAuthors = data)
-    ProjectService.getAuthors(this.$route.params.id)
-      .then(data =>{
-        this.authors = data;
-      })
+    this.loadingAuthors = true;
+    this.fetchAndSetCurrentSettings()
+      .finally(() => this.loadingAuthors = false);
   },
   computed: {
     unassociatedLogAuthors() {
