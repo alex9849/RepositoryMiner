@@ -13,7 +13,7 @@
 
 
 ## Build
->###Frontend
+>### Frontend
 > The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you don't
 > have it installed yet you can follow the instructions on the quasar-website under the following link:
 > [Quasar CLI Installation](https://quasar.dev/quasar-cli/installation)
@@ -22,7 +22,7 @@
 > 
 > ![img.png](ReadMe_Img/quassar_dev_cmd.png)
 > 
-> ###Backend
+> ### Backend
 > 
 
 
