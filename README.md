@@ -12,7 +12,7 @@
 > commit information into it. The repolog.log-file is the input for the RepositoryMining-Application.
 
 
-##Build
+## Build
 >###Frontend
 > The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you don't
 > have it installed yet you can follow the instructions on the quasar-website under the following link:
@@ -27,7 +27,7 @@
 
 
 
-##Usage
+## Usage
 >1. This is how the main menu looks like when you start the application for the first time.
 >There are no projects in the database and, you only have the opportunity to add a new project. 
 >Now click on the __add project__ button.
