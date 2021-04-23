@@ -12,10 +12,10 @@
 > commit information into it. The repolog.log-file is the input for the RepositoryMining-Application.
 
 
-## Build
+##Build
 >### Frontend
-> The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you don't
-> have it installed yet you can follow the instructions on the quasar-website under the following link:
+> The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you
+> haven't installed it yet you can follow the instructions on the quasar-website under the following link:
 > [Quasar CLI Installation](https://quasar.dev/quasar-cli/installation)
 > To run the frontend in dev-mode navigate to the frontend folder in the Hettel-RepositoryMining Folder and type 
 > ``quasar dev`` into the cli.  
@@ -23,11 +23,15 @@
 > ![img.png](ReadMe_Img/quassar_dev_cmd.png)
 > 
 > ### Backend
+> The backend uses the Spring-Framework. To run the backend just clone the repository and import it as an existing maven repository into your IDE.
+> After that move to the __src/main/java__ folder and click on the __de.hskl.repominer__ package. Now open the __RepoMiner.java__
+> file and run it. 
+> 
 > 
 
 
 
-## Usage
+##Usage
 >1. This is how the main menu looks like when you start the application for the first time.
 >There are no projects in the database and, you only have the opportunity to add a new project. 
 >Now click on the __add project__ button.
@@ -66,7 +70,11 @@
 >          to demonstrate the folders and their content
            ![img_1.png](ReadMe_Img/bubblechart.png)
 >       2. if the current directory consists of only one file, the __code ownership__ will display a pie chart
->          ![img_1.png](ReadMe_Img/piechart_readme.png)
+>          ![img_1.png](ReadMe_Img/piechart_readme.png)  
+> <span style="color:#89cff0">__Information:__</span> if one of these graphs display to much information you can simply 
+> disable or enable single parts of the graph by clicking on the components name. For example in the pictures above
+> you can disable/enable the graph content by clicking on the author-name (Matthew McCullough) or the folder/file-name
+> (resource/, README.txt).
 > 
 > You can click on a single file or folder
 > to extend this folder and get deeper in the file-tree structure. For instance clicking on the __src-folder__ in the 
