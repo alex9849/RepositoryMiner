@@ -78,10 +78,10 @@
 > 
 > You can click on a single file or folder
 > to extend this folder and get deeper in the file-tree structure. For instance clicking on the __src-folder__ in the 
-> root directory leads you to the src-folder and the components of it (as you would it expect it)
-> ![img.png](ReadMe_img/clicked_src_folder.png)
-> Leads you to:
-> ![img.png](ReadMe_Img/src_folder_content.png)
+> root directory leads you to the src-folder and the components of it (as you would it expect it)  
+> ![img.png](ReadMe_Img/clicked_src_folder.png)  
+> Leads you to:  
+> ![img.png](ReadMe_Img/src_folder_content.png)  
 > The header-section on the top of the picture above shows you the current path you are into. You can also change the 
 > directory by clicking on the path-components next to the tiny house or go back to the root directory by clicking on 
 > the tiny house.
