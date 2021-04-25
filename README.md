@@ -28,6 +28,10 @@
 > After that move to the __src/main/java__ folder and click on the __de.hskl.repominer__ package. Now open the __RepoMiner.java__
 > file and run it. 
 > 
+> ### Build for production
+> To perform the maven build  just navigate to the __Hettel-RepositoryMining__-folder and open
+> the powershell/cli. Type ``mvn clean install`` and run the command. 
+> 
 > 
 
 
