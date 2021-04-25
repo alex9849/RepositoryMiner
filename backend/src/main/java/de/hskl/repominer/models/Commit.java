@@ -16,7 +16,7 @@ public class Commit {
     @JsonIgnore
     private List<FileChange> fileChanges;
     @JsonIgnore
-    private Author author;
+    private LogAuthor logAuthor;
 
     public Commit(int id, int projectId, String hash, boolean isMerge, int authorId, Date timeStamp, String message) {
         this.id = id;
@@ -72,12 +72,12 @@ public class Commit {
         this.fileChanges = fileChanges;
     }
 
-    public Author getAuthor() {
-        return author;
+    public LogAuthor getAuthor() {
+        return logAuthor;
     }
 
-    public void setAuthor(Author author) {
-        this.author = author;
+    public void setAuthor(LogAuthor logAuthor) {
+        this.logAuthor = logAuthor;
     }
 
     public void setProjectId(int projectId) {

@@ -23,11 +23,23 @@ const routes = [
         children: [
           {
             path: '',
-            redirect: {name: 'browseProject'}
+            redirect: {name: 'ProjectBrowser'}
           }, {
-            name: 'browseProject',
+            name: 'ProjectBrowser',
             path: 'browse',
-            component: () => import('pages/BrowseProject')
+            component: () => import('pages/ProjectBrowser')
+          }, {
+            name: 'ProjectSettings',
+            path: 'settings',
+            component: () => import('pages/ProjectSettings'),
+            redirect: {name: 'ProjectSettingsAuthors'},
+            children: [
+              {
+                name: 'ProjectSettingsAuthors',
+                path: 'authors',
+                component: () => import('pages/ProjectSettingsAuthors'),
+              }
+            ]
           }
         ]
       }

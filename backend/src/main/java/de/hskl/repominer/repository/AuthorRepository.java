@@ -34,7 +34,7 @@ public class AuthorRepository {
         }
     }
 
-    public List<Author> loadAllAuthorsForProject(int projectId) {
+    public List<Author> loadAuthorsForProject(int projectId) {
         List<Author> resultList = new ArrayList<>();
 
         try{
@@ -50,14 +50,15 @@ public class AuthorRepository {
 
             return resultList;
 
-        }catch(SQLException throwables){
+        } catch(SQLException throwables){
             throw new DaoException("Error loading allAuthorsForPorject");
         }
-
     }
 
 
-    public Author saveAuthor(Author author) {
+    public Author addAuthor(Author author) {
+        System.out.println(author);
+
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO Author (projectId, name) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -84,4 +85,15 @@ public class AuthorRepository {
     }
 
 
+    public boolean deleteAuthor(int authorId) {
+        System.out.println("deleting author: " + loadAuthor(authorId));
+        try{
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM Author WHERE id = ?");
+            pstmt.setInt(1, authorId);
+            return pstmt.executeUpdate() != 0;
+        }catch (SQLException throwables){
+            throw new DaoException("Error deleting Author", throwables);
+        }
+    }
 }

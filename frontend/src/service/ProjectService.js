@@ -19,6 +19,10 @@ class ProjectService {
       .then(response => response.data);
   }
 
+  saveAuthorsAndLogAuthorGroups(projectId, authorList){
+    return axios.put(API_PATH + projectId + "/author", authorList );
+  }
+
   getProjects() {
     return axios.get(API_PATH)
       .then(response => {
@@ -48,6 +52,17 @@ class ProjectService {
       params: requestMeta
     }
     return axios.get(API_PATH + projectId + "/chart/" + chartName, config)
+      .then(response => response.data);
+  }
+
+  getLogAuthors(projectId) {
+    return axios.get(API_PATH + projectId + "/logauthor")
+      .then(response => response.data);
+  }
+
+
+  getAuthors(projectId) {
+    return axios.get(API_PATH + projectId + "/author")
       .then(response => response.data);
   }
 

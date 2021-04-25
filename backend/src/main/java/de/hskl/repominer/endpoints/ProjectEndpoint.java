@@ -1,5 +1,6 @@
 package de.hskl.repominer.endpoints;
 
+import de.hskl.repominer.models.Author;
 import de.hskl.repominer.models.Project;
 import de.hskl.repominer.models.chart.ChartContext;
 import de.hskl.repominer.models.chart.ChartRequestMeta;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.util.List;
 
 @RestController()
 @RequestMapping( "/api/project")
@@ -40,6 +42,19 @@ public class ProjectEndpoint {
 
         UriComponents uriComponents = uriBuilder.path("/api/project/{id}").buildAndExpand(project.getId());
         return ResponseEntity.created(uriComponents.toUri()).body(project);
+    }
+
+    @RequestMapping(value = "{id}/author", method = RequestMethod.PUT)
+    public ResponseEntity<?> saveAuthorsAndLogAuthorsSettings(@PathVariable(value="id") int id, @RequestBody List<Author> authorsList){
+        System.out.println("-----ENDPOINT saveAuthorsAndLogAuthorsSettings");
+
+        //update projectId's for new created authors in authorsList
+        for(Author a : authorsList)
+            if(a.getProjectId() == 0) a.setProjectId(id);
+
+        projectService.updateAuthorsAndLogAuthorsSettings(id, authorsList);
+
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -77,6 +92,16 @@ public class ProjectEndpoint {
             throw new NotFoundException("Chart couldn't be found!");
         }
         return ResponseEntity.ok(chartData);
+    }
+
+    @RequestMapping(value = "{id}/logauthor", method = RequestMethod.GET)
+    public ResponseEntity<?> getLogAuthors(@PathVariable("id") int projectId) {
+        return ResponseEntity.ok(projectService.getLogAuthors(projectId));
+    }
+
+    @RequestMapping(value = "{id}/author", method = RequestMethod.GET)
+    public ResponseEntity<?> getAutors(@PathVariable("id") int projectId) {
+        return ResponseEntity.ok(projectService.getAuthors(projectId));
     }
 
 }

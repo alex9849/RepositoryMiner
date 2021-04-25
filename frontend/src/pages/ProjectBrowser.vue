@@ -1,13 +1,11 @@
 <template>
-  <q-page
-    padding
-  >
+  <q-page>
     <file-browser
       v-model="browser.currentPath"
       :file-tree="browser.fileTree"
       :loading="browser.loading"
       @isCurrentFileAFile="browser.isFile = $event"
-      @input="$router.push({name: 'browseProject', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
+      @input="$router.push({name: 'ProjectBrowser', params: {id: $route.params.id}, query: {path: $event? $event: undefined}})"
     >
       <q-card
         class="bg-grey-3"
@@ -63,7 +61,7 @@ import ChartDialog from "components/ChartDialog";
 import ChartService from "src/service/ChartService";
 
 export default {
-  name: "BrowseProject",
+  name: "ProjectBrowser",
   components: {ChartDialog, FileBrowser},
   data: () => {
     return {
