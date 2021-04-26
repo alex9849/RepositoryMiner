@@ -38,12 +38,12 @@
 
 ## Usage
 >1. This is how the main menu looks like when you start the application for the first time.
->There are no projects in the database and, you only have the opportunity to add a new project. 
->Now click on the __add project__ button.
+>There are no projects in the database, you only have the opportunity to add a new project. 
+>Now click on the __add project - Button__ .
 >![img.png](ReadMe_Img/mainScreen.png)
 > 
 > 
-> 2. For this example we use the "hellogitworld" repository on github. You can clone it with the following commands:
+> 2. For this example we use the "hellogitworld" repository on github. You can clone it with the following commands:  
 > __HTTPS:__ ``https://github.com/githubtraining/hellogitworld.git ``  
 > __SSH:__ ``git@github.com:githubtraining/hellogitworld.git``  
 > __GitHub CLI:__ ``gh repo clone githubtraining/hellogitworld``  
@@ -80,7 +80,7 @@
 > <span style="color:#89cff0">__Information:__</span> if one of these graphs display to much information you can simply 
 > disable or enable single parts of the graph by clicking on the components name. For example in the pictures above
 > you can disable/enable the graph content by clicking on the author-name (Matthew McCullough) or the folder/file-name
-> (resource/, README.txt). 
+> (resource/, README.txt).  
 > 
 > You can click on a single file or folder
 > to extend this folder and get deeper in the file-tree structure. For instance clicking on the __src-folder__ in the 
@@ -95,16 +95,16 @@
 > 5. To get to the settings just click on the __Settings-Button__ on the top of the page. You are now
 > in the "Authors"-settings.  
 > ![img.png](ReadMe_Img/author_settings.png)
-> Here you can drag the different log-authors from one author group to another group author or create new authors and link a group of log-authors
+> Here you can drag the different log-authors from one author group to another author group or create new authors and link a group of log-authors
 > to them. Every log-author who is in an author group is treated as one author and will be displayed in the graph visualizations.
 > With the small garbage can on the right site of every author group you can delete the
 > specific author.  
 > ![img.png](ReadMe_Img/two_logAuthors_in_one_author_group.png)  
 > In the picture above you can see that we draged the log-author "Matthew McCullough" into the author group of
-> Jordan McCullough. After saving the author settings by clicking on the __Save authors__-Button, commits of one 
-> of those two log-authors that get parsed and visualized, get treated as they 
+> Jordan McCullough. After saving the author settings by clicking on the __Save authors-Button__, commits of one 
+> of those two log-authors  get treated as they 
 > were __both__ "Jordan McCullough".  
 > Clicking on __new author__ leads you to this dialog:
 > ![img.png](ReadMe_Img/new_author_dialog.png)  
-> Here you can type in the name for your new author and confirm it with the green ok-button. To exit the dialog without 
-> creating a new author just click in the abort-button.
+> Here you can type in the name for your new author and confirm it with the green __OK-Button__. To exit the dialog without 
+> creating a new author just click the __ABORT-Button__.
