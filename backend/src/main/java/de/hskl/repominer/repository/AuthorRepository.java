@@ -57,8 +57,6 @@ public class AuthorRepository {
 
 
     public Author addAuthor(Author author) {
-        System.out.println(author);
-
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO Author (projectId, name) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -86,7 +84,6 @@ public class AuthorRepository {
 
 
     public boolean deleteAuthor(int authorId) {
-        System.out.println("deleting author: " + loadAuthor(authorId));
         try{
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM Author WHERE id = ?");
