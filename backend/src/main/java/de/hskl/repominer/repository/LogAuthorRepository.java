@@ -58,7 +58,7 @@ public class LogAuthorRepository {
         }
     }
 
-    public LogAuthor updateLogAuthor(int authorId, LogAuthor logAuthor){
+    public LogAuthor updateLogAuthor(Integer authorId, LogAuthor logAuthor){
         String updateStmt = "   UPDATE LogAuthor" +
                 "               SET AuthorId = ? " +
                 "               WHERE id = ?";
@@ -66,7 +66,7 @@ public class LogAuthorRepository {
         try{
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement(updateStmt);
-            pstmt.setInt(1, authorId);
+            pstmt.setObject(1, authorId);
             pstmt.setInt(2, logAuthor.getId());
             pstmt.execute();
 

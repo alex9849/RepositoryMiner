@@ -138,22 +138,34 @@ public class ProjectService {
     public void updateAuthorsAndLogAuthorsSettings(int projectId, List<Author> authorList){
         //check if some authors got deleted
         List<Author> currentAuthorsInDb = authorRepo.loadAuthorsForProject(projectId);
+        Map<Integer, LogAuthor> currentDbLogauthorsById = logAuthorRepo.loadLogAuthorsForProject(projectId)
+                .stream().collect(Collectors.toMap(LogAuthor::getId, x -> x));
+
         for(Author dbAuthor : currentAuthorsInDb){
             boolean exists = false;
             for(Author a : authorList){
                 if(a.getId() == dbAuthor.getId()) exists = true;
             }
             //loesche author, wenn er im frontendSettings geloescht wurde
-            if(!exists) authorRepo.deleteAuthor( dbAuthor.getId() );
+            if(!exists) {
+                authorRepo.deleteAuthor( dbAuthor.getId() );
+            }
         }
 
-        for(Author author : authorList){
-            if(author.getId() == 0)
+        currentDbLogauthorsById.values().forEach(x -> x.setAuthorId(null));
+
+        for(Author author : authorList) {
+            if(author.getId() == 0) {
                 authorRepo.addAuthor(author); //create new author, if id==0
+            }
 
-            List<LogAuthor> logAuthorList = author.getLogAuthors();
-            for(LogAuthor logAuthor : logAuthorList)
-                logAuthorRepo.updateLogAuthor(author.getId(), logAuthor);
+            for(LogAuthor logAuthor : author.getLogAuthors()) {
+                if(currentDbLogauthorsById.containsKey(logAuthor.getId())) {
+                    currentDbLogauthorsById.get(logAuthor.getId()).setAuthorId(author.getId());
+                }
+            }
         }
+
+        currentDbLogauthorsById.values().forEach(x -> logAuthorRepo.updateLogAuthor(x.getAuthorId(), x));
     }
 }
