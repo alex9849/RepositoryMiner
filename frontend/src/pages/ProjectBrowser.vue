@@ -59,6 +59,7 @@ import FileBrowser from "components/FileBrowser";
 import ProjectService from "src/service/ProjectService";
 import ChartDialog from "components/ChartDialog";
 import ChartService from "src/service/ChartService";
+import HeatMapChartService from "src/service/chartServices/HeatMapChartService";
 
 export default {
   name: "ProjectBrowser",
@@ -103,11 +104,15 @@ export default {
     requestChart(identifier) {
       this.chartDialog.loading = true;
       this.chartDialog.show = true;
+      /*
       ProjectService.getChart(this.projectId, identifier, {path: this.browser.currentPath})
         .then(chartData => {
           this.chartDialog.chartOptions = ChartService.parseBackendToOptions(chartData);
           this.chartDialog.loading = false;
         });
+       */
+      this.chartDialog.chartOptions = ChartService.parseBackendToOptions(HeatMapChartService.exampleBackendData);
+      this.chartDialog.loading = false;
     }
   },
   computed: {
