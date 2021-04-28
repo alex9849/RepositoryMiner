@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -45,9 +46,8 @@ public class ProjectEndpoint {
     }
 
     @RequestMapping(value = "{id}/author", method = RequestMethod.PUT)
-    public ResponseEntity<?> saveAuthorsAndLogAuthorsSettings(@PathVariable(value="id") int id, @RequestBody List<Author> authorsList){
-        System.out.println("-----ENDPOINT saveAuthorsAndLogAuthorsSettings");
-
+    public ResponseEntity<?> saveAuthorsAndLogAuthorsSettings(@PathVariable(value="id") int id,
+                                                              @Valid @RequestBody List<Author> authorsList){
         //update projectId's for new created authors in authorsList
         for(Author a : authorsList)
             if(a.getProjectId() == 0) a.setProjectId(id);
