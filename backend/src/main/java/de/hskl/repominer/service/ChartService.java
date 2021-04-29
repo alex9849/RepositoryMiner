@@ -7,6 +7,7 @@ import de.hskl.repominer.models.chart.data.AbstractChart;
 import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipFolderGetter;
 import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipGetter;
 import de.hskl.repominer.models.chart.datagetter.ComeOwnershipDevelopmentGetter;
+import de.hskl.repominer.models.chart.datagetter.commitmap.CommitMapGetter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -41,6 +42,13 @@ public class ChartService {
                         new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER, ChartContext.SubContext.FILE)))),
                 new ComeOwnershipDevelopmentGetter());
         requestableCharts.put(ownerShipDevelopmentChart.getIdentifier(), ownerShipDevelopmentChart);
+
+        RequestableChart commitMapChart = new RequestableChart(
+                "groups", "commitMapChart", "Commit-Map",
+                Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
+                        new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER)))),
+                new CommitMapGetter());
+        requestableCharts.put(commitMapChart.getIdentifier(), commitMapChart);
     }
 
     public Set<RequestableChart> getByContext(ChartContext.ViewContext viewContext) {

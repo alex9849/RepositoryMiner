@@ -2,6 +2,7 @@ package de.hskl.repominer.service;
 
 import de.hskl.repominer.models.*;
 import de.hskl.repominer.models.chart.datagetter.OwnerShip;
+import de.hskl.repominer.models.chart.datagetter.commitmap.FileCommitMatrix;
 import de.hskl.repominer.repository.*;
 import de.hskl.repominer.service.logparser.LogParser;
 import org.springframework.stereotype.Service;
@@ -167,5 +168,9 @@ public class ProjectService {
         }
 
         currentDbLogauthorsById.values().forEach(x -> logAuthorRepo.updateLogAuthor(x.getAuthorId(), x));
+    }
+
+    public FileCommitMatrix getFileCommitMatrix(int projectId, String path) {
+        return projectRepo.getFileCommitMatrix(projectId, path);
     }
 }

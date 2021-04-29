@@ -2,15 +2,16 @@ package de.hskl.repominer.repository;
 
 import de.hskl.repominer.models.Project;
 import de.hskl.repominer.models.chart.datagetter.OwnerShip;
+import de.hskl.repominer.models.chart.datagetter.commitmap.FileCommitMatrix;
 import de.hskl.repominer.models.exception.DaoException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ProjectRepository {
@@ -223,6 +224,46 @@ public class ProjectRepository {
                 ownerShips.add(ownerShip);
             }
             return ownerShips;
+        } catch (SQLException  e) {
+            throw new DaoException("Error calculating ownership", e);
+        }
+    }
+
+    public FileCommitMatrix getFileCommitMatrix(int projectId, String path) {
+        final String query = "select cp.path, c.hash\n" +
+                "from CurrentPath cp\n" +
+                "         left join FileChange fc on cp.fileId = fc.fileId\n" +
+                "         left join \"Commit\" c on fc.commitId = c.id\n" +
+                "where cp.path LIKE ? || '%'\n" +
+                "  AND cp.projectId = ?";
+        try {
+            Connection con = DataSourceUtils.getConnection(ds);
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setString(1, path);
+            pstmt.setInt(2, projectId);
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            Map<String, Integer> fileIndex = new HashMap<>();
+            Map<String, Integer> commitIndex = new HashMap<>();
+            Map<String, Set<String>> fileWithCommits = new HashMap<>();
+            while (rs.next()) {
+                fileIndex.computeIfAbsent(rs.getString("path"), x -> fileIndex.size());
+                commitIndex.computeIfAbsent(rs.getString("hash"), x -> commitIndex.size());
+                fileWithCommits.computeIfAbsent(rs.getString("path"), x -> new HashSet<>())
+                        .add(rs.getString("hash"));
+            }
+            FileCommitMatrix matrix = new FileCommitMatrix(fileIndex.size(), commitIndex.size());
+            for(Map.Entry<String, Integer> fileEntry : fileIndex.entrySet()) {
+                matrix.setYContext(fileEntry.getValue(), fileEntry.getKey());
+                for(Map.Entry<String, Integer> commitEntry : commitIndex.entrySet()) {
+                    matrix.setXContext(commitEntry.getValue(), commitEntry.getKey());
+                    if(fileWithCommits.get(fileEntry.getKey()).contains(commitEntry.getKey())) {
+                        matrix.setValue(fileEntry.getValue(), commitEntry.getValue(), 1);
+                    }
+                }
+            }
+
+            return matrix;
         } catch (SQLException  e) {
             throw new DaoException("Error calculating ownership", e);
         }
