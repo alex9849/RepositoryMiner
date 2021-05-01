@@ -1,8 +1,5 @@
 package de.hskl.repominer.models.chart.datagetter.commitmap;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class FileCommitMatrix {
     private int[][] matrix;
     private String[] xContext;
@@ -29,18 +26,6 @@ public class FileCommitMatrix {
     public void setYContext(int y, String value) {
         this.yContext[y] = value;
     }
-    
-    public String getXContext(int x) {
-        return this.xContext[x];
-    }
-
-    public List<String> getXContextList() {
-        return Arrays.asList(this.xContext);
-    }
-
-    public List<String> getYContextList() {
-        return Arrays.asList(this.yContext);
-    }
 
     public int getM() {
         return this.yContext.length;
@@ -49,17 +34,29 @@ public class FileCommitMatrix {
     public int getN() {
         return this.xContext.length;
     }
-    
-    public String getYContext(int y) {
-        return this.yContext[y];
+
+    public String[] getXContext() {
+        return xContext;
+    }
+
+    public void setXContext(String[] xContext) {
+        this.xContext = xContext;
+    }
+
+    public String[] getYContext() {
+        return yContext;
+    }
+
+    public void setYContext(String[] yContext) {
+        this.yContext = yContext;
     }
     
     public FileCommitMatrix transpose() {
         FileCommitMatrix transposed = new FileCommitMatrix(this.xContext.length, this.yContext.length);
         for(int i = 0; i < this.matrix.length; i++) {
-            transposed.setXContext(i, this.getYContext(i));
+            transposed.xContext[i] = this.yContext[i];
             for(int j = 0; j < this.matrix[i].length; j++) {
-                transposed.setYContext(j, this.getXContext(j));
+                transposed.yContext[j] = this.xContext[j];
                 transposed.setValue(j, i, this.matrix[i][j]);
             }
         }
