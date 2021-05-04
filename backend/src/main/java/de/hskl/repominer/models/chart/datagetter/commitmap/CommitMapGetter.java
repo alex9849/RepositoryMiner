@@ -12,12 +12,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class CommitMapGetter implements ChartDataGetter {
+    private FileCommitMatrix.Sorting sortBy;
+
+    public CommitMapGetter(FileCommitMatrix.Sorting sorting) {
+        this.sortBy = sorting;
+    }
+
     @Override
     public AbstractChart<?> get(int projectId, ChartRequestMeta crm, ProjectService projectService) {
         if(crm.path == null) {
             throw new IllegalArgumentException("Meta path required!");
         }
-        FileCommitMatrix fileCommitMatrix = projectService.getFileCommitMatrix(projectId, crm.path);
+        FileCommitMatrix fileCommitMatrix = projectService.getFileCommitMatrix(projectId, crm.path, sortBy);
         FirstFolderExtractor path1FolderMapper = new FirstFolderExtractor();
         fileCommitMatrix.setYContext(Arrays.stream(fileCommitMatrix.getYContext())
                 .map(x -> x.substring(crm.path.length()))

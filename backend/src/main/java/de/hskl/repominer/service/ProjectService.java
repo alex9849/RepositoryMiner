@@ -170,7 +170,7 @@ public class ProjectService {
         currentDbLogauthorsById.values().forEach(x -> logAuthorRepo.updateLogAuthor(x.getAuthorId(), x));
     }
 
-    public FileCommitMatrix getFileCommitMatrix(int projectId, String path) {
-        return projectRepo.getFileCommitMatrix(projectId, path);
+    public FileCommitMatrix getFileCommitMatrix(int projectId, String path, FileCommitMatrix.Sorting sorting) {
+        return projectRepo.getFileCommitMatrix(projectId, path, sorting);
     }
 }

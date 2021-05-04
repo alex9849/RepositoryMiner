@@ -8,6 +8,7 @@ import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipFolderGetter;
 import de.hskl.repominer.models.chart.datagetter.CodeOwnerShipGetter;
 import de.hskl.repominer.models.chart.datagetter.ComeOwnershipDevelopmentGetter;
 import de.hskl.repominer.models.chart.datagetter.commitmap.CommitMapGetter;
+import de.hskl.repominer.models.chart.datagetter.commitmap.FileCommitMatrix;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -43,12 +44,19 @@ public class ChartService {
                 new ComeOwnershipDevelopmentGetter());
         requestableCharts.put(ownerShipDevelopmentChart.getIdentifier(), ownerShipDevelopmentChart);
 
-        RequestableChart commitMapChart = new RequestableChart(
-                "groups", "commitMapChart", "Commit-Map",
+        RequestableChart commitMapChartByCreationDate = new RequestableChart(
+                "groups", "commitMapChartByCreationDate", "Commit-Map (by creation date)",
                 Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
                         new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER)))),
-                new CommitMapGetter());
-        requestableCharts.put(commitMapChart.getIdentifier(), commitMapChart);
+                new CommitMapGetter(FileCommitMatrix.Sorting.BY_CREATION_DATE));
+        requestableCharts.put(commitMapChartByCreationDate.getIdentifier(), commitMapChartByCreationDate);
+
+        RequestableChart commitMapChartByName = new RequestableChart(
+                "groups", "commitMapChartByName", "Commit-Map (by name)",
+                Collections.singleton(new ChartContext(ChartContext.ViewContext.FILE_BROWSER,
+                        new HashSet<>(Arrays.asList(ChartContext.SubContext.FOLDER)))),
+                new CommitMapGetter(FileCommitMatrix.Sorting.BY_NAME));
+        requestableCharts.put(commitMapChartByName.getIdentifier(), commitMapChartByName);
     }
 
     public Set<RequestableChart> getByContext(ChartContext.ViewContext viewContext) {

@@ -229,13 +229,18 @@ public class ProjectRepository {
         }
     }
 
-    public FileCommitMatrix getFileCommitMatrix(int projectId, String path) {
-        final String query = "select cp.path, c.hash\n" +
+    public FileCommitMatrix getFileCommitMatrix(int projectId, String path, FileCommitMatrix.Sorting sortBy) {
+        String query = "select cp.path, c.hash\n" +
                 "from CurrentPath cp\n" +
                 "         left join FileChange fc on cp.fileId = fc.fileId\n" +
                 "         left join \"Commit\" c on fc.commitId = c.id\n" +
                 "where cp.path LIKE ? || '%'\n" +
-                "  AND cp.projectId = ?";
+                "  AND cp.projectId = ? ";
+        if(sortBy == FileCommitMatrix.Sorting.BY_NAME) {
+            query += "ORDER BY cp.path DESC";
+        } else {
+            query += "ORDER BY c.timestamp DESC";
+        }
         try {
             Connection con = DataSourceUtils.getConnection(ds);
             PreparedStatement pstmt = con.prepareStatement(query);

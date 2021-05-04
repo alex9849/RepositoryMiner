@@ -83,4 +83,7 @@ public class FileCommitMatrix {
         return result;
     }
 
+    public enum Sorting {
+        BY_NAME, BY_CREATION_DATE
+    }
 }
