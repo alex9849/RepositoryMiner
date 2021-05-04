@@ -7,7 +7,7 @@ public abstract class XAxisChart<SeriesDataType> extends AbstractChart<SeriesDat
         return xAxisTitle;
     }
 
-    public void setxAxisTitle(String xAxisTitle) {
-        this.xAxisTitle = xAxisTitle;
+    public void setxAxisTitle(String yAxisTitle) {
+        this.xAxisTitle = yAxisTitle;
     }
 }

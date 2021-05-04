@@ -59,6 +59,7 @@ import Highcharts from 'highcharts'
 
 require('highcharts/highcharts-more.js')(Highcharts);
 require('highcharts/modules/drilldown.js')(Highcharts);
+require('highcharts/modules/heatmap.js')(Highcharts);
 
 export default {
   name: "ChartDialog",
