@@ -15,22 +15,34 @@
 
 ## Build
 >### Frontend
+> <span style="color:#ffcc00">__Attention:__ </span>
+> <span > if you follow the instructions in the Quasar CLI Installation 
+> down below and also run the `mvn clean install` command in the *Build for Production* part,
+> Node.js will be installed twice. ( `mvn clean install` installs Node.js Version 12.16.1 automatically ).
+> </span>
+> ----
 > The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you
 > haven't installed it yet you can follow the instructions on the quasar-website under the following link:
-> [Quasar CLI Installation](https://quasar.dev/quasar-cli/installation)
+> [Quasar CLI Installation](https://quasar.dev/quasar-cli/installation)  
 > To run the frontend in dev-mode navigate to the frontend folder in the Hettel-RepositoryMining Folder and type 
 > ``quasar dev`` into the cli.  
 > 
 > ![img.png](ReadMe_Img/quassar_dev_cmd.png)
 > 
+> ##User-Mode
 > ### Backend
 > The backend uses the Spring-Framework. To run the backend just clone the repository and import it as an existing maven repository into your IDE.
 > After that move to the __src/main/java__ folder and click on the __de.hskl.repominer__ package. Now open the __RepoMiner.java__
 > file and run it. 
 > 
-> ### Build for production
+> ### Build for production 
+> #### (Installs Node.js version 12.16.1 and npm)  
 > To perform the maven build  just navigate to the __Hettel-RepositoryMining__-folder and open
-> the PowerShell/CLI. Type ``mvn clean install`` and run the command. 
+> the PowerShell/CLI. Type ``mvn clean install`` and run the command.  
+> To run this command you need maven installed
+> on your machine. If this isn't the case, download the maven .zip file and add the /bin directory to your 
+> PATH variable. To get more details about the installation of maven, follow this link:
+> https://www.marcobehler.com/guides/mvn-clean-install-a-short-guide-to-maven#_how_do_you_install_maven
 > 
 > 
 
