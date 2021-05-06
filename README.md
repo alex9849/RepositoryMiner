@@ -38,14 +38,16 @@
 > 
 > ### Build for production & start application without IDE
 > #### (Installs Node.js version 12.16.1 and npm)  
-> 1. To perform the maven build  just navigate to the __Hettel-RepositoryMining__ folder and open
-> the PowerShell/CLI. Type ``mvn clean install`` and run the command 
-> After executing that command, Node.js version 12.16.1 and npm will be installed
-> automatically.  
->To run this command you need maven installed
-> on your machine. If this isn't the case, download the maven .zip file and add the /bin directory to your 
-> PATH variable. To get more details about the installation of maven, follow this link:
-> https://www.marcobehler.com/guides/mvn-clean-install-a-short-guide-to-maven#_how_do_you_install_maven
+> 1. ###### Build for production
+>   
+>    To perform the maven build  just navigate to the __Hettel-RepositoryMining__ folder and open
+>    the PowerShell/CLI. Type ``mvn clean install`` and run the command 
+>    After executing that command, Node.js version 12.16.1 and npm will be installed
+>    automatically.  
+>    To run this command you need maven installed
+>    on your machine. If this isn't the case, download the maven .zip file and add the /bin directory to your 
+>    PATH variable. To get more details about the installation of maven, follow this link:
+>    https://www.marcobehler.com/guides/mvn-clean-install-a-short-guide-to-maven#_how_do_you_install_maven
 >
 > 2. ###### Start RepoMiner without an IDE
 >    __Backend:__
