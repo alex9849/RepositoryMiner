@@ -18,7 +18,7 @@
 > <span style="color:#ffcc00">__Attention:__ </span>
 > <span > if you follow the instructions in the Quasar CLI Installation 
 > down below and also run the `mvn clean install` command in the *Build for Production* part,
-> Node.js will be installed twice. ( `mvn clean install` installs Node.js Version 12.16.1 automatically ).
+> Node.js will be installed twice. (`mvn clean install` installs Node.js Version 12.16.1 automatically).
 > </span>
 >----
 >The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you
@@ -34,7 +34,7 @@
 >After that move to the __src/main/java__ folder and click on the __de.hskl.repominer__ package. Now open the __RepoMiner.java__
 >file and run it.
 >
-> ##User-Mode
+> ## User-Mode
 > 
 > ### Build for production & start application without IDE
 > #### (Installs Node.js version 12.16.1 and npm)  
