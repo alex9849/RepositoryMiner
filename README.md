@@ -15,10 +15,10 @@
 
 >## Build for developing
 >### Frontend
-> <span style="color:#ffcc00">__Attention:__ </span>
-> <span > if you follow the instructions in the Quasar CLI Installation 
+> <span style="color:#ffcc00; ">__Attention:__ </span>
+> <span style="font-size:12pt"> if you follow the instructions in the Quasar CLI Installation 
 > down below and also run the `mvn clean install` command in the *Build for Production* part,
-> Node.js will be installed twice. (`mvn clean install` installs Node.js Version 12.16.1 automatically).
+> Node.js will be installed twice (`mvn clean install` installs Node.js Version 12.16.1 automatically).
 > </span>
 >----
 >The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you
