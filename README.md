@@ -13,38 +13,50 @@
 > commit information into it. The repolog.log-file is the input for the RepositoryMining-Application.
 
 
-## Build
+>## Build for developing
 >### Frontend
 > <span style="color:#ffcc00">__Attention:__ </span>
 > <span > if you follow the instructions in the Quasar CLI Installation 
 > down below and also run the `mvn clean install` command in the *Build for Production* part,
 > Node.js will be installed twice. ( `mvn clean install` installs Node.js Version 12.16.1 automatically ).
 > </span>
-> ----
-> The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you
-> haven't installed it yet you can follow the instructions on the quasar-website under the following link:
-> [Quasar CLI Installation](https://quasar.dev/quasar-cli/installation)  
-> To run the frontend in dev-mode navigate to the frontend folder in the Hettel-RepositoryMining Folder and type 
-> ``quasar dev`` into the cli.  
+>----
+>The frontend was created with the Quasar-Framework. To execute it you have to install the Quasar cli. If you
+>haven't installed it yet you can follow the instructions on the quasar-website under the following link:
+>[Quasar CLI Installation](https://quasar.dev/quasar-cli/installation)  
+>To run the frontend in dev-mode navigate to the frontend folder in the Hettel-RepositoryMining Folder and type 
+>``quasar dev`` into the cli.  
 > 
-> ![img.png](ReadMe_Img/quassar_dev_cmd.png)
+>![img.png](ReadMe_Img/quassar_dev_cmd.png)
 > 
-> ##User-Mode
 > ### Backend
-> The backend uses the Spring-Framework. To run the backend just clone the repository and import it as an existing maven repository into your IDE.
-> After that move to the __src/main/java__ folder and click on the __de.hskl.repominer__ package. Now open the __RepoMiner.java__
-> file and run it. 
+>The backend uses the Spring-Framework. To run the backend just clone the repository and import it as an existing maven repository into your IDE.
+>After that move to the __src/main/java__ folder and click on the __de.hskl.repominer__ package. Now open the __RepoMiner.java__
+>file and run it.
+>
+> ##User-Mode
 > 
-> ### Build for production 
+> ### Build for production & start application without IDE
 > #### (Installs Node.js version 12.16.1 and npm)  
-> To perform the maven build  just navigate to the __Hettel-RepositoryMining__-folder and open
-> the PowerShell/CLI. Type ``mvn clean install`` and run the command.  
-> To run this command you need maven installed
+> 1. To perform the maven build  just navigate to the __Hettel-RepositoryMining__ folder and open
+> the PowerShell/CLI. Type ``mvn clean install`` and run the command 
+> After executing that command, Node.js version 12.16.1 and npm will be installed
+> automatically.  
+>To run this command you need maven installed
 > on your machine. If this isn't the case, download the maven .zip file and add the /bin directory to your 
 > PATH variable. To get more details about the installation of maven, follow this link:
 > https://www.marcobehler.com/guides/mvn-clean-install-a-short-guide-to-maven#_how_do_you_install_maven
+>
+> 2. ###### Start RepoMiner without an IDE
+>    __Backend:__
 > 
-> 
+>    Now you should find a newly created __target__ folder in the _Hettel-RepositoryMining/backend_ path. Open that
+>    folder and the PowerShell cli. To start the backend without an IDE you have to execute the 
+>    _backend-1.0-SNAPSHOT.jar_ file with `java -jar backend-1.0-SNAPSHOT.jar`.  
+>    <br>  
+>    __Frontend:__  
+>    Open a new PowerShell cli and navigate to the _Hettel-RepositoryMining/frontend_ folder. Type `quasar dev` and
+>    run that command. 
 
 
 
@@ -61,7 +73,10 @@
 > __GitHub CLI:__ ``gh repo clone githubtraining/hellogitworld``  
 > After pressing the __add project__ -Button you'll get navigated to the __add projects__ screen. Here you can copy the necessary git-command for the cli. 
 > Execute that command in the directory of the git-repository. A new file with the name __repolog.log__ should appear in the git-repository.   
-> ![img.png](ReadMe_Img/repolog_created.png)   
+> ![img.png](ReadMe_Img/repolog_created.png)  
+> <span style="color:#89cff0; font-size:12pt ">__Information:__</span> 
+> <span style= "font-size: 12pt">the encoding for the repolog.log file has to be UTF-16</span>  
+> <br>
 > Choose a name for your project in the text field and paste your repolog.log-file in the "Upload git-log here" section. 
 > To add the data to the database click on the __add-Button__ otherwise use the __abort-Button__ to go back 
 > to the main screen.
