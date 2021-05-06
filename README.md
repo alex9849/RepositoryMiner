@@ -135,3 +135,9 @@
 > ![img.png](ReadMe_Img/new_author_dialog.png)  
 > Here you can type in the name of your new author and confirm it with the green __OK-Button__. To exit the dialog without 
 > creating a new author just click the __ABORT-Button__.
+
+
+>### Workspaces
+>     Frontend: Alexander Liggesmeyer  
+>     Backend:  Alexander Liggesmeyer, Daniel Poslon  
+>     Doku:     Daniel Poslon
