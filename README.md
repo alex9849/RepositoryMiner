@@ -70,7 +70,7 @@
 >1. This is how the main menu looks like when you start the application for the first time.
 >There are no projects in the database, you only have the opportunity to add a new project. 
 >Now click on the __add project - Button__.  
->![img.png](ReadMe_Img/mainScreen.png)  
+>![img.png](ReadMe_Img/mainScreen.png)
 > 
 > 
 > 2. For this example, we use the "hellogitworld" repository on GitHub. You can clone it with the following commands:  
