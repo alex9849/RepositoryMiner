@@ -1,4 +1,6 @@
 # Hettel-RepositoryMining
+![img.png](ReadMe_Img/RepoMiner_logo.jpeg)  
+> 
 > The Hettel-RepositoryMining is a study project from the university of applied sciences 
 > in Kaiserslautern Germany to detect developers
 > in a software project which changed big parts of the code and therefore gained a massive amount of knowledge.
@@ -41,7 +43,7 @@
 > 
 > ### Build for production & start application without IDE
 > #### (Installs Node.js version 12.16.1 and npm)  
-> 1. ###### Build for production
+> 1. #### Build for production
 >   
 >    To perform the maven build  just navigate to the __Hettel-RepositoryMining__ folder and open
 >    the PowerShell/CLI. Type ``mvn clean install`` and run the command. 
@@ -52,7 +54,7 @@
 >    PATH variable. To get more details about the installation of maven, follow this link:
 >    https://www.marcobehler.com/guides/mvn-clean-install-a-short-guide-to-maven#_how_do_you_install_maven
 >
-> 2. ###### Start RepoMiner without an IDE
+> 2. #### Start RepoMiner without an IDE
 >    __Backend:__
 > 
 >    Now you should find a newly created __target__ folder in the _Hettel-RepositoryMining/backend_ path. Open that
