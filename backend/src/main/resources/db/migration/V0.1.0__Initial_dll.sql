@@ -32,7 +32,7 @@ CREATE TABLE "Commit"
     projectId INTEGER REFERENCES Project ON DELETE CASCADE,
     isMerge   INTEGER NOT NULL,
     hash      TEXT,
-    authorId  INTEGER NOT NULL REFERENCES Author ON DELETE CASCADE,
+    authorId  INTEGER NOT NULL REFERENCES LogAuthor ON DELETE CASCADE,
     timestamp INTEGER NOT NULL,
     message   TEXT    NOT NULL,
     CONSTRAINT commit_hash_unique UNIQUE (projectId, hash)

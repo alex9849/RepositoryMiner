@@ -7,46 +7,17 @@
         <q-btn
           flat
           dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
-
-        <q-toolbar-title>
-          RepoMiner
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+          icon="home"
+          no-caps
+          :ripple="false"
+          :to="{name: 'projects'}"
+        >
+          <q-toolbar-title>
+            RepoMiner
+          </q-toolbar-title>
+        </q-btn>
       </q-toolbar>
     </q-header>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      bordered
-      show-if-above
-      content-class="bg-primary text-white"
-    >
-      <q-list>
-        <q-item
-          v-for="sideBarLink in sideBarLinks"
-          clickable
-          :exact="sideBarLink.exact"
-          :to="sideBarLink.to"
-          active-class="q-item-no-link-highlighting"
-        >
-          <q-item-section
-            avatar
-          >
-            <q-icon
-              :name="sideBarLink.icon"
-            />
-          </q-item-section>
-          <q-item-section>
-            {{ sideBarLink.label }}
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view/>

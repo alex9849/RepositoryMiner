@@ -1,11 +1,16 @@
 package de.hskl.repominer.models;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class Author {
     private int projectId;
     private int id;
+    @NotNull
+    @Min(1)
     private String name;
+    @NotNull
     private List<LogAuthor> logAuthors;
 
     public Author(int projectId, int id, String name) {

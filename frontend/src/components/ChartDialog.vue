@@ -48,7 +48,7 @@
         v-if="!loading"
         class="row justify-center items-center"
       >
-        <highcharts :options="hcChartOptions" :highcharts="hcInstance" />
+        <highcharts :options="hcChartOptions" :highcharts="hcInstance" style="width: 100%;"/>
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -59,6 +59,7 @@ import Highcharts from 'highcharts'
 
 require('highcharts/highcharts-more.js')(Highcharts);
 require('highcharts/modules/drilldown.js')(Highcharts);
+require('highcharts/modules/heatmap.js')(Highcharts);
 
 export default {
   name: "ChartDialog",
@@ -86,6 +87,17 @@ export default {
   data() {
     return {
       hcInstance: Highcharts
+    }
+  },
+  created() {
+    document.addEventListener("resize", this.onResize)
+  },
+  destroyed() {
+    document.removeEventListener("resize", this.onResize)
+  },
+  methods: {
+    onResize(event) {
+      this.hcInstance.charts[0].reflow();
     }
   }
 }

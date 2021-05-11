@@ -31,7 +31,6 @@ public class LogParser {
                 fileTracker = new FileTracker(pc.hash);
                 isNewestCommit = false;
             }
-            System.out.println("Parsing commit: " + pc.hash + " (" + ++index / parsedCommits.size() * 100 + "%)");
 
             boolean isMerge = pc instanceof ParsedMergeCommit;
 
@@ -132,7 +131,7 @@ public class LogParser {
     private static List<ParsedCommit> toParsedCommits(List<UnparsedCommit> unparsedCommits) throws ParseException {
         List<ParsedCommit> parsedCommits = new LinkedList<>();
         List<ParsedMergeCommit> unsafeParentDiffMerges = new ArrayList<>();
-        //GitTreeBuilder gitTreeBuilder = null;
+        GitTreeBuilder gitTreeBuilder = null;
 
         ParsedCommit currentParsedCommit = null;
 
@@ -162,11 +161,11 @@ public class LogParser {
                 currentParsedCommit = nextCommit;
                 parsedCommits.add(currentParsedCommit);
 
-                /*if(gitTreeBuilder == null) {
+                if(gitTreeBuilder == null) {
                     gitTreeBuilder = new GitTreeBuilder(currentParsedCommit);
                 } else {
                     gitTreeBuilder.append(currentParsedCommit);
-                }*/
+                }
             }
 
             FileModificationHolder fmh = new FileModificationHolder();
@@ -180,14 +179,14 @@ public class LogParser {
                 currentParsedCommit.changedFiles = fmh;
             }
         }
-        /*if(gitTreeBuilder == null) {
+        if(gitTreeBuilder == null) {
             return parsedCommits;
         }
 
         GitTreeBuilder.GitTree gitTree = gitTreeBuilder.build();
 
         for(int i = unsafeParentDiffMerges.size() - 1; i >= 0; i--) {
-            boolean isLeftSideDiff = false;
+            boolean isRightSideDiff = false;
             ParsedMergeCommit checkMerge = unsafeParentDiffMerges.get(i);
             GitTreeBuilder.TreeNode currMergeNode = gitTree.getCommitNode(checkMerge.hash);
             ParsedFileChange searchRename = null;
@@ -211,17 +210,17 @@ public class LogParser {
                         continue;
                     }
                     if(fc.newPath.equals(searchRename.newPath)) {
-                        isLeftSideDiff = true;
+                        isRightSideDiff = true;
                         break nodeComparisons;
                     }
                 }
             }
 
-            if(isLeftSideDiff) {
+            if(!isRightSideDiff) {
                 checkMerge.changedFilesFromLeftTreeSide = checkMerge.changedFiles;
                 checkMerge.changedFiles = new FileModificationHolder();
             }
-        }*/
+        }
 
         return parsedCommits;
     }

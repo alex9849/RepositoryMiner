@@ -6,6 +6,7 @@ import de.hskl.repominer.models.chart.data.AbstractChart;
 import de.hskl.repominer.models.chart.data.SeriesEntry;
 import de.hskl.repominer.models.chart.data.packedbubble.PackedBubbleChart;
 import de.hskl.repominer.models.chart.data.packedbubble.PackedBubbleChartDatum;
+import de.hskl.repominer.models.chart.data.pie.PieChartDatum;
 import de.hskl.repominer.service.ProjectService;
 
 import java.util.ArrayList;
@@ -35,6 +36,18 @@ public class CodeOwnerShipFolderGetter implements ChartDataGetter {
             datum.setName(ownerShip.getAuthorName());
             datum.setValue(ownerShip.getChangedCode());
             seriesEntry.getData().add(datum);
+        }
+
+        //Calculate in %
+        for(Map.Entry<String, SeriesEntry<PackedBubbleChartDatum>> seriesEntry : pathToSeriesEntry.entrySet()) {
+            //Not null because Data is never empty
+            double sum = seriesEntry.getValue().getData().stream().mapToDouble(PieChartDatum::getValue).sum();
+            if(sum == 0) {
+                continue;
+            }
+            for(PackedBubbleChartDatum datum : seriesEntry.getValue().getData()) {
+                datum.setValue((datum.getValue() * 100) / sum);
+            }
         }
 
         packedBubbleChart.setSeries(new ArrayList<>(pathToSeriesEntry.values()));
