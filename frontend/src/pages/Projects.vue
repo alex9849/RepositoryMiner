@@ -3,11 +3,14 @@
     padding
     class="q-gutter-lg"
   >
-    <h4
+    <div
       class="row justify-center"
     >
-      Projects
-    </h4>
+      <q-img
+        width="400px"
+        src="RepoMiner.jpg"
+      />
+    </div>
     <div
       class="row justify-center"
     >
