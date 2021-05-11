@@ -98,8 +98,8 @@
 > 4. If you pressed the __select-Button__ you'll be navigated to the __browse-project__-Screen. Here you have a folder 
 > structure like the one you had in your repository we cloned before in the 2. step in this tutorial. There is also a 
 > settings section where you can change your properties.  
-> ![img.png](ReadMe_Img/browse_project.png)  
->  The __available graphs-Section__ consists of two buttons:
+> ![img.png](ReadMe_Img/browse_project.png)
+>  The __available graphs-Section__ consists of four buttons:
 >   - Code ownership development: _shows a line chart with a timeline and the number of changed lines of code
 >     by an author at the current path in the directory_  
 >     ![img.png](ReadMe_Img/linechart.png)  
@@ -107,13 +107,22 @@
 >   - Code ownership: _depends on where you call it up_
 >       1. if your current directory has a folder in it, the __code ownership__ will display a split packed bubble chart
 >          to demonstrate the folders and their content  
-           ![img_1.png](ReadMe_Img/bubblechart.png)  
+![img_1.png](ReadMe_Img/bubblechart.png)
 >       2. if the current directory consists of only one file, the __code ownership__ will display a pie chart  
 >          ![img_1.png](ReadMe_Img/piechart_readme.png)  
-> <span style="color:#89cff0">__Information:__</span> if one of these graphs displays too much information you can simply 
+> <span style="color:#89cff0">__Information:__</span> if one of these graphs displays too much information you can simply
 > disable or enable single parts of the graph by clicking on the components name. For example in the pictures above
 > you can disable/enable the graph content by clicking on the author-name (Matthew McCullough) or the folder/file-name
-> (resource/, README.txt).   <br>
+> (resource/, README.txt).
+>   - Commit-Map (by creation date): the axes of the coordinate system are file names. The heatmap shows how
+>       often file pairs have been committed together (sorted by creation date)  
+> ![img_1.png](ReadMe_Img/heatmap_creation_date_src_folder.png)  
+>    
+>   - Commit-Map (by name)  : the axes of the coordinate system are file names. The heatmap shows how
+> often file pairs have been committed together (sorted by name)   
+>![img_2.png](ReadMe_Img/heatmap_name_src_folder.png)  
+> <br>
+> 
 > 
 >   You can click on a single file or folder
 > to extend this folder and get deeper in the file-tree structure. For instance, clicking on the __src-folder__ in the 
